@@ -80,6 +80,11 @@
         .btn-excel { background-color: #27ae60; }
 
         .chart-container { background: #f8f9fa; padding: 15px; border-radius: 8px; border: 1px solid #e2e8f0; display: flex; align-items: center; justify-content: center; height: 280px; }
+
+        /* Estilos Gerenciamento */
+        .btn-manage { background-color: #9b59b6; color: white; border: none; padding: 8px 12px; border-radius: 4px; font-weight: bold; cursor: pointer; margin-right: 5px; }
+        .btn-manage:hover { background-color: #8e44ad; }
+        .btn-danger-zone { background-color: #e74c3c; color: white; border: none; padding: 8px 12px; border-radius: 4px; font-weight: bold; cursor: pointer; }
     </style>
 </head>
 <body>
@@ -88,7 +93,7 @@
         <h2>Acessar Painel de Trabalho</h2>
         <div class="form-group">
             <label for="loginUser">Quem está acessando?</label>
-            <select id="loginUser">
+            <select id="loginUser" onchange="toggleLoginPasswordView()">
                 <option value="admin">Administrador (Você)</option>
                 <option value="usuario_1">Usuário 1 - Modelista</option>
                 <option value="usuario_2">Usuário 2 - Auxiliar (Cadastro)</option>
@@ -96,6 +101,10 @@
                 <option value="usuario_4">Usuário 4 - Desenhista</option>
                 <option value="usuario_5">Usuário 5 - Auxiliar (Personalizado)</option>
             </select>
+        </div>
+        <div class="form-group" id="loginPasswordGroup">
+            <label for="loginPassword">Senha do Administrador</label>
+            <input type="password" id="loginPassword" placeholder="Digite sua senha de admin">
         </div>
         <button class="btn-submit" onclick="login()">Entrar no Sistema</button>
     </div>
@@ -108,7 +117,8 @@
 
         <div class="nav-tabs" id="adminTabs" style="display: none;">
             <button class="tab-btn active" onclick="switchTab('painel')">Painel de Operações</button>
-            <button class="tab-btn" onclick="switchTab('relatorios')">Relatórios & Gráficos da Diretoria</button>
+            <button class="tab-btn" onclick="switchTab('relatorios')">Relatórios & Gráficos</button>
+            <button class="tab-btn" onclick="switchTab('gerenciamento')" style="background: #9b59b6; color: white;">Gerenciar Equipe & Backup</button>
         </div>
 
         <div class="alert-panel" id="criticalAlertPanel">
@@ -221,10 +231,48 @@
                 </div>
             </div>
         </div>
+
+        <div id="tabGerenciamento" class="box" style="display: none; max-width: 800px; margin: 0 auto;">
+            <h2>Configurações de Controle Operacional</h2>
+            
+            <div class="box" style="background: #fdfdfd; border: 1px solid #ddd; margin-top: 15px;">
+                <h3>Nomes Atuais da Equipe</h3>
+                <p style="font-size: 0.8rem; color: #777; margin-bottom: 15px;">Altere o nome das pessoas abaixo conforme a equipe mudar. O sistema se adaptará automaticamente.</p>
+                
+                <div class="form-group"><label>Usuário 1 - Modelista:</label><input type="text" id="cfg_user1"></div>
+                <div class="form-group"><label>Usuário 2 - Auxiliar (Cadastro):</label><input type="text" id="cfg_user2"></div>
+                <div class="form-group"><label>Usuário 3 - Digitalizador:</label><input type="text" id="cfg_user3"></div>
+                <div class="form-group"><label>Usuário 4 - Desenhista:</label><input type="text" id="cfg_user4"></div>
+                <div class="form-group"><label>Usuário 5 - Auxiliar (Personalizado):</label><input type="text" id="cfg_user5"></div>
+                
+                <button class="btn-manage" style="width:100%; padding:10px; margin-top:5px;" onclick="salvarConfiguracaoEquipe()">Salvar Alterações de Nomes</button>
+            </div>
+
+            <div class="box" style="background: #fdfdfd; border: 1px solid #ddd;">
+                <h3>Segurança do Administrador</h3>
+                <div class="form-group">
+                    <label for="cfg_adminPassword">Definir Nova Senha de Admin:</label>
+                    <input type="password" id="cfg_adminPassword" placeholder="Deixe em branco para manter a atual">
+                </div>
+                <button class="btn-manage" style="width:100%; padding:10px;" onclick="salvarSenhaAdmin()">Atualizar Senha</button>
+            </div>
+
+            <div class="box" style="background: #fdfdfd; border: 1px solid #e74c3c;">
+                <h3 style="color: #c0392b;">Gerenciamento de Arquivos de Backup (Nuvem)</h3>
+                <p style="font-size: 0.8rem; color: #555; margin-bottom: 15px;">Crie pontos de restauração das tarefas ativas e do histórico diretamente no Firebase.</p>
+                
+                <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                    <button class="btn-manage" style="background-color: #27ae60;" onclick="criarBackupFirebase()">Criar/Substituir Backup Atual</button>
+                    <button class="btn-manage" style="background-color: #f39c12;" onclick="restaurarBackupFirebase()">Restaurar Último Backup</button>
+                    <button class="btn-danger-zone" onclick="apagarBackupFirebase()">Apagar Backup do Banco</button>
+                </div>
+                <div id="backupStatus" style="margin-top: 10px; font-size: 0.85rem; font-weight: bold; color: #555;"></div>
+            </div>
+        </div>
     </div>
 
     <script>
-        // --- ADICIONE AS CREDENCIAIS RESTANTES DA SUA CONTA AQUI ---
+        // --- COLOQUE AS CREDENCIAIS DA SUA CONTA DO FIREBASE AQUI ---
         const firebaseConfig = {
             apiKey: "COLE_AQUI_SUA_API_KEY", 
             authDomain: "engenhariagrancouro.firebaseapp.com",
@@ -252,7 +300,8 @@
             "Medição de consumo": ["admin", "usuario_3"]
         };
 
-        const nomesExibicao = {
+        // Nomes padrão iniciais (caso não existam no Firebase ainda)
+        let nomesExibicao = {
             "admin": "Administrador",
             "usuario_1": "Usuário 1 - Modelista",
             "usuario_2": "Usuário 2 - Auxiliar (Cadastro)",
@@ -261,10 +310,50 @@
             "usuario_5": "Usuário 5 - Auxiliar (Personalizado)"
         };
 
+        let adminPasswordDB = "admin123"; // Senha padrão inicial
         let tasks = [];
         let historicTasks = [];
         let currentUser = null;
         let myChart = null;
+
+        // Escutar nomes da equipe sincronizados do Firebase
+        database.ref('configuracoes/equipe').on('value', (snapshot) => {
+            const data = snapshot.val();
+            if (data) {
+                nomesExibicao.usuario_1 = data.usuario_1 || nomesExibicao.usuario_1;
+                nomesExibicao.usuario_2 = data.usuario_2 || nomesExibicao.usuario_2;
+                nomesExibicao.usuario_3 = data.usuario_3 || nomesExibicao.usuario_3;
+                nomesExibicao.usuario_4 = data.usuario_4 || nomesExibicao.usuario_4;
+                nomesExibicao.usuario_5 = data.usuario_5 || nomesExibicao.usuario_5;
+                
+                // Atualizar campos do formulário de gerenciamento se estiverem abertos
+                document.getElementById('cfg_user1').value = nomesExibicao.usuario_1;
+                document.getElementById('cfg_user2').value = nomesExibicao.usuario_2;
+                document.getElementById('cfg_user3').value = nomesExibicao.usuario_3;
+                document.getElementById('cfg_user4').value = nomesExibicao.usuario_4;
+                document.getElementById('cfg_user5').value = nomesExibicao.usuario_5;
+                
+                atualizarNomesNoSeletorLogin();
+                if(currentUser) renderTasks();
+            }
+        });
+
+        // Escutar senha do administrador sincronizada
+        database.ref('configuracoes/seguranca/adminPassword').on('value', (snapshot) => {
+            const val = snapshot.val();
+            if(val) adminPasswordDB = val;
+        });
+
+        // Escutar status do backup
+        database.ref('backup_sistema/info').on('value', (snapshot) => {
+            const info = snapshot.val();
+            const statusDiv = document.getElementById('backupStatus');
+            if (info) {
+                statusDiv.innerHTML = `Backup disponível salvo em: <span style="color:#27ae60;">${info.data}</span>`;
+            } else {
+                statusDiv.innerHTML = "Nenhum arquivo de backup encontrado no Firebase.";
+            }
+        });
 
         database.ref('tasks/ativas').on('value', (snapshot) => {
             const data = snapshot.val();
@@ -280,10 +369,37 @@
             }
         });
 
+        function atualizarNomesNoSeletorLogin() {
+            const select = document.getElementById('loginUser');
+            select.options[1].text = nomesExibicao.usuario_1;
+            select.options[2].text = nomesExibicao.usuario_2;
+            select.options[3].text = nomesExibicao.usuario_3;
+            select.options[4].text = nomesExibicao.usuario_4;
+            select.options[5].text = nomesExibicao.usuario_5;
+        }
+
+        function toggleLoginPasswordView() {
+            const user = document.getElementById('loginUser').value;
+            const passGroup = document.getElementById('loginPasswordGroup');
+            passGroup.style.display = (user === 'admin') ? 'block' : 'none';
+        }
+        toggleLoginPasswordView();
+
         function login() {
-            currentUser = document.getElementById('loginUser').value;
+            const userSelected = document.getElementById('loginUser').value;
+            
+            if (userSelected === 'admin') {
+                const passInput = document.getElementById('loginPassword').value;
+                if (passInput !== adminPasswordDB) {
+                    alert("Senha incorreta do Administrador!");
+                    return;
+                }
+            }
+
+            currentUser = userSelected;
             document.getElementById('loginScreen').style.display = 'none';
             document.getElementById('mainDashboard').style.display = 'block';
+            document.getElementById('loginPassword').value = '';
             
             const container = document.getElementById('tabPainel');
             const adminBox = document.getElementById('adminFormBox');
@@ -304,6 +420,7 @@
                 if(container) container.classList.add('full-width');
                 document.getElementById('listTitle').innerText = "Suas Demandas Ativas";
                 document.getElementById('tabRelatorios').style.display = 'none';
+                document.getElementById('tabGerenciamento').style.display = 'none';
                 document.getElementById('tabPainel').style.display = 'grid';
                 verificarAlertasCriticos();
             }
@@ -314,26 +431,32 @@
             document.getElementById('loginScreen').style.display = 'block';
             document.getElementById('mainDashboard').style.display = 'none';
             currentUser = null;
+            toggleLoginPasswordView();
         }
 
         function switchTab(tab) {
             document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById('tabPainel').style.display = 'none';
+            document.getElementById('tabRelatorios').style.display = 'none';
+            document.getElementById('tabGerenciamento').style.display = 'none';
+
             if (tab === 'painel') {
                 document.querySelectorAll('.tab-btn')[0].classList.add('active');
                 document.getElementById('tabPainel').style.display = 'grid';
-                document.getElementById('tabRelatorios').style.display = 'none';
-            } else {
+            } else if (tab === 'relatorios') {
                 document.querySelectorAll('.tab-btn')[1].classList.add('active');
-                document.getElementById('tabPainel').style.display = 'none';
                 document.getElementById('tabRelatorios').style.display = 'block';
                 updateReportDashboard();
+            } else if (tab === 'gerenciamento') {
+                document.querySelectorAll('.tab-btn')[2].classList.add('active');
+                document.getElementById('tabGerenciamento').style.display = 'block';
             }
         }
 
         function verificarAlertasCriticos() {
             const hoje = new Date().toISOString().split('T')[0];
             const temUrgencia = tasks.some(t => 
-                t.responsibles.includes(currentUser) && t.priority === "1" && t.deadline <= hoje
+                t.responsibles && t.responsibles.includes(currentUser) && t.priority === "1" && t.deadline <= hoje
             );
             document.getElementById('criticalAlertPanel').style.display = temUrgencia ? 'block' : 'none';
         }
@@ -342,7 +465,7 @@
             const taskList = document.getElementById('taskList');
             taskList.innerHTML = '';
 
-            let filteredTasks = (currentUser === 'admin') ? [...tasks] : tasks.filter(t => t.responsibles.includes(currentUser));
+            let filteredTasks = (currentUser === 'admin') ? [...tasks] : tasks.filter(t => t.responsibles && t.responsibles.includes(currentUser));
             filteredTasks.sort((a, b) => a.priority - b.priority || new Date(a.deadline) - new Date(b.deadline));
 
             if (filteredTasks.length === 0) {
@@ -361,12 +484,14 @@
                 if (task.deadline < hoje) prazoStatus = `<span class="deadline-alert">⚠️ ATRASADA (${dataBr})</span>`;
                 else if (task.deadline === hoje) prazoStatus = `<span class="deadline-alert">🚨 ENTREGA HOJE</span>`;
 
+                let nomesResponsaveis = task.responsibles ? task.responsibles.map(r => nomesExibicao[r] || r).join(' / ') : "Não definido";
+
                 card.innerHTML = `
                     <span class="prio-badge">Prioridade ${task.priority}</span>
                     <h3>${task.title} <span style="font-size:0.85rem; color:#7f8c8d; font-weight:normal;">(${task.category || 'Sem Categoria'})</span></h3>
                     <div class="task-info-line"><strong>Ação:</strong> ${task.action}</div>
                     <div class="task-meta">
-                        <span>👥 Responsáveis: <strong>${task.responsibles.map(r => nomesExibicao[r]).join(' / ')}</strong></span>
+                        <span>👥 Responsáveis: <strong>${nomesResponsaveis}</strong></span>
                         <span>${prazoStatus}</span>
                     </div>
                     <div class="task-actions">
@@ -391,7 +516,7 @@
                 priority: document.getElementById('taskPriority').value,
                 deadline: document.getElementById('taskDeadline').value,
                 desc: document.getElementById('taskDesc').value,
-                responsibles: roteamentoUsuarios[acao],
+                responsibles: roteamentoUsuarios[acao] || [],
                 timestampCreated: new Date().getTime()
             };
 
@@ -414,12 +539,9 @@
             let hExtraDetectada = "Não";
             
             const horaFechamento = dataFim.getHours();
-            const minutoFechamento = dataFim.getMinutes();
-            const tempoFechamentoNum = horaFechamento + (minutoFechamento / 60);
-            
+            const tempoFechamentoNum = horaFechamento + (dataFim.getMinutes() / 60);
             const horaAbertura = dataInicio.getHours();
-            const minutoAbertura = dataInicio.getMinutes();
-            const tempoAberturaNum = horaAbertura + (minutoAbertura / 60);
+            const tempoAberturaNum = horaAbertura + (dataInicio.getMinutes() / 60);
 
             if (tempoFechamentoNum > 17.0 || tempoFechamentoNum < 7.2 || tempoAberturaNum > 17.0 || tempoAberturaNum < 7.2 || dataFim.getDay() === 0 || dataFim.getDay() === 6) {
                 hExtraDetectada = "Sim";
@@ -548,6 +670,87 @@
             });
 
             doc.save(`Relatorio_Rendimento_${p.toLowerCase()}.pdf`);
+        }
+
+        // --- FUNÇÕES EXCLUSIVAS DE GERENCIAMENTO E BACKUP ---
+        function salvarConfiguracaoEquipe() {
+            if(currentUser !== 'admin') return;
+            const configEquipe = {
+                usuario_1: document.getElementById('cfg_user1').value,
+                usuario_2: document.getElementById('cfg_user2').value,
+                usuario_3: document.getElementById('cfg_user3').value,
+                usuario_4: document.getElementById('cfg_user4').value,
+                usuario_5: document.getElementById('cfg_user5').value
+            };
+            
+            database.ref('configuracoes/equipe').set(configEquipe).then(() => {
+                alert("Nomes da equipe atualizados com sucesso na nuvem!");
+            });
+        }
+
+        function salvarSenhaAdmin() {
+            if(currentUser !== 'admin') return;
+            const novaSenha = document.getElementById('cfg_adminPassword').value;
+            if(!novaSenha) {
+                alert("Digite uma senha válida.");
+                return;
+            }
+            database.ref('configuracoes/seguranca/adminPassword').set(novaSenha).then(() => {
+                alert("Senha do Administrador atualizada com sucesso!");
+                document.getElementById('cfg_adminPassword').value = '';
+            });
+        }
+
+        function criarBackupFirebase() {
+            if(currentUser !== 'admin') return;
+            
+            // Puxa o estado atual dos dados ativas e historico
+            Promise.all([
+                database.ref('tasks/ativas').once('value'),
+                database.ref('tasks/historico').once('value')
+            ]).then(([snapshotAtivas, snapshotHist]) => {
+                const dadosBackup = {
+                    info: {
+                        data: new Date().toLocaleString('pt-BR'),
+                        criadoPor: nomesExibicao[currentUser]
+                    },
+                    ativas: snapshotAtivas.val() || {},
+                    historico: snapshotHist.val() || {}
+                };
+
+                database.ref('backup_sistema').set(dadosBackup).then(() => {
+                    alert("Arquivo de Backup criado e substituído no Firebase com sucesso!");
+                });
+            });
+        }
+
+        function restaurarBackupFirebase() {
+            if(currentUser !== 'admin') return;
+            if(!confirm("⚠️ ATENÇÃO: Restaurar o backup apagará os dados atuais da tela para colocar os dados salvos no backup. Deseja continuar?")) return;
+
+            database.ref('backup_sistema').once('value').then((snapshot) => {
+                const bkp = snapshot.val();
+                if(!bkp) {
+                    alert("Nenhum backup encontrado para restaurar.");
+                    return;
+                }
+
+                Promise.all([
+                    database.ref('tasks/ativas').set(bkp.ativas || null),
+                    database.ref('tasks/historico').set(bkp.historico || null)
+                ]).then(() => {
+                    alert("Sistema restaurado com sucesso para a versão de: " + bkp.info.data);
+                });
+            });
+        }
+
+        function apagarBackupFirebase() {
+            if(currentUser !== 'admin') return;
+            if(!confirm("Tem certeza que deseja deletar o arquivo de backup do Firebase permanentemente?")) return;
+
+            database.ref('backup_sistema').remove().then(() => {
+                alert("Arquivo de backup excluído da nuvem.");
+            });
         }
     </script>
 </body>
