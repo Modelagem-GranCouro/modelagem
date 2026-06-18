@@ -1,0 +1,554 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Sistema Avançado de Gestão - Modelagem (Firebase)</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.29/jspdf.plugin.autotable.min.js"></script>
+    
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background-color: #f4f6f9; padding: 20px; color: #333; }
+        header { margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; background: white; padding: 15px 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+        h1 { color: #2c3e50; font-size: 1.4rem; }
+        
+        .nav-tabs { display: flex; gap: 10px; margin-bottom: 20px; }
+        .tab-btn { padding: 10px 20px; background: #e0e0e0; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; color: #555; }
+        .tab-btn.active { background: #3498db; color: white; }
+        
+        .logout-btn { background: #e74c3c; width: auto; padding: 5px 15px; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; }
+        .logout-btn:hover { background: #c0392b; }
+
+        #loginScreen { max-width: 400px; margin: 100px auto; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); text-align: center; }
+        #loginScreen h2 { margin-bottom: 20px; color: #2c3e50; font-size: 1.4rem; }
+        
+        #mainDashboard { display: none; }
+        .container { max-width: 1400px; margin: 0 auto; display: grid; grid-template-columns: 1fr 2.2fr; gap: 20px; }
+        .full-width { grid-template-columns: 1fr !important; }
+
+        .box { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); height: fit-content; margin-bottom: 20px; }
+        .box h2 { margin-bottom: 15px; font-size: 1.15rem; color: #34495e; border-bottom: 2px solid #ecf0f1; padding-bottom: 5px; }
+
+        .form-group { margin-bottom: 12px; }
+        .form-group label { display: block; margin-bottom: 5px; font-weight: 600; font-size: 0.85rem; color: #444; }
+        .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; font-size: 0.95rem; }
+        
+        button.btn-submit { width: 100%; padding: 10px; background-color: #3498db; color: white; border: none; border-radius: 4px; font-size: 1rem; cursor: pointer; font-weight: bold; }
+        button.btn-submit:hover { background-color: #2980b9; }
+
+        .alert-panel { display: none; background: #fff5f5; border: 2px dashed #e74c3c; padding: 15px; border-radius: 8px; margin-bottom: 20px; color: #c0392b; }
+
+        /* Cards */
+        .task-list { display: grid; grid-template-columns: 1fr; gap: 15px; }
+        .task-card { background: #fdfdfd; border-left: 6px solid #95a5a6; padding: 15px; border-radius: 4px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+        .prio-1 { border-left-color: #e74c3c; background-color: #fffafb; } 
+        .prio-2 { border-left-color: #f39c12; background-color: #fffbf5; } 
+        .prio-3 { border-left-color: #2ecc71; background-color: #f6fdf8; } 
+        .prio-badge { display: inline-block; padding: 2px 8px; border-radius: 12px; font-size: 0.75rem; color: white; font-weight: bold; margin-bottom: 8px; }
+        .prio-1 .prio-badge { background: #e74c3c; }
+        .prio-2 .prio-badge { background: #f39c12; }
+        .prio-3 .prio-badge { background: #2ecc71; }
+
+        .task-meta { display: flex; flex-wrap: wrap; gap: 15px; font-size: 0.85rem; color: #7f8c8d; background: #f1f3f5; padding: 6px 10px; border-radius: 4px; margin-top: 10px; justify-content: space-between; }
+        .deadline-alert { color: #e74c3c; font-weight: bold; }
+        .task-actions { margin-top: 10px; display: flex; gap: 10px; justify-content: flex-end; }
+        .btn-action { width: auto; padding: 6px 12px; font-size: 0.8rem; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; color: white; }
+        .btn-done { background-color: #2ecc71; }
+        .btn-delete { background-color: #95a5a6; }
+
+        /* Relatórios */
+        .report-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .report-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin-bottom: 20px; }
+        .metric-card { background: #f8f9fa; border: 1px solid #e2e8f0; padding: 15px; border-radius: 6px; text-align: center; }
+        .metric-card h4 { font-size: 0.9rem; color: #64748b; margin-bottom: 5px; }
+        .metric-card p { font-size: 1.6rem; font-weight: bold; color: #1e293b; }
+        
+        .rating-box { padding: 15px; border-radius: 6px; text-align: center; font-weight: bold; font-size: 1.1rem; margin-bottom: 20px; color: white; }
+        .rating-boa { background-color: #2ecc71; }
+        .rating-media { background-color: #f39c12; }
+        .rating-ruim { background-color: #e74c3c; }
+
+        .report-actions { display: flex; gap: 10px; margin-top: 20px; }
+        .btn-report { flex: 1; padding: 12px; border: none; border-radius: 4px; font-weight: bold; color: white; cursor: pointer; font-size: 0.9rem; }
+        .btn-pdf { background-color: #e74c3c; }
+        .btn-excel { background-color: #27ae60; }
+
+        .chart-container { background: #f8f9fa; padding: 15px; border-radius: 8px; border: 1px solid #e2e8f0; display: flex; align-items: center; justify-content: center; height: 280px; }
+    </style>
+</head>
+<body>
+
+    <div id="loginScreen">
+        <h2>Acessar Painel de Trabalho</h2>
+        <div class="form-group">
+            <label for="loginUser">Quem está acessando?</label>
+            <select id="loginUser">
+                <option value="admin">Administrador (Você)</option>
+                <option value="usuario_1">Usuário 1 - Modelista</option>
+                <option value="usuario_2">Usuário 2 - Auxiliar (Cadastro)</option>
+                <option value="usuario_3">Usuário 3 - Digitalizador</option>
+                <option value="usuario_4">Usuário 4 - Desenhista</option>
+                <option value="usuario_5">Usuário 5 - Auxiliar (Personalizado)</option>
+            </select>
+        </div>
+        <button class="btn-submit" onclick="login()">Entrar no Sistema</button>
+    </div>
+
+    <div id="mainDashboard">
+        <header>
+            <h1>Painel de Modelagem: <span id="userDisplay" style="color: #3498db;"></span></h1>
+            <button class="logout-btn" onclick="logout()">Sair / Trocar Usuário</button>
+        </header>
+
+        <div class="nav-tabs" id="adminTabs" style="display: none;">
+            <button class="tab-btn active" onclick="switchTab('painel')">Painel de Operações</button>
+            <button class="tab-btn" onclick="switchTab('relatorios')">Relatórios & Gráficos da Diretoria</button>
+        </div>
+
+        <div class="alert-panel" id="criticalAlertPanel">
+            <h3>⚠️ ATENÇÃO E FOCO MÁXIMO!</h3>
+            <p>Você possui tarefas de <strong>Prioridade 1</strong> urgentes vencendo hoje ou já atrasadas.</p>
+        </div>
+
+        <div id="tabPainel" class="container">
+            <div class="box" id="adminFormBox">
+                <h2>Lançar Nova Tarefa no Setor</h2>
+                <form id="taskForm">
+                    <div class="form-group">
+                        <label for="taskTitle">Referência / Nome do Modelo</label>
+                        <input type="text" id="taskTitle" required placeholder="Ex: Vestido Crepe Ref 501">
+                    </div>
+                    <div class="form-group">
+                        <label for="taskCategory">Categoria</label>
+                        <select id="taskCategory" required>
+                            <option value="Coleção Normal">Coleção Normal</option>
+                            <option value="Coleção Cápsula">Coleção Cápsula</option>
+                            <option value="Alto Verão">Alto Verão</option>
+                            <option value="Inverno">Inverno</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="taskAction">Especificação da Tarefa</label>
+                        <select id="taskAction" required>
+                            <option value="Fazer modelo novo">Fazer modelo novo</option>
+                            <option value="Alterar modelo existente">Alterar modelo existente</option>
+                            <option value="Cadastrar modelo novo">Cadastrar modelo novo</option>
+                            <option value="Alterar cadastro de um modelo existente">Alterar cadastro de um modelo existente</option>
+                            <option value="Digitalizar modelo novo">Digitalizar modelo novo</option>
+                            <option value="Alterar modelo ja digitalizado">Alterar modelo ja digitalizado</option>
+                            <option value="Fazer personalizado">Fazer personalizado</option>
+                            <option value="Desenvolver nova arte personalizada">Desenvolver nova arte personalizada</option>
+                            <option value="alterar personalizado existente">Alterar personalizado existente</option>
+                            <option value="Criar bordado a partir da imagem disponibilizada">Criar bordado a partir da imagem disponibilizada</option>
+                            <option value="Medição de consumo">Medição de consumo</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="taskPriority">Sequência de Prioridade</label>
+                        <select id="taskPriority" required>
+                            <option value="1">Prioridade 1 (Máxima)</option>
+                            <option value="2">Prioridade 2 (Média)</option>
+                            <option value="3">Prioridade 3 (Normal)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="taskDeadline">Prazo Limite para Entrega</label>
+                        <input type="date" id="taskDeadline" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="taskDesc">Instruções Adicionais</label>
+                        <textarea id="taskDesc" rows="3"></textarea>
+                    </div>
+                    <button type="submit" class="btn-submit">Direcionar e Enviar</button>
+                </form>
+            </div>
+
+            <div class="box" style="flex: 1;" id="taskListBox">
+                <h2 id="listTitle">Fila de Demandas Ativas</h2>
+                <div class="task-list" id="taskList"></div>
+            </div>
+        </div>
+
+        <div id="tabRelatorios" class="box" style="display: none; max-width: 1400px; margin: 0 auto;">
+            <h2>Painel Estatístico Avançado de Performance</h2>
+            
+            <div class="form-group" style="max-width: 300px; margin-bottom: 20px;">
+                <label for="reportPeriod">Selecionar Abrangência Temporal:</label>
+                <select id="reportPeriod" onchange="updateReportDashboard()">
+                    <option value="semanal">Últimos 7 dias (Semanal)</option>
+                    <option value="quinzenal">Últimos 15 dias (Quinzenal)</option>
+                    <option value="mensal">Últimos 30 dias (Mensal)</option>
+                    <option value="anual">Últimos 365 dias (Anual)</option>
+                </select>
+            </div>
+
+            <div id="sectorRating" class="rating-box">CALCULANDO REGULARIDADE...</div>
+
+            <div class="report-layout">
+                <div>
+                    <div class="report-grid">
+                        <div class="metric-card">
+                            <h4>No Prazo</h4>
+                            <p id="mNoPrazo" style="color: #2ecc71;">0</p>
+                        </div>
+                        <div class="metric-card">
+                            <h4>Atrasadas</h4>
+                            <p id="mForaPrazo" style="color: #e74c3c;">0</p>
+                        </div>
+                        <div class="metric-card">
+                            <h4>Em Fila (Pendente)</h4>
+                            <p id="mPendentes" style="color: #f39c12;">0</p>
+                        </div>
+                        <div class="metric-card">
+                            <h4>Volumetria Total</h4>
+                            <p id="mTotal">0</p>
+                        </div>
+                    </div>
+                    <div class="report-actions">
+                        <button class="btn-report btn-pdf" onclick="exportPDF()">Exportar Relatório PDF</button>
+                        <button class="btn-report btn-excel" onclick="exportExcel()">Exportar Planilha Excel</button>
+                    </div>
+                </div>
+
+                <div class="chart-container">
+                    <canvas id="efficiencyChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- ADICIONE AS CREDENCIAIS RESTANTES DA SUA CONTA AQUI ---
+        const firebaseConfig = {
+            apiKey: "COLE_AQUI_SUA_API_KEY", 
+            authDomain: "engenhariagrancouro.firebaseapp.com",
+            databaseURL: "https://engenhariagrancouro-default-rtdb.firebaseio.com",
+            projectId: "engenhariagrancouro",
+            storageBucket: "engenhariagrancouro.appspot.com",
+            messagingSenderId: "COLE_AQUI_SEU_MESSAGING_SENDER_ID", 
+            appId: "COLE_AQUI_SEU_APP_ID" 
+        };
+        
+        firebase.initializeApp(firebaseConfig);
+        const database = firebase.database();
+
+        const roteamentoUsuarios = {
+            "Fazer modelo novo": ["usuario_1"],
+            "Alterar modelo existente": ["usuario_1"],
+            "Cadastrar modelo novo": ["usuario_2"],
+            "Alterar cadastro de um modelo existente": ["usuario_2"],
+            "Digitalizar modelo novo": ["usuario_3"],
+            "Alterar modelo ja digitalizado": ["usuario_3"],
+            "Fazer personalizado": ["usuario_4", "usuario_5"],
+            "Desenvolver nova arte personalizada": ["usuario_4"],
+            "alterar personalizado existente": ["usuario_4", "usuario_5"],
+            "Criar bordado a partir da imagem disponibilizada": ["usuario_4", "usuario_5"],
+            "Medição de consumo": ["admin", "usuario_3"]
+        };
+
+        const nomesExibicao = {
+            "admin": "Administrador",
+            "usuario_1": "Usuário 1 - Modelista",
+            "usuario_2": "Usuário 2 - Auxiliar (Cadastro)",
+            "usuario_3": "Usuário 3 - Digitalizador",
+            "usuario_4": "Usuário 4 - Desenhista",
+            "usuario_5": "Usuário 5 - Auxiliar (Personalizado)"
+        };
+
+        let tasks = [];
+        let historicTasks = [];
+        let currentUser = null;
+        let myChart = null;
+
+        database.ref('tasks/ativas').on('value', (snapshot) => {
+            const data = snapshot.val();
+            tasks = data ? Object.values(data) : [];
+            if(currentUser) { renderTasks(); verificarAlertasCriticos(); }
+        });
+
+        database.ref('tasks/historico').on('value', (snapshot) => {
+            const data = snapshot.val();
+            historicTasks = data ? Object.values(data) : [];
+            if(currentUser && document.getElementById('tabRelatorios').style.display === 'block') {
+                updateReportDashboard();
+            }
+        });
+
+        function login() {
+            currentUser = document.getElementById('loginUser').value;
+            document.getElementById('loginScreen').style.display = 'none';
+            document.getElementById('mainDashboard').style.display = 'block';
+            
+            const container = document.getElementById('tabPainel');
+            const adminBox = document.getElementById('adminFormBox');
+            const tabs = document.getElementById('adminTabs');
+
+            if (currentUser === 'admin') {
+                document.getElementById('userDisplay').innerText = nomesExibicao[currentUser];
+                if(adminBox) adminBox.style.display = 'block';
+                tabs.style.display = 'flex';
+                if(container) container.classList.remove('full-width');
+                document.getElementById('listTitle').innerText = "Visão Geral do Setor";
+                document.getElementById('criticalAlertPanel').style.display = 'none';
+                switchTab('painel');
+            } else {
+                document.getElementById('userDisplay').innerText = nomesExibicao[currentUser];
+                if(adminBox) adminBox.style.display = 'none';
+                tabs.style.display = 'none';
+                if(container) container.classList.add('full-width');
+                document.getElementById('listTitle').innerText = "Suas Demandas Ativas";
+                document.getElementById('tabRelatorios').style.display = 'none';
+                document.getElementById('tabPainel').style.display = 'grid';
+                verificarAlertasCriticos();
+            }
+            renderTasks();
+        }
+
+        function logout() {
+            document.getElementById('loginScreen').style.display = 'block';
+            document.getElementById('mainDashboard').style.display = 'none';
+            currentUser = null;
+        }
+
+        function switchTab(tab) {
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            if (tab === 'painel') {
+                document.querySelectorAll('.tab-btn')[0].classList.add('active');
+                document.getElementById('tabPainel').style.display = 'grid';
+                document.getElementById('tabRelatorios').style.display = 'none';
+            } else {
+                document.querySelectorAll('.tab-btn')[1].classList.add('active');
+                document.getElementById('tabPainel').style.display = 'none';
+                document.getElementById('tabRelatorios').style.display = 'block';
+                updateReportDashboard();
+            }
+        }
+
+        function verificarAlertasCriticos() {
+            const hoje = new Date().toISOString().split('T')[0];
+            const temUrgencia = tasks.some(t => 
+                t.responsibles.includes(currentUser) && t.priority === "1" && t.deadline <= hoje
+            );
+            document.getElementById('criticalAlertPanel').style.display = temUrgencia ? 'block' : 'none';
+        }
+
+        function renderTasks() {
+            const taskList = document.getElementById('taskList');
+            taskList.innerHTML = '';
+
+            let filteredTasks = (currentUser === 'admin') ? [...tasks] : tasks.filter(t => t.responsibles.includes(currentUser));
+            filteredTasks.sort((a, b) => a.priority - b.priority || new Date(a.deadline) - new Date(b.deadline));
+
+            if (filteredTasks.length === 0) {
+                taskList.innerHTML = '<p style="color: #999; text-align: center; padding: 25px;">Nenhuma atividade pendente.</p>';
+                return;
+            }
+
+            const hoje = new Date().toISOString().split('T')[0];
+
+            filteredTasks.forEach((task) => {
+                const card = document.createElement('div');
+                card.className = `task-card prio-${task.priority}`;
+                const dataBr = task.deadline.split('-').reverse().join('/');
+                let prazoStatus = `Prazo: ${dataBr}`;
+                
+                if (task.deadline < hoje) prazoStatus = `<span class="deadline-alert">⚠️ ATRASADA (${dataBr})</span>`;
+                else if (task.deadline === hoje) prazoStatus = `<span class="deadline-alert">🚨 ENTREGA HOJE</span>`;
+
+                card.innerHTML = `
+                    <span class="prio-badge">Prioridade ${task.priority}</span>
+                    <h3>${task.title} <span style="font-size:0.85rem; color:#7f8c8d; font-weight:normal;">(${task.category || 'Sem Categoria'})</span></h3>
+                    <div class="task-info-line"><strong>Ação:</strong> ${task.action}</div>
+                    <div class="task-meta">
+                        <span>👥 Responsáveis: <strong>${task.responsibles.map(r => nomesExibicao[r]).join(' / ')}</strong></span>
+                        <span>${prazoStatus}</span>
+                    </div>
+                    <div class="task-actions">
+                        ${currentUser === 'admin' ? `<button class="btn-action btn-delete" onclick="deleteTask('${task.id}')">Excluir</button>` : ''}
+                        <button class="btn-action btn-done" onclick="finishTask('${task.id}')">Concluir ✓</button>
+                    </div>
+                `;
+                taskList.appendChild(card);
+            });
+        }
+
+        document.getElementById('taskForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            const acao = document.getElementById('taskAction').value;
+            const taskId = '_' + Math.random().toString(36).substr(2, 9);
+            
+            const newTask = {
+                id: taskId,
+                title: document.getElementById('taskTitle').value,
+                category: document.getElementById('taskCategory').value,
+                action: acao,
+                priority: document.getElementById('taskPriority').value,
+                deadline: document.getElementById('taskDeadline').value,
+                desc: document.getElementById('taskDesc').value,
+                responsibles: roteamentoUsuarios[acao],
+                timestampCreated: new Date().getTime()
+            };
+
+            database.ref('tasks/ativas/' + taskId).set(newTask);
+            document.getElementById('taskForm').reset();
+            alert("Tarefa registrada no banco de dados.");
+        });
+
+        function calcularTempoEHoraExtra(inicioMs, fimMs) {
+            const dataInicio = new Date(inicioMs);
+            const dataFim = new Date(fimMs);
+            const diferencaTotalMs = fimMs - inicioMs;
+            
+            const totalMinutosGerais = Math.floor(diferencaTotalMs / 1000 / 60);
+            const dias = Math.floor(totalMinutosGerais / (24 * 60));
+            const horas = Math.floor((totalMinutosGerais % (24 * 60)) / 60);
+            const minutos = totalMinutosGerais % 60;
+            
+            let tempoFormatado = `${dias}d ${horas}h ${minutos}m`;
+            let hExtraDetectada = "Não";
+            
+            const horaFechamento = dataFim.getHours();
+            const minutoFechamento = dataFim.getMinutes();
+            const tempoFechamentoNum = horaFechamento + (minutoFechamento / 60);
+            
+            const horaAbertura = dataInicio.getHours();
+            const minutoAbertura = dataInicio.getMinutes();
+            const tempoAberturaNum = horaAbertura + (minutoAbertura / 60);
+
+            if (tempoFechamentoNum > 17.0 || tempoFechamentoNum < 7.2 || tempoAberturaNum > 17.0 || tempoAberturaNum < 7.2 || dataFim.getDay() === 0 || dataFim.getDay() === 6) {
+                hExtraDetectada = "Sim";
+            }
+
+            return { tempoFormatado, hExtraDetectada };
+        }
+
+        window.finishTask = function(id) {
+            const compTask = tasks.find(t => t.id === id);
+            if (compTask) {
+                const timestampFim = new Date().getTime();
+                const calculos = calcularTempoEHoraExtra(compTask.timestampCreated, timestampFim);
+                
+                compTask.dateFinished = new Date().toISOString().split('T')[0];
+                compTask.onTime = compTask.dateFinished <= compTask.deadline;
+                compTask.timeSpent = calculos.tempoFormatado;
+                compTask.hasOvertime = calculos.hExtraDetectada;
+                compTask.userWhoFinished = nomesExibicao[currentUser] || currentUser;
+
+                database.ref('tasks/historico/' + id).set(compTask).then(() => {
+                    database.ref('tasks/ativas/' + id).remove();
+                    alert("Tarefa finalizada com sucesso!");
+                });
+            }
+        }
+
+        window.deleteTask = function(id) {
+            if(confirm("Apagar permanentemente?")) {
+                database.ref('tasks/ativas/' + id).remove();
+            }
+        }
+
+        function getFilteredMetrics() {
+            const periodo = document.getElementById('reportPeriod').value;
+            const hoje = new Date();
+            let limiteDias = 7;
+            
+            if (periodo === 'quinzenal') limiteDias = 15;
+            else if (periodo === 'mensal') limiteDias = 30;
+            else if (periodo === 'anual') limiteDias = 365;
+
+            const dataCorte = new Date(hoje.setDate(hoje.getDate() - limiteDias)).toISOString().split('T')[0];
+            const concluidasNoPeriodo = historicTasks.filter(t => t.dateFinished >= dataCorte);
+            
+            const noPrazo = concluidasNoPeriodo.filter(t => t.onTime).length;
+            const foraPrazo = concluidasNoPeriodo.filter(t => !t.onTime).length;
+            const pendentes = tasks.length;
+
+            return { noPrazo, foraPrazo, pendentes, total: noPrazo + foraPrazo + pendentes, concluidasNoPeriodo };
+        }
+
+        function updateReportDashboard() {
+            const metrics = getFilteredMetrics();
+            
+            document.getElementById('mNoPrazo').innerText = metrics.noPrazo;
+            document.getElementById('mForaPrazo').innerText = metrics.foraPrazo;
+            document.getElementById('mPendentes').innerText = metrics.pendentes;
+            document.getElementById('mTotal').innerText = metrics.total;
+
+            const totalEntregue = metrics.noPrazo + metrics.foraPrazo;
+            let taxa = totalEntregue > 0 ? (metrics.noPrazo / totalEntregue) * 100 : 100;
+
+            const ratingBox = document.getElementById('sectorRating');
+            if (taxa >= 85) { ratingBox.innerText = `REGULARIDADE: BOA (${taxa.toFixed(1)}% no prazo)`; ratingBox.className = "rating-box rating-boa"; }
+            else if (taxa >= 60) { ratingBox.innerText = `REGULARIDADE: MÉDIA (${taxa.toFixed(1)}% no prazo)`; ratingBox.className = "rating-box rating-media"; }
+            else { ratingBox.innerText = `REGULARIDADE: RUIM (${taxa.toFixed(1)}% no prazo)`; ratingBox.className = "rating-box rating-ruim"; }
+
+            if (myChart) myChart.destroy();
+            const ctx = document.getElementById('efficiencyChart').getContext('2d');
+            myChart = new Chart(ctx, {
+                type: 'doughnut',
+                data: {
+                    labels: ['No Prazo', 'Atrasado', 'Pendente'],
+                    datasets: [{
+                        data: [metrics.noPrazo, metrics.foraPrazo, metrics.pendentes],
+                        backgroundColor: ['#2ecc71', '#e74c3c', '#f39c12']
+                    }]
+                },
+                options: { responsive: true, maintainAspectRatio: false }
+            });
+        }
+
+        function exportExcel() {
+            const metrics = getFilteredMetrics();
+            const p = document.getElementById('reportPeriod').value.toUpperCase();
+            
+            let linhas = [
+                ["RELATÓRIO DE AUDITORIA OPERACIONAL - INDUSTRIAL (" + p + ")"],
+                [],
+                ["Responsável Conclusão", "Categoria", "Tarefa / Ação", "Tempo Total Gasto", "Hora Extra Realizada?", "Status de Prazo"],
+            ];
+
+            metrics.concluidasNoPeriodo.forEach(t => {
+                linhas.push([t.userWhoFinished, t.category || "Sem Categoria", t.action, t.timeSpent, t.hasOvertime, t.onTime ? "No Prazo" : "Fora do Prazo"]);
+            });
+
+            const wb = XLSX.utils.book_new();
+            const ws = XLSX.utils.aoa_to_sheet(linhas);
+            XLSX.utils.book_append_sheet(wb, ws, "Desempenho");
+            XLSX.writeFile(wb, `Planilha_Diretoria_${p.toLowerCase()}.xlsx`);
+        }
+
+        function exportPDF() {
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            const metrics = getFilteredMetrics();
+            const p = document.getElementById('reportPeriod').value.toUpperCase();
+            
+            doc.setFont("Helvetica", "bold"); doc.setFontSize(16);
+            doc.text("BALANÇO GERAL DE PRODUTIVIDADE E ENTREGAS", 14, 20);
+            
+            doc.setFontSize(10); doc.setFont("Helvetica", "normal");
+            doc.text(`Período Solicitado: ${p} | Expediente Padrão: 07:12 às 17:00`, 14, 26);
+
+            let matrizCorpo = [];
+            metrics.concluidasNoPeriodo.forEach(t => {
+                matrizCorpo.push([t.userWhoFinished, t.category || "Sem Categoria", t.action, t.timeSpent, t.hasOvertime, t.onTime ? "No Prazo" : "Atrasado"]);
+            });
+
+            doc.autoTable({
+                startY: 35,
+                head: [['Responsável', 'Categoria', 'Nome da Tarefa', 'Tempo Gasto', 'H. Extra', 'Prazo']],
+                body: matrizCorpo,
+                headStyles: { fillColor: [44, 62, 80] }
+            });
+
+            doc.save(`Relatorio_Rendimento_${p.toLowerCase()}.pdf`);
+        }
+    </script>
+</body>
+</html>
