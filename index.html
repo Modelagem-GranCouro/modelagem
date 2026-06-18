@@ -14,54 +14,74 @@
 
     <style>
         * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        body { background-color: #f4f6f9; padding: 20px; color: #333; }
-        header { margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; background: white; padding: 15px 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+        body { background-color: #f4f6f9; padding: 15px; color: #333; }
+        
+        header { 
+            max-width: 1600px;
+            margin: 0 auto 20px auto;
+            display: flex; 
+            flex-direction: row;
+            justify-content: space-between; 
+            align-items: center; 
+            background: white; 
+            padding: 15px 20px; 
+            border-radius: 8px; 
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            flex-wrap: wrap;
+            gap: 15px;
+        }
         h1 { color: #2c3e50; font-size: 1.4rem; }
         
-        .nav-tabs { display: flex; gap: 10px; margin-bottom: 20px; }
-        .tab-btn { padding: 10px 20px; background: #e0e0e0; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; color: #555; }
+        .nav-tabs { max-width: 1600px; margin: 0 auto 20px auto; display: flex; gap: 10px; flex-wrap: wrap; }
+        .tab-btn { padding: 12px 24px; background: #e0e0e0; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; color: #555; transition: background 0.2s; font-size: 0.9rem; }
         .tab-btn.active { background: #3498db; color: white; }
         
-        .logout-btn { background: #e74c3c; width: auto; padding: 5px 15px; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; }
+        .login-trigger-btn { background: #3498db; padding: 10px 20px; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 0.9rem; }
+        .login-trigger-btn:hover { background: #2980b9; }
+        .logout-btn { background: #e74c3c; width: auto; padding: 10px 20px; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 0.9rem; }
         .logout-btn:hover { background: #c0392b; }
 
-        #loginScreen { max-width: 400px; margin: 100px auto; background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 10px rgba(0,0,0,0.1); text-align: center; }
-        #loginScreen h2 { margin-bottom: 20px; color: #2c3e50; font-size: 1.4rem; }
-        
-        #mainDashboard { display: none; }
-        .container { max-width: 1400px; margin: 0 auto; display: grid; grid-template-columns: 1fr 2.2fr; gap: 20px; }
+        /* Estilos do Popup de Login (Modal) */
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; justify-content: center; align-items: center; padding: 15px; }
+        .modal-content { background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); width: 100%; max-width: 450px; text-align: center; position: relative; }
+        .modal-content h2 { margin-bottom: 20px; color: #2c3e50; font-size: 1.3rem; }
+        .close-modal { position: absolute; top: 12px; right: 15px; font-size: 1.4rem; background: none; border: none; color: #aaa; cursor: pointer; font-weight: bold; }
+        .close-modal:hover { color: #666; }
+
+        /* Containers Principais Ampliados */
+        .container { max-width: 1600px; margin: 0 auto; display: grid; grid-template-columns: 1fr 2.5fr; gap: 20px; width: 100%; }
         .full-width { grid-template-columns: 1fr !important; }
 
-        .box { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); height: fit-content; margin-bottom: 20px; }
-        .box h2 { margin-bottom: 15px; font-size: 1.15rem; color: #34495e; border-bottom: 2px solid #ecf0f1; padding-bottom: 5px; }
+        .box { background: white; padding: 25px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); height: fit-content; margin-bottom: 20px; }
+        .box h2 { margin-bottom: 15px; font-size: 1.2rem; color: #34495e; border-bottom: 2px solid #ecf0f1; padding-bottom: 5px; }
 
-        .form-group { margin-bottom: 12px; }
-        .form-group label { display: block; margin-bottom: 5px; font-weight: 600; font-size: 0.85rem; color: #444; }
-        .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 8px; border: 1px solid #ccc; border-radius: 4px; font-size: 0.95rem; }
+        .form-group { margin-bottom: 15px; text-align: left; }
+        .form-group label { display: block; margin-bottom: 6px; font-weight: 600; font-size: 0.9rem; color: #444; }
+        .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; font-size: 0.95rem; background-color: #fff; }
         
-        button.btn-submit { width: 100%; padding: 10px; background-color: #3498db; color: white; border: none; border-radius: 4px; font-size: 1rem; cursor: pointer; font-weight: bold; }
+        button.btn-submit { width: 100%; padding: 12px; background-color: #3498db; color: white; border: none; border-radius: 4px; font-size: 1rem; cursor: pointer; font-weight: bold; transition: background 0.2s; }
         button.btn-submit:hover { background-color: #2980b9; }
 
-        .alert-panel { display: none; background: #fff5f5; border: 2px dashed #e74c3c; padding: 15px; border-radius: 8px; margin-bottom: 20px; color: #c0392b; }
+        .alert-panel { display: none; max-width: 1600px; margin: 0 auto 20px auto; background: #fff5f5; border: 2px dashed #e74c3c; padding: 15px; border-radius: 8px; color: #c0392b; }
 
-        /* Cards */
+        /* Cards e Listas */
         .task-list { display: grid; grid-template-columns: 1fr; gap: 15px; }
-        .task-card { background: #fdfdfd; border-left: 6px solid #95a5a6; padding: 15px; border-radius: 4px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+        .task-card { background: #fdfdfd; border-left: 6px solid #95a5a6; padding: 18px; border-radius: 4px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
         .prio-1 { border-left-color: #e74c3c; background-color: #fffafb; } 
         .prio-2 { border-left-color: #f39c12; background-color: #fffbf5; } 
         .prio-3 { border-left-color: #2ecc71; background-color: #f6fdf8; } 
-        .prio-badge { display: inline-block; padding: 2px 8px; border-radius: 12px; font-size: 0.75rem; color: white; font-weight: bold; margin-bottom: 8px; }
+        .prio-badge { display: inline-block; padding: 3px 10px; border-radius: 12px; font-size: 0.75rem; color: white; font-weight: bold; margin-bottom: 10px; }
         .prio-1 .prio-badge { background: #e74c3c; }
         .prio-2 .prio-badge { background: #f39c12; }
         .prio-3 .prio-badge { background: #2ecc71; }
 
-        .task-info-line { margin-bottom: 6px; font-size: 0.95rem; }
-        .task-desc-box { background: #f8f9fa; border-left: 3px solid #3498db; padding: 8px; margin-top: 8px; font-size: 0.9rem; color: #555; border-radius: 0 4px 4px 0; }
+        .task-info-line { margin-bottom: 8px; font-size: 1rem; }
+        .task-desc-box { background: #f8f9fa; border-left: 3px solid #3498db; padding: 10px; margin-top: 10px; font-size: 0.95rem; color: #555; border-radius: 0 4px 4px 0; }
 
-        .task-meta { display: flex; flex-wrap: wrap; gap: 15px; font-size: 0.85rem; color: #7f8c8d; background: #f1f3f5; padding: 6px 10px; border-radius: 4px; margin-top: 10px; justify-content: space-between; }
+        .task-meta { display: flex; flex-wrap: wrap; gap: 15px; font-size: 0.9rem; color: #7f8c8d; background: #f1f3f5; padding: 8px 12px; border-radius: 4px; margin-top: 12px; justify-content: space-between; align-items: center; }
         .deadline-alert { color: #e74c3c; font-weight: bold; }
-        .task-actions { margin-top: 10px; display: flex; gap: 10px; justify-content: flex-end; }
-        .btn-action { width: auto; padding: 6px 12px; font-size: 0.8rem; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; color: white; }
+        .task-actions { margin-top: 12px; display: flex; gap: 10px; justify-content: flex-end; }
+        .btn-action { width: auto; padding: 8px 16px; font-size: 0.85rem; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; color: white; }
         .btn-done { background-color: #2ecc71; }
         .btn-delete { background-color: #95a5a6; }
 
@@ -70,7 +90,7 @@
         .report-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin-bottom: 20px; }
         .metric-card { background: #f8f9fa; border: 1px solid #e2e8f0; padding: 15px; border-radius: 6px; text-align: center; }
         .metric-card h4 { font-size: 0.9rem; color: #64748b; margin-bottom: 5px; }
-        .metric-card p { font-size: 1.6rem; font-weight: bold; color: #1e293b; }
+        .metric-card p { font-size: 1.8rem; font-weight: bold; color: #1e293b; }
         
         .rating-box { padding: 15px; border-radius: 6px; text-align: center; font-weight: bold; font-size: 1.1rem; margin-bottom: 20px; color: white; }
         .rating-boa { background-color: #2ecc71; }
@@ -82,46 +102,71 @@
         .btn-pdf { background-color: #e74c3c; }
         .btn-excel { background-color: #27ae60; }
 
-        .chart-container { background: #f8f9fa; padding: 15px; border-radius: 8px; border: 1px solid #e2e8f0; display: flex; align-items: center; justify-content: center; height: 280px; }
+        .chart-container { background: #f8f9fa; padding: 15px; border-radius: 8px; border: 1px solid #e2e8f0; display: flex; align-items: center; justify-content: center; height: 320px; }
 
-        /* Estilos Gerenciamento */
-        .btn-manage { background-color: #9b59b6; color: white; border: none; padding: 8px 12px; border-radius: 4px; font-weight: bold; cursor: pointer; margin-right: 5px; }
-        .btn-manage:hover { background-color: #8e44ad; }
-        .btn-danger-zone { background-color: #e74c3c; color: white; border: none; padding: 8px 12px; border-radius: 4px; font-weight: bold; cursor: pointer; }
+        /* Configurações */
+        .btn-manage { background-color: #9b59b6; color: white; border: none; padding: 10px 15px; border-radius: 4px; font-weight: bold; cursor: pointer; margin-right: 5px; transition: opacity 0.2s; }
+        .btn-manage:hover { opacity: 0.9; }
+        .btn-danger-zone { background-color: #e74c3c; color: white; border: none; padding: 10px 15px; border-radius: 4px; font-weight: bold; cursor: pointer; }
+
+        /* --- MEDIA QUERIES PARA ADAPTAÇÃO COMPLETA (CELULAR/TABLET) --- */
+        @media (max-width: 992px) {
+            .container { grid-template-columns: 1fr; }
+            .report-layout { grid-template-columns: 1fr; }
+            header { flex-direction: column; text-align: center; }
+            h1 { font-size: 1.2rem; }
+        }
+
+        @media (max-width: 576px) {
+            body { padding: 10px; }
+            header { padding: 12px; }
+            .box { padding: 15px; }
+            .report-grid { grid-template-columns: 1fr; }
+            .report-actions { flex-direction: column; }
+            .task-meta { flex-direction: column; align-items: flex-start; gap: 8px; }
+            .task-actions { width: 100%; }
+            .btn-action { flex: 1; text-align: center; }
+        }
     </style>
 </head>
 <body>
 
-    <div id="loginScreen">
-        <h2>Acessar Painel de Trabalho</h2>
-        <div class="form-group">
-            <label for="loginUser">Quem está acessando?</label>
-            <select id="loginUser" onchange="toggleLoginPasswordView()">
-                <option value="admin">Administrador (Você)</option>
-                <option value="usuario_1">Usuário 1 - Modelista</option>
-                <option value="usuario_2">Usuário 2 - Auxiliar (Cadastro)</option>
-                <option value="usuario_3">Usuário 3 - Digitalizador</option>
-                <option value="usuario_4">Usuário 4 - Desenhista</option>
-                <option value="usuario_5">Usuário 5 - Auxiliar (Personalizado)</option>
-            </select>
+    <div class="modal-overlay" id="loginModal">
+        <div class="modal-content">
+            <button class="close-modal" onclick="fecharModalLogin()">&times;</button>
+            <h2>Acesso Restrito ao Painel</h2>
+            <div class="form-group">
+                <label for="loginUser">Quem está acessando?</label>
+                <select id="loginUser" onchange="toggleLoginPasswordView()">
+                    <option value="admin">Administrador</option>
+                    <option value="usuario_1">Usuário 1 - Modelista</option>
+                    <option value="usuario_2">Usuário 2 - Auxiliar (Cadastro)</option>
+                    <option value="usuario_3">Usuário 3 - Digitalizador</option>
+                    <option value="usuario_4">Usuário 4 - Desenhista</option>
+                    <option value="usuario_5">Usuário 5 - Auxiliar (Personalizado)</option>
+                </select>
+            </div>
+            <div class="form-group" id="loginPasswordGroup">
+                <label for="loginPassword">Senha do Administrador</label>
+                <input type="password" id="loginPassword" placeholder="Digite sua senha de admin">
+            </div>
+            <button class="btn-submit" onclick="login()">Confirmar e Entrar</button>
         </div>
-        <div class="form-group" id="loginPasswordGroup">
-            <label for="loginPassword">Senha do Administrador</label>
-            <input type="password" id="loginPassword" placeholder="Digite sua senha de admin">
-        </div>
-        <button class="btn-submit" onclick="login()">Entrar no Sistema</button>
     </div>
 
     <div id="mainDashboard">
         <header>
-            <h1>Painel de Modelagem: <span id="userDisplay" style="color: #3498db;"></span></h1>
-            <button class="logout-btn" onclick="logout()">Sair / Trocar Usuário</button>
+            <h1>Painel de Modelagem: <span id="userDisplay" style="color: #27ae60;">Visitante (Apenas Leitura)</span></h1>
+            <div id="headerActions">
+                <button class="login-trigger-btn" id="btnLoginTrigger" onclick="abrirModalLogin()">Acessar Painel Restrito</button>
+                <button class="logout-btn" id="btnLogout" style="display: none;" onclick="logout()">Sair / Trocar Usuário</button>
+            </div>
         </header>
 
         <div class="nav-tabs" id="adminTabs" style="display: none;">
-            <button class="tab-btn active" onclick="switchTab('painel')">Painel de Operações</button>
-            <button class="tab-btn" onclick="switchTab('relatorios')">Relatórios & Gráficos</button>
-            <button class="tab-btn" onclick="switchTab('gerenciamento')" style="background: #9b59b6; color: white;">Gerenciar Equipe & Backup</button>
+            <button class="tab-btn active" id="btnTabPainel" onclick="switchTab('painel')">Painel de Operações</button>
+            <button class="tab-btn" id="btnTabRelatorios" onclick="switchTab('relatorios')">Relatórios & Gráficos</button>
+            <button class="tab-btn" id="btnTabGerenciamento" onclick="switchTab('gerenciamento')" style="background: #9b59b6; color: white;">Gerenciar Equipe & Backup</button>
         </div>
 
         <div class="alert-panel" id="criticalAlertPanel">
@@ -129,8 +174,8 @@
             <p>Você possui tarefas de <strong>Prioridade 1</strong> urgentes vencendo hoje ou já atrasadas.</p>
         </div>
 
-        <div id="tabPainel" class="container">
-            <div class="box" id="adminFormBox">
+        <div id="tabPainel" class="container full-width">
+            <div class="box" id="adminFormBox" style="display: none;">
                 <h2>Lançar Nova Tarefa no Setor</h2>
                 <form id="taskForm">
                     <div class="form-group">
@@ -181,12 +226,12 @@
             </div>
 
             <div class="box" style="flex: 1;" id="taskListBox">
-                <h2 id="listTitle">Fila de Demandas Ativas</h2>
+                <h2 id="listTitle">Fila Geral de Monitoramento (Apenas Leitura)</h2>
                 <div class="task-list" id="taskList"></div>
             </div>
         </div>
 
-        <div id="tabRelatorios" class="box" style="display: none; max-width: 1400px; margin: 0 auto;">
+        <div id="tabRelatorios" class="box" style="display: none; max-width: 1600px; margin: 0 auto;">
             <h2>Painel Estatístico Avançado de Performance</h2>
             
             <div class="form-group" style="max-width: 300px; margin-bottom: 20px;">
@@ -233,12 +278,12 @@
             </div>
         </div>
 
-        <div id="tabGerenciamento" class="box" style="display: none; max-width: 800px; margin: 0 auto;">
+        <div id="tabGerenciamento" class="box" style="display: none; max-width: 1000px; margin: 0 auto;">
             <h2>Configurações de Controle Operacional</h2>
             
             <div class="box" style="background: #fdfdfd; border: 1px solid #ddd; margin-top: 15px;">
                 <h3>Nomes Atuais da Equipe</h3>
-                <p style="font-size: 0.8rem; color: #777; margin-bottom: 15px;">Altere o nome das pessoas abaixo conforme a equipe mudar. O sistema se adaptará automaticamente.</p>
+                <p style="font-size: 0.85rem; color: #777; margin-bottom: 15px;">Altere o nome das pessoas abaixo conforme a equipe mudar. O sistema se adaptará automaticamente.</p>
                 
                 <div class="form-group"><label>Usuário 1 - Modelista:</label><input type="text" id="cfg_user1"></div>
                 <div class="form-group"><label>Usuário 2 - Auxiliar (Cadastro):</label><input type="text" id="cfg_user2"></div>
@@ -246,7 +291,7 @@
                 <div class="form-group"><label>Usuário 4 - Desenhista:</label><input type="text" id="cfg_user4"></div>
                 <div class="form-group"><label>Usuário 5 - Auxiliar (Personalizado):</label><input type="text" id="cfg_user5"></div>
                 
-                <button class="btn-manage" style="width:100%; padding:10px; margin-top:5px;" onclick="salvarConfiguracaoEquipe()">Salvar Alterações de Nomes</button>
+                <button class="btn-manage" style="width:100%; padding:12px; margin-top:5px;" onclick="salvarConfiguracaoEquipe()">Salvar Alterações de Nomes</button>
             </div>
 
             <div class="box" style="background: #fdfdfd; border: 1px solid #ddd;">
@@ -255,12 +300,12 @@
                     <label for="cfg_adminPassword">Definir Nova Senha de Admin:</label>
                     <input type="password" id="cfg_adminPassword" placeholder="Deixe em branco para manter a atual">
                 </div>
-                <button class="btn-manage" style="width:100%; padding:10px;" onclick="salvarSenhaAdmin()">Atualizar Senha</button>
+                <button class="btn-manage" style="width:100%; padding:12px;" onclick="salvarSenhaAdmin()">Atualizar Senha</button>
             </div>
 
             <div class="box" style="background: #fdfdfd; border: 1px solid #e74c3c;">
                 <h3 style="color: #c0392b;">Gerenciamento de Arquivos de Backup (Nuvem)</h3>
-                <p style="font-size: 0.8rem; color: #555; margin-bottom: 15px;">Crie pontos de restauracão das tarefas ativas e do histórico diretamente no Firebase.</p>
+                <p style="font-size: 0.85rem; color: #555; margin-bottom: 15px;">Crie pontos de restauração das tarefas ativas e do histórico diretamente no Firebase.</p>
                 
                 <div style="display: flex; gap: 10px; flex-wrap: wrap;">
                     <button class="btn-manage" style="background-color: #27ae60;" onclick="criarBackupFirebase()">Criar/Substituir Backup Atual</button>
@@ -287,17 +332,18 @@
         firebase.initializeApp(firebaseConfig);
         const database = firebase.database();
 
+        // Roteamento de Tarefas Atualizado
         const roteamentoUsuarios = {
             "Fazer modelo novo": ["usuario_1"],
             "Alterar modelo existente": ["usuario_1"],
-            "Cadastrar modelo novo": ["usuario_2"],
-            "Alterar cadastro de um modelo existente": ["usuario_2"],
+            "Cadastrar modelo novo": ["usuario_2", "usuario_5"],
+            "Alterar cadastro de um modelo existente": ["usuario_2", "usuario_5"],
             "Digitalizar modelo novo": ["usuario_3"],
             "Alterar modelo ja digitalizado": ["usuario_3"],
-            "Fazer personalizado": ["usuario_4", "usuario_5"],
+            "Fazer personalizado": ["usuario_2", "usuario_5"],
             "Desenvolver nova arte personalizada": ["usuario_4"],
-            "alterar personalizado existente": ["usuario_4", "usuario_5"],
-            "Criar bordado a partir da imagem disponibilizada": ["usuario_4", "usuario_5"],
+            "alterar personalizado existente": ["usuario_2", "usuario_5"],
+            "Criar bordado a partir da imagem disponibilizada": ["usuario_4"],
             "Medição de consumo": ["admin", "usuario_3"]
         };
 
@@ -307,13 +353,14 @@
             "usuario_2": "Usuário 2 - Auxiliar (Cadastro)",
             "usuario_3": "Usuário 3 - Digitalizador",
             "usuario_4": "Usuário 4 - Desenhista",
-            "usuario_5": "Usuário 5 - Auxiliar (Personalizado)"
+            "usuario_5": "Usuário 5 - Auxiliar (Personalizado)",
+            "visitante": "Visitante (Apenas Leitura)"
         };
 
         let adminPasswordDB = "admin123"; 
         let tasks = [];
         let historicTasks = [];
-        let currentUser = null;
+        let currentUser = 'visitante';
         let myChart = null;
 
         database.ref('configuracoes/equipe').on('value', (snapshot) => {
@@ -381,9 +428,42 @@
         }
         toggleLoginPasswordView();
 
+        // Escutadores para ativar o login ao pressionar a tecla Enter
+        document.getElementById('loginUser').addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') { login(); }
+        });
+        document.getElementById('loginPassword').addEventListener('keydown', function(e) {
+            if (e.key === 'Enter') { login(); }
+        });
+
+        window.addEventListener('DOMContentLoaded', () => {
+            const savedUser = sessionStorage.getItem('modelagem_current_user');
+            const savedTab = sessionStorage.getItem('modelagem_current_tab') || 'painel';
+            if (savedUser && savedUser !== 'visitante') {
+                currentUser = savedUser;
+                configurarInterfacePorUsuario();
+                if(currentUser === 'admin' && savedTab !== 'painel') {
+                    switchTab(savedTab);
+                }
+            } else {
+                currentUser = 'visitante';
+                configurarInterfacePorUsuario();
+            }
+        });
+
+        function abrirModalLogin() {
+            document.getElementById('loginModal').style.display = 'flex';
+            // Coloca o foco automático no seletor de usuário ao abrir
+            document.getElementById('loginUser').focus();
+        }
+
+        function fecharModalLogin() {
+            document.getElementById('loginModal').style.display = 'none';
+            document.getElementById('loginPassword').value = '';
+        }
+
         function login() {
             const userSelected = document.getElementById('loginUser').value;
-            
             if (userSelected === 'admin') {
                 const passInput = document.getElementById('loginPassword').value;
                 if (passInput !== adminPasswordDB) {
@@ -391,26 +471,48 @@
                     return;
                 }
             }
-
             currentUser = userSelected;
-            document.getElementById('loginScreen').style.display = 'none';
+            sessionStorage.setItem('modelagem_current_user', currentUser);
+            fecharModalLogin();
+            configurarInterfacePorUsuario();
+        }
+
+        function configurarInterfacePorUsuario() {
             document.getElementById('mainDashboard').style.display = 'block';
-            document.getElementById('loginPassword').value = '';
             
             const container = document.getElementById('tabPainel');
             const adminBox = document.getElementById('adminFormBox');
             const tabs = document.getElementById('adminTabs');
+            const btnLoginTrigger = document.getElementById('btnLoginTrigger');
+            const btnLogout = document.getElementById('btnLogout');
 
             if (currentUser === 'admin') {
                 document.getElementById('userDisplay').innerText = nomesExibicao[currentUser];
+                document.getElementById('userDisplay').style.color = '#3498db';
                 if(adminBox) adminBox.style.display = 'block';
                 tabs.style.display = 'flex';
                 if(container) container.classList.remove('full-width');
                 document.getElementById('listTitle').innerText = "Visão Geral do Setor";
                 document.getElementById('criticalAlertPanel').style.display = 'none';
-                switchTab('painel');
+                btnLoginTrigger.style.display = 'none';
+                btnLogout.style.display = 'block';
+                switchTab(sessionStorage.getItem('modelagem_current_tab') || 'painel');
+            } else if (currentUser === 'visitante') {
+                document.getElementById('userDisplay').innerText = "Visitante (Apenas Leitura)";
+                document.getElementById('userDisplay').style.color = '#27ae60';
+                if(adminBox) adminBox.style.display = 'none';
+                tabs.style.display = 'none';
+                if(container) container.classList.add('full-width');
+                document.getElementById('listTitle').innerText = "Fila Geral de Monitoramento (Apenas Leitura)";
+                document.getElementById('tabRelatorios').style.display = 'none';
+                document.getElementById('tabGerenciamento').style.display = 'none';
+                document.getElementById('tabPainel').style.display = 'grid';
+                document.getElementById('criticalAlertPanel').style.display = 'none';
+                btnLoginTrigger.style.display = 'block';
+                btnLogout.style.display = 'none';
             } else {
                 document.getElementById('userDisplay').innerText = nomesExibicao[currentUser];
+                document.getElementById('userDisplay').style.color = '#e67e22';
                 if(adminBox) adminBox.style.display = 'none';
                 tabs.style.display = 'none';
                 if(container) container.classList.add('full-width');
@@ -418,41 +520,54 @@
                 document.getElementById('tabRelatorios').style.display = 'none';
                 document.getElementById('tabGerenciamento').style.display = 'none';
                 document.getElementById('tabPainel').style.display = 'grid';
+                btnLoginTrigger.style.display = 'none';
+                btnLogout.style.display = 'block';
                 verificarAlertasCriticos();
             }
             renderTasks();
         }
 
         function logout() {
-            document.getElementById('loginScreen').style.display = 'block';
-            document.getElementById('mainDashboard').style.display = 'none';
-            currentUser = null;
-            toggleLoginPasswordView();
+            sessionStorage.setItem('modelagem_current_user', 'visitante');
+            sessionStorage.removeItem('modelagem_current_tab');
+            currentUser = 'visitante';
+            configurarInterfacePorUsuario();
         }
 
         function switchTab(tab) {
+            if(currentUser !== 'admin') return;
+            sessionStorage.setItem('modelagem_current_tab', tab);
+            
             document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
             document.getElementById('tabPainel').style.display = 'none';
             document.getElementById('tabRelatorios').style.display = 'none';
             document.getElementById('tabGerenciamento').style.display = 'none';
 
             if (tab === 'painel') {
-                document.querySelectorAll('.tab-btn')[0].classList.add('active');
+                document.getElementById('btnTabPainel').classList.add('active');
                 document.getElementById('tabPainel').style.display = 'grid';
             } else if (tab === 'relatorios') {
-                document.querySelectorAll('.tab-btn')[1].classList.add('active');
+                document.getElementById('btnTabRelatorios').classList.add('active');
                 document.getElementById('tabRelatorios').style.display = 'block';
                 updateReportDashboard();
             } else if (tab === 'gerenciamento') {
-                document.querySelectorAll('.tab-btn')[2].classList.add('active');
+                document.getElementById('btnTabGerenciamento').classList.add('active');
                 document.getElementById('tabGerenciamento').style.display = 'block';
             }
         }
 
         function verificarAlertasCriticos() {
+            if(currentUser === 'visitante' || currentUser === 'admin') return;
             const hoje = new Date().toISOString().split('T')[0];
+            
+            // Lógica unificada para alertas de auxiliares
+            let checkUser = [currentUser];
+            if(currentUser === 'usuario_2' || currentUser === 'usuario_5') {
+                checkUser = ['usuario_2', 'usuario_5'];
+            }
+
             const temUrgencia = tasks.some(t => 
-                t.responsibles && t.responsibles.includes(currentUser) && t.priority === "1" && t.deadline <= hoje
+                t.responsibles && t.responsibles.some(r => checkUser.includes(r)) && t.priority === "1" && t.deadline <= hoje
             );
             document.getElementById('criticalAlertPanel').style.display = temUrgencia ? 'block' : 'none';
         }
@@ -461,11 +576,21 @@
             const taskList = document.getElementById('taskList');
             taskList.innerHTML = '';
 
-            let filteredTasks = (currentUser === 'admin') ? [...tasks] : tasks.filter(t => t.responsibles && t.responsibles.includes(currentUser));
+            let filteredTasks = [];
+
+            // NOVA LÓGICA DE FILTRAGEM: Agrupar tarefas do Usuário 2 e Usuário 5 na mesma tela
+            if (currentUser === 'admin' || currentUser === 'visitante') {
+                filteredTasks = [...tasks];
+            } else if (currentUser === 'usuario_2' || currentUser === 'usuario_5') {
+                filteredTasks = tasks.filter(t => t.responsibles && (t.responsibles.includes('usuario_2') || t.responsibles.includes('usuario_5')));
+            } else {
+                filteredTasks = tasks.filter(t => t.responsibles && t.responsibles.includes(currentUser));
+            }
+
             filteredTasks.sort((a, b) => a.priority - b.priority || new Date(a.deadline) - new Date(b.deadline));
 
             if (filteredTasks.length === 0) {
-                taskList.innerHTML = '<p style="color: #999; text-align: center; padding: 25px;">Nenhuma atividade pendente.</p>';
+                taskList.innerHTML = '<p style="color: #999; text-align: center; padding: 35px; font-size: 1.1rem;">Nenhuma atividade pendente.</p>';
                 return;
             }
 
@@ -482,25 +607,31 @@
 
                 let nomesResponsaveis = task.responsibles ? task.responsibles.map(r => nomesExibicao[r] || r).join(' / ') : "Não definido";
 
-                // Se houver instruções adicionais, cria a caixinha com o texto correspondente
                 let instrucoesHTML = '';
                 if (task.desc && task.desc.trim() !== "") {
                     instrucoesHTML = `<div class="task-desc-box"><strong>Instruções Adicionais:</strong> ${task.desc}</div>`;
                 }
 
+                let botoesAcaoHTML = '';
+                if(currentUser !== 'visitante') {
+                    botoesAcaoHTML = `
+                        <div class="task-actions">
+                            ${currentUser === 'admin' ? `<button class="btn-action btn-delete" onclick="deleteTask('${task.id}')">Excluir</button>` : ''}
+                            <button class="btn-action btn-done" onclick="finishTask('${task.id}')">Concluir ✓</button>
+                        </div>
+                    `;
+                }
+
                 card.innerHTML = `
                     <span class="prio-badge">Prioridade ${task.priority}</span>
-                    <h3>${task.title} <span style="font-size:0.85rem; color:#3498db; font-weight:bold; background:#e8f4fd; padding:2px 6px; border-radius:4px; margin-left:5px;">${task.category || 'Não Informado'}</span></h3>
+                    <h3>${task.title} <span style="font-size:0.85rem; color:#3498db; font-weight:bold; background:#e8f4fd; padding:3px 8px; border-radius:4px; margin-left:5px;">${task.category || 'Não Informado'}</span></h3>
                     <div class="task-info-line" style="margin-top: 8px;"><strong>Ação:</strong> ${task.action}</div>
                     ${instrucoesHTML}
                     <div class="task-meta">
                         <span>👥 Responsáveis: <strong>${nomesResponsaveis}</strong></span>
                         <span>${prazoStatus}</span>
                     </div>
-                    <div class="task-actions">
-                        ${currentUser === 'admin' ? `<button class="btn-action btn-delete" onclick="deleteTask('${task.id}')">Excluir</button>` : ''}
-                        <button class="btn-action btn-done" onclick="finishTask('${task.id}')">Concluir ✓</button>
-                    </div>
+                    ${botoesAcaoHTML}
                 `;
                 taskList.appendChild(card);
             });
@@ -552,6 +683,7 @@
         }
 
         window.finishTask = function(id) {
+            if(currentUser === 'visitante') return;
             const compTask = tasks.find(t => t.id === id);
             if (compTask) {
                 const timestampFim = new Date().getTime();
@@ -571,6 +703,7 @@
         }
 
         window.deleteTask = function(id) {
+            if(currentUser === 'visitante') return;
             if(confirm("Apagar permanentemente?")) {
                 database.ref('tasks/ativas/' + id).remove();
             }
@@ -673,7 +806,6 @@
             doc.save(`Relatorio_Rendimento_${p.toLowerCase()}.pdf`);
         }
 
-        // --- FUNÇÕES EXCLUSIVAS DE GERENCIAMENTO E BACKUP ---
         function salvarConfiguracaoEquipe() {
             if(currentUser !== 'admin') return;
             const configEquipe = {
