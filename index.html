@@ -55,6 +55,9 @@
         .prio-2 .prio-badge { background: #f39c12; }
         .prio-3 .prio-badge { background: #2ecc71; }
 
+        .task-info-line { margin-bottom: 6px; font-size: 0.95rem; }
+        .task-desc-box { background: #f8f9fa; border-left: 3px solid #3498db; padding: 8px; margin-top: 8px; font-size: 0.9rem; color: #555; border-radius: 0 4px 4px 0; }
+
         .task-meta { display: flex; flex-wrap: wrap; gap: 15px; font-size: 0.85rem; color: #7f8c8d; background: #f1f3f5; padding: 6px 10px; border-radius: 4px; margin-top: 10px; justify-content: space-between; }
         .deadline-alert { color: #e74c3c; font-weight: bold; }
         .task-actions { margin-top: 10px; display: flex; gap: 10px; justify-content: flex-end; }
@@ -132,15 +135,13 @@
                 <form id="taskForm">
                     <div class="form-group">
                         <label for="taskTitle">Referência / Nome do Modelo</label>
-                        <input type="text" id="taskTitle" required placeholder="Ex: Vestido Crepe Ref 501">
+                        <input type="text" id="taskTitle" required placeholder="Ex: Referência do modelo">
                     </div>
                     <div class="form-group">
                         <label for="taskCategory">Categoria</label>
                         <select id="taskCategory" required>
-                            <option value="Coleção Normal">Coleção Normal</option>
-                            <option value="Coleção Cápsula">Coleção Cápsula</option>
-                            <option value="Alto Verão">Alto Verão</option>
-                            <option value="Inverno">Inverno</option>
+                            <option value="KIT">KIT</option>
+                            <option value="PISO">PISO</option>
                         </select>
                     </div>
                     <div class="form-group">
@@ -173,7 +174,7 @@
                     </div>
                     <div class="form-group">
                         <label for="taskDesc">Instruções Adicionais</label>
-                        <textarea id="taskDesc" rows="3"></textarea>
+                        <textarea id="taskDesc" rows="3" placeholder="Informações que o usuário precisa visualizar"></textarea>
                     </div>
                     <button type="submit" class="btn-submit">Direcionar e Enviar</button>
                 </form>
@@ -259,7 +260,7 @@
 
             <div class="box" style="background: #fdfdfd; border: 1px solid #e74c3c;">
                 <h3 style="color: #c0392b;">Gerenciamento de Arquivos de Backup (Nuvem)</h3>
-                <p style="font-size: 0.8rem; color: #555; margin-bottom: 15px;">Crie pontos de restauração das tarefas ativas e do histórico diretamente no Firebase.</p>
+                <p style="font-size: 0.8rem; color: #555; margin-bottom: 15px;">Crie pontos de restauracão das tarefas ativas e do histórico diretamente no Firebase.</p>
                 
                 <div style="display: flex; gap: 10px; flex-wrap: wrap;">
                     <button class="btn-manage" style="background-color: #27ae60;" onclick="criarBackupFirebase()">Criar/Substituir Backup Atual</button>
@@ -300,7 +301,6 @@
             "Medição de consumo": ["admin", "usuario_3"]
         };
 
-        // Nomes padrão iniciais (caso não existam no Firebase ainda)
         let nomesExibicao = {
             "admin": "Administrador",
             "usuario_1": "Usuário 1 - Modelista",
@@ -310,13 +310,12 @@
             "usuario_5": "Usuário 5 - Auxiliar (Personalizado)"
         };
 
-        let adminPasswordDB = "admin123"; // Senha padrão inicial
+        let adminPasswordDB = "admin123"; 
         let tasks = [];
         let historicTasks = [];
         let currentUser = null;
         let myChart = null;
 
-        // Escutar nomes da equipe sincronizados do Firebase
         database.ref('configuracoes/equipe').on('value', (snapshot) => {
             const data = snapshot.val();
             if (data) {
@@ -326,7 +325,6 @@
                 nomesExibicao.usuario_4 = data.usuario_4 || nomesExibicao.usuario_4;
                 nomesExibicao.usuario_5 = data.usuario_5 || nomesExibicao.usuario_5;
                 
-                // Atualizar campos do formulário de gerenciamento se estiverem abertos
                 document.getElementById('cfg_user1').value = nomesExibicao.usuario_1;
                 document.getElementById('cfg_user2').value = nomesExibicao.usuario_2;
                 document.getElementById('cfg_user3').value = nomesExibicao.usuario_3;
@@ -338,13 +336,11 @@
             }
         });
 
-        // Escutar senha do administrador sincronizada
         database.ref('configuracoes/seguranca/adminPassword').on('value', (snapshot) => {
             const val = snapshot.val();
             if(val) adminPasswordDB = val;
         });
 
-        // Escutar status do backup
         database.ref('backup_sistema/info').on('value', (snapshot) => {
             const info = snapshot.val();
             const statusDiv = document.getElementById('backupStatus');
@@ -486,10 +482,17 @@
 
                 let nomesResponsaveis = task.responsibles ? task.responsibles.map(r => nomesExibicao[r] || r).join(' / ') : "Não definido";
 
+                // Se houver instruções adicionais, cria a caixinha com o texto correspondente
+                let instrucoesHTML = '';
+                if (task.desc && task.desc.trim() !== "") {
+                    instrucoesHTML = `<div class="task-desc-box"><strong>Instruções Adicionais:</strong> ${task.desc}</div>`;
+                }
+
                 card.innerHTML = `
                     <span class="prio-badge">Prioridade ${task.priority}</span>
-                    <h3>${task.title} <span style="font-size:0.85rem; color:#7f8c8d; font-weight:normal;">(${task.category || 'Sem Categoria'})</span></h3>
-                    <div class="task-info-line"><strong>Ação:</strong> ${task.action}</div>
+                    <h3>${task.title} <span style="font-size:0.85rem; color:#3498db; font-weight:bold; background:#e8f4fd; padding:2px 6px; border-radius:4px; margin-left:5px;">${task.category || 'Não Informado'}</span></h3>
+                    <div class="task-info-line" style="margin-top: 8px;"><strong>Ação:</strong> ${task.action}</div>
+                    ${instrucoesHTML}
                     <div class="task-meta">
                         <span>👥 Responsáveis: <strong>${nomesResponsaveis}</strong></span>
                         <span>${prazoStatus}</span>
@@ -538,10 +541,8 @@
             let tempoFormatado = `${dias}d ${horas}h ${minutos}m`;
             let hExtraDetectada = "Não";
             
-            const horaFechamento = dataFim.getHours();
-            const tempoFechamentoNum = horaFechamento + (dataFim.getMinutes() / 60);
-            const horaAbertura = dataInicio.getHours();
-            const tempoAberturaNum = horaAbertura + (dataInicio.getMinutes() / 60);
+            const tempoFechamentoNum = dataFim.getHours() + (dataFim.getMinutes() / 60);
+            const tempoAberturaNum = dataInicio.getHours() + (dataInicio.getMinutes() / 60);
 
             if (tempoFechamentoNum > 17.0 || tempoFechamentoNum < 7.2 || tempoAberturaNum > 17.0 || tempoAberturaNum < 7.2 || dataFim.getDay() === 0 || dataFim.getDay() === 6) {
                 hExtraDetectada = "Sim";
@@ -636,7 +637,7 @@
             ];
 
             metrics.concluidasNoPeriodo.forEach(t => {
-                linhas.push([t.userWhoFinished, t.category || "Sem Categoria", t.action, t.timeSpent, t.hasOvertime, t.onTime ? "No Prazo" : "Fora do Prazo"]);
+                linhas.push([t.userWhoFinished, t.category || "Não Informado", t.action, t.timeSpent, t.hasOvertime, t.onTime ? "No Prazo" : "Fora do Prazo"]);
             });
 
             const wb = XLSX.utils.book_new();
@@ -659,7 +660,7 @@
 
             let matrizCorpo = [];
             metrics.concluidasNoPeriodo.forEach(t => {
-                matrizCorpo.push([t.userWhoFinished, t.category || "Sem Categoria", t.action, t.timeSpent, t.hasOvertime, t.onTime ? "No Prazo" : "Atrasado"]);
+                matrizCorpo.push([t.userWhoFinished, t.category || "Não Informado", t.action, t.timeSpent, t.hasOvertime, t.onTime ? "No Prazo" : "Atrasado"]);
             });
 
             doc.autoTable({
@@ -704,7 +705,6 @@
         function criarBackupFirebase() {
             if(currentUser !== 'admin') return;
             
-            // Puxa o estado atual dos dados ativas e historico
             Promise.all([
                 database.ref('tasks/ativas').once('value'),
                 database.ref('tasks/historico').once('value')
