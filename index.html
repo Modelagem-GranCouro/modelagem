@@ -620,7 +620,7 @@
             const agora = new Date();
             const horas = agora.getHours();
             const minutos = agora.getMinutes();
-            const totalMinutos = (horas * 60) + minutos;
+            const totalMinutos = (horas * 60) + minutes;
 
             return ((totalMinutos >= (9 * 60) + 50) && (totalMinutos < (10 * 60))) || 
                    ((totalMinutos >= (15 * 60) + 30) && (totalMinutos < (15 * 60) + 40));
@@ -690,12 +690,9 @@
         function renderTasks() {
             const taskList = document.getElementById('taskList');
             taskList.innerHTML = '';
-            let filteredTasks = [];
-
-            if (currentUser === 'visitante') { filteredTasks = [...tasks]; }
-            else if (currentUser === 'usuario_2' || currentUser === 'usuario_5') {
-                filteredTasks = tasks.filter(t => t.responsibles && (t.responsibles.includes('usuario_2') || t.responsibles.includes('usuario_5')));
-            } else { filteredTasks = tasks.filter(t => t.responsibles && t.responsibles.includes(currentUser)); }
+            
+            // CONFIGURAÇÃO GLOBAL: Permite que todos vejam todas as tarefas sem filtragem por usuário
+            let filteredTasks = [...tasks];
 
             filteredTasks.sort((a, b) => a.priority - b.priority || new Date(a.deadline) - new Date(b.deadline));
             if (filteredTasks.length === 0) { taskList.innerHTML = '<p style="color: #999; text-align: center; padding: 35px;">Nenhuma atividade ativa no momento.</p>'; return; }
@@ -720,7 +717,9 @@
                 }
 
                 let botoesAcaoHTML = '';
-                const canControl = (currentUser === 'admin') || (task.responsibles && task.responsibles.includes(currentUser));
+                
+                // QUALQUER USUÁRIO LOGADO (EXCETO VISITANTE) TEM PERMISSÃO DE CONTROLE GLOBAL
+                const canControl = (currentUser !== 'visitante');
                 
                 if(currentUser !== 'visitante' && canControl) {
                     const isRunning = task.timeLogs && task.timeLogs.length > 0 && task.timeLogs[task.timeLogs.length - 1].type === 'start';
@@ -974,7 +973,7 @@
                     jornada: { in: document.getElementById(`cfg_in${i}`).value, out: document.getElementById(`cfg_out${i}`).value }
                 };
             }
-            database.ref('configuracoes/equipe').set(configEquipe).then(() => { alert("Configurações atualizadas!"); });
+            database.ref('configuracoes/equipe').set(configEquipe).then(() => { alert("Configurações updated!"); });
         }
 
         function salvarSenhaAdmin() {
