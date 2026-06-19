@@ -620,7 +620,7 @@
             const agora = new Date();
             const horas = agora.getHours();
             const minutos = agora.getMinutes();
-            const totalMinutos = (horas * 60) + minutes;
+            const totalMinutos = (horas * 60) + minutos;
 
             return ((totalMinutos >= (9 * 60) + 50) && (totalMinutos < (10 * 60))) || 
                    ((totalMinutos >= (15 * 60) + 30) && (totalMinutos < (15 * 60) + 40));
@@ -691,7 +691,6 @@
             const taskList = document.getElementById('taskList');
             taskList.innerHTML = '';
             
-            // CONFIGURAÇÃO GLOBAL: Permite que todos vejam todas as tarefas sem filtragem por usuário
             let filteredTasks = [...tasks];
 
             filteredTasks.sort((a, b) => a.priority - b.priority || new Date(a.deadline) - new Date(b.deadline));
@@ -717,8 +716,6 @@
                 }
 
                 let botoesAcaoHTML = '';
-                
-                // QUALQUER USUÁRIO LOGADO (EXCETO VISITANTE) TEM PERMISSÃO DE CONTROLE GLOBAL
                 const canControl = (currentUser !== 'visitante');
                 
                 if(currentUser !== 'visitante' && canControl) {
@@ -753,6 +750,12 @@
             if (!task) return;
             const now = new Date().getTime();
             if (!task.timeLogs) task.timeLogs = [];
+            if (!task.responsibles) task.responsibles = [];
+
+            // INCLUSÃO DINÂMICA: Se o Líder ou outro funcionário iniciar a tarefa, o perfil dele entra na lista de responsáveis se já não estiver lá
+            if (acao === 'start' && !task.responsibles.includes(currentUser)) {
+                task.responsibles.push(currentUser);
+            }
 
             if (acao === 'pause') {
                 const motivo = prompt("Informe uma observação/motivo para pausar esta tarefa (Ela continuará contando como tempo trabalhado):");
@@ -973,7 +976,7 @@
                     jornada: { in: document.getElementById(`cfg_in${i}`).value, out: document.getElementById(`cfg_out${i}`).value }
                 };
             }
-            database.ref('configuracoes/equipe').set(configEquipe).then(() => { alert("Configurações updated!"); });
+            database.ref('configuracoes/equipe').set(configEquipe).then(() => { alert("Configurações atualizadas!"); });
         }
 
         function salvarSenhaAdmin() {
