@@ -74,7 +74,7 @@
 
         .task-info-line { margin-bottom: 8px; font-size: 1rem; }
         .task-desc-box { background: #f8f9fa; border-left: 3px solid #3498db; padding: 10px; margin-top: 10px; font-size: 0.95rem; color: #555; border-radius: 0 4px 4px 0; }
-        .task-pause-box { background: #fff5f5; border-left: 3px solid #e74c3c; padding: 8px; margin-top: 5px; font-size: 0.85rem; color: #c0392b; border-radius: 4px; }
+        .task-pause-box { background: #fff5f5; border-left: 3px solid #e67e22; padding: 8px; margin-top: 5px; font-size: 0.85rem; color: #c0392b; border-radius: 4px; }
 
         .task-meta { display: flex; flex-wrap: wrap; gap: 15px; font-size: 0.9rem; color: #7f8c8d; background: #f1f3f5; padding: 8px 12px; border-radius: 4px; margin-top: 12px; justify-content: space-between; align-items: center; }
         .deadline-alert { color: #e74c3c; font-weight: bold; }
@@ -125,11 +125,11 @@
                 <label for="loginUser">Quem está acessando?</label>
                 <select id="loginUser" onchange="toggleLoginPasswordView()">
                     <option value="admin">Administrador</option>
-                    <option value="usuario_1">Usuário 1 - Modelista</option>
-                    <option value="usuario_2">Usuário 2 - Auxiliar (Cadastro)</option>
-                    <option value="usuario_3">Usuário 3 - Digitalizador</option>
-                    <option value="usuario_4">Usuário 4 - Desenhista</option>
-                    <option value="usuario_5">Usuário 5 - Auxiliar (Personalizado)</option>
+                    <option value="usuario_1">Modelista</option>
+                    <option value="usuario_2">Auxiliar 1 (Cadastro)</option>
+                    <option value="usuario_3">Digitalizador</option>
+                    <option value="usuario_4">Desenhista</option>
+                    <option value="usuario_5">Auxiliar 2 (Personalizado)</option>
                 </select>
             </div>
             <div class="form-group" id="loginPasswordGroup">
@@ -142,17 +142,17 @@
 
     <div id="mainDashboard">
         <header>
-            <h1>Painel de Modelagem: <span id="userDisplay" style="color: #27ae60;">Visitante (Apenas Leitura)</span></h1>
+            <h1>Painel de Modelagem: <span id="userDisplay" style="color: #27ae60;">Monitoramento Geral</span></h1>
             <div id="headerActions">
                 <button class="login-trigger-btn" id="btnLoginTrigger" onclick="abrirModalLogin()">Acessar Painel Restrito</button>
-                <button class="logout-btn" id="btnLogout" style="display: none;" onclick="logout()">Sair / Trocar Usuário</button>
+                <button class="logout-btn" id="btnLogout" style="display: none;" onclick="logout()">Sair / Painel Geral</button>
             </div>
         </header>
 
-        <div class="nav-tabs" id="adminTabs" style="display: none;">
-            <button class="tab-btn active" id="btnTabPainel" onclick="switchTab('painel')">Painel de Operações</button>
-            <button class="tab-btn" id="btnTabRelatorios" onclick="switchTab('relatorios')">Relatórios & Gráficos</button>
-            <button class="tab-btn" id="btnTabGerenciamento" onclick="switchTab('gerenciamento')" style="background: #9b59b6; color: white;">Gerenciar Equipe & Backup</button>
+        <div class="nav-tabs" id="adminTabs">
+            <button class="tab-btn active" id="btnTabPainel" onclick="switchTab('painel')">Painel de Monitoramento Geral</button>
+            <button class="tab-btn" id="btnTabRelatorios" onclick="switchTab('relatorios')">Relatórios & Gráficos Estatísticos</button>
+            <button class="tab-btn" id="btnTabGerenciamento" onclick="switchTab('gerenciamento')" style="background: #9b59b6; color: white; display: none;">Gerenciar Equipe & Backup</button>
         </div>
 
         <div class="alert-panel" id="criticalAlertPanel">
@@ -205,14 +205,14 @@
                     </div>
                     <div class="form-group">
                         <label for="taskDesc">Instruções Adicionais</label>
-                        <textarea id="taskDesc" rows="3" placeholder="Informações que o usuário precisa visualizar"></textarea>
+                        <textarea id="taskDesc" rows="3" placeholder="Informações adicionais relevantes"></textarea>
                     </div>
                     <button type="submit" class="btn-submit">Direcionar e Enviar</button>
                 </form>
             </div>
 
             <div class="box" style="flex: 1;" id="taskListBox">
-                <h2 id="listTitle">Fila Geral de Monitoramento (Apenas Leitura)</h2>
+                <h2 id="listTitle">Fila Geral de Monitoramento em Tempo Real</h2>
                 <div class="task-list" id="taskList"></div>
             </div>
         </div>
@@ -248,7 +248,7 @@
 
             <hr style="margin: 30px 0; border: 0; border-top: 1px solid #ddd;">
 
-            <h3>2. Relatório de Gestão de Tempo da Equipe (Trabalho vs. Ociosidade)</h3>
+            <h3>2. Relatório de Gestão de Tempo da Equipe (Trabalho vs. Ociosidade Real)</h3>
             <div class="report-layout">
                 <div style="overflow-x: auto;">
                     <table style="width: 100%; border-collapse: collapse; background: white; font-size: 0.9rem;" id="timeTable">
@@ -256,7 +256,7 @@
                             <tr style="background: #2c3e50; color: white;">
                                 <th style="padding: 10px; text-align: left;">Funcionário</th>
                                 <th style="padding: 10px; text-align: center;">Tempo em Trabalho</th>
-                                <th style="padding: 10px; text-align: center;">Tempo Ocioso</th>
+                                <th style="padding: 10px; text-align: center;">Tempo Ocioso Real</th>
                                 <th style="padding: 10px; text-align: center;">Interrupções</th>
                             </tr>
                         </thead>
@@ -267,7 +267,7 @@
                 <div class="chart-container"><canvas id="timeChart"></canvas></div>
             </div>
 
-            <div class="report-actions">
+            <div class="report-actions" id="reportButtonsContainer">
                 <button class="btn-report btn-pdf" onclick="exportPDF()">Exportar Relatório PDF</button>
                 <button class="btn-report btn-excel" onclick="exportExcel()">Exportar Planilha Excel</button>
             </div>
@@ -278,10 +278,10 @@
             
             <div class="box" style="background: #fdfdfd; border: 1px solid #ddd; margin-top: 15px;">
                 <h3>Configurações de Jornada & Nomes da Equipe</h3>
-                <p style="font-size: 0.85rem; color: #777; margin-bottom: 15px;">Ajuste o nome exibido e o horário de expediente de cada colaborador. O cálculo de tempo ocioso usará esses valores.</p>
+                <p style="font-size: 0.85rem; color: #777; margin-bottom: 15px;">Ajuste o nome exibido e o horário de expediente de cada colaborador.</p>
                 
                 <div class="form-group">
-                    <label>Usuário 1 - Modelista:</label>
+                    <label>Usuário 1:</label>
                     <div class="grid-jornada">
                         <input type="text" id="cfg_user1" placeholder="Nome">
                         <label>Entrada: <input type="time" id="cfg_in1"></label>
@@ -289,7 +289,7 @@
                     </div>
                 </div>
                 <div class="form-group">
-                    <label>Usuário 2 - Auxiliar 1 (Cadastro):</label>
+                    <label>Usuário 2:</label>
                     <div class="grid-jornada">
                         <input type="text" id="cfg_user2" placeholder="Nome">
                         <label>Entrada: <input type="time" id="cfg_in2"></label>
@@ -297,7 +297,7 @@
                     </div>
                 </div>
                 <div class="form-group">
-                    <label>Usuário 3 - Digitalizador:</label>
+                    <label>Usuário 3:</label>
                     <div class="grid-jornada">
                         <input type="text" id="cfg_user3" placeholder="Nome">
                         <label>Entrada: <input type="time" id="cfg_in3"></label>
@@ -305,7 +305,7 @@
                     </div>
                 </div>
                 <div class="form-group">
-                    <label>Usuário 4 - Desenhista:</label>
+                    <label>Usuário 4:</label>
                     <div class="grid-jornada">
                         <input type="text" id="cfg_user4" placeholder="Nome">
                         <label>Entrada: <input type="time" id="cfg_in4"></label>
@@ -313,7 +313,7 @@
                     </div>
                 </div>
                 <div class="form-group">
-                    <label>Usuário 5 - Auxiliar 2 (Personalizado):</label>
+                    <label>Usuário 5:</label>
                     <div class="grid-jornada">
                         <input type="text" id="cfg_user5" placeholder="Nome">
                         <label>Entrada: <input type="time" id="cfg_in5"></label>
@@ -375,12 +375,12 @@
 
         let nomesExibicao = {
             "admin": "Administrador",
-            "usuario_1": "Usuário 1 - Modelista",
-            "usuario_2": "Usuário 2 - Auxiliar (Cadastro)",
-            "usuario_3": "Usuário 3 - Digitalizador",
-            "usuario_4": "Usuário 4 - Desenhista",
-            "usuario_5": "Usuário 5 - Auxiliar (Personalizado)",
-            "visitante": "Visitante (Apenas Leitura)"
+            "usuario_1": "Modelista",
+            "usuario_2": "Auxiliar 1 (Cadastro)",
+            "usuario_3": "Digitalizador",
+            "usuario_4": "Desenhista",
+            "usuario_5": "Auxiliar 2 (Personalizado)",
+            "visitante": "Monitoramento Geral"
         };
 
         let jornadas = {
@@ -388,7 +388,7 @@
             "usuario_2": { in: "07:12", out: "17:00" },
             "usuario_3": { in: "07:12", out: "17:00" },
             "usuario_4": { in: "07:12", out: "17:00" },
-            "usuario_5": { in: "14:00", out: "18:00" } // Caso padrão do Isaías adaptável
+            "usuario_5": { in: "14:00", out: "18:00" }
         };
 
         let adminPasswordDB = "admin123"; 
@@ -407,9 +407,9 @@
                 });
                 
                 for(let i=1; i<=5; i++) {
-                    document.getElementById(`cfg_user${i}`).value = nomesExibicao[`usuario_${i}`];
-                    document.getElementById(`cfg_in${i}`).value = jornadas[`usuario_${i}`].in;
-                    document.getElementById(`cfg_out${i}`).value = jornadas[`usuario_${i}`].out;
+                    if (document.getElementById(`cfg_user${i}`)) document.getElementById(`cfg_user${i}`).value = nomesExibicao[`usuario_${i}`];
+                    if (document.getElementById(`cfg_in${i}`)) document.getElementById(`cfg_in${i}`).value = jornadas[`usuario_${i}`].in;
+                    if (document.getElementById(`cfg_out${i}`)) document.getElementById(`cfg_out${i}`).value = jornadas[`usuario_${i}`].out;
                 }
                 
                 atualizarNomesNoSeletorLogin();
@@ -426,14 +426,13 @@
             const data = snapshot.val();
             tasks = data ? Object.values(data) : [];
             if(currentUser) { renderTasks(); verificarAlertasCriticos(); }
+            if(document.getElementById('tabRelatorios').style.display === 'block') updateReportDashboard();
         });
 
         database.ref('tasks/historico').on('value', (snapshot) => {
             const data = snapshot.val();
             historicTasks = data ? Object.values(data) : [];
-            if(currentUser && document.getElementById('tabRelatorios').style.display === 'block') {
-                updateReportDashboard();
-            }
+            if(document.getElementById('tabRelatorios').style.display === 'block') updateReportDashboard();
         });
 
         function atualizarNomesNoSeletorLogin() {
@@ -481,26 +480,40 @@
             document.getElementById('mainDashboard').style.display = 'block';
             const container = document.getElementById('tabPainel');
             const adminBox = document.getElementById('adminFormBox');
-            const tabs = document.getElementById('adminTabs');
-            
+            const btnGerenciamento = document.getElementById('btnTabGerenciamento');
+            const btnLoginTrigger = document.getElementById('btnLoginTrigger');
+            const btnLogout = document.getElementById('btnLogout');
+            const reportButtons = document.getElementById('reportButtonsContainer');
+
+            document.getElementById('adminTabs').style.display = 'flex';
+
             if (currentUser === 'admin') {
                 document.getElementById('userDisplay').innerText = nomesExibicao[currentUser];
-                adminBox.style.display = 'block'; tabs.style.display = 'flex'; container.classList.remove('full-width');
+                adminBox.style.display = 'block'; container.classList.remove('full-width');
+                btnGerenciamento.style.display = 'block';
                 document.getElementById('listTitle').innerText = "Visão Geral do Setor";
                 document.getElementById('criticalAlertPanel').style.display = 'none';
-                document.getElementById('btnLoginTrigger').style.display = 'none'; document.getElementById('btnLogout').style.display = 'block';
+                btnLoginTrigger.style.display = 'none'; btnLogout.style.display = 'block';
+                reportButtons.style.display = 'flex';
                 switchTab(sessionStorage.getItem('modelagem_current_tab') || 'painel');
             } else if (currentUser === 'visitante') {
-                document.getElementById('userDisplay').innerText = "Visitante (Apenas Leitura)";
-                adminBox.style.display = 'none'; tabs.style.display = 'none'; container.classList.add('full-width');
-                document.getElementById('listTitle').innerText = "Fila Geral de Monitoramento (Apenas Leitura)";
+                document.getElementById('userDisplay').innerText = "Monitoramento Geral (Apenas Leitura)";
+                adminBox.style.display = 'none'; container.classList.add('full-width');
+                btnGerenciamento.style.display = 'none';
+                document.getElementById('listTitle').innerText = "Fila Geral de Monitoramento em Tempo Real";
                 document.getElementById('criticalAlertPanel').style.display = 'none';
-                document.getElementById('btnLoginTrigger').style.display = 'block'; document.getElementById('btnLogout').style.display = 'none';
+                btnLoginTrigger.style.display = 'block'; btnLogout.style.display = 'none';
+                reportButtons.style.display = 'none'; 
+                switchTab('painel');
             } else {
                 document.getElementById('userDisplay').innerText = nomesExibicao[currentUser];
-                adminBox.style.display = 'none'; tabs.style.display = 'none'; container.classList.add('full-width');
+                adminBox.style.display = 'none'; container.classList.add('full-width');
+                document.getElementById('adminTabs').style.display = 'none'; 
                 document.getElementById('listTitle').innerText = "Suas Demandas Ativas";
-                document.getElementById('btnLoginTrigger').style.display = 'none'; document.getElementById('btnLogout').style.display = 'block';
+                btnLoginTrigger.style.display = 'none'; btnLogout.style.display = 'block';
+                document.getElementById('tabRelatorios').style.display = 'none';
+                document.getElementById('tabGerenciamento').style.display = 'none';
+                document.getElementById('tabPainel').style.display = 'grid';
                 verificarAlertasCriticos();
             }
             renderTasks();
@@ -509,14 +522,14 @@
         function logout() { sessionStorage.setItem('modelagem_current_user', 'visitante'); currentUser = 'visitante'; configurarInterfacePorUsuario(); }
 
         function switchTab(tab) {
-            if(currentUser !== 'admin') return;
+            if(currentUser !== 'admin' && currentUser !== 'visitante') return;
             sessionStorage.setItem('modelagem_current_tab', tab);
             document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
             document.getElementById('tabPainel').style.display = 'none'; document.getElementById('tabRelatorios').style.display = 'none'; document.getElementById('tabGerenciamento').style.display = 'none';
 
             if (tab === 'painel') { document.getElementById('btnTabPainel').classList.add('active'); document.getElementById('tabPainel').style.display = 'grid'; }
             else if (tab === 'relatorios') { document.getElementById('btnTabRelatorios').classList.add('active'); document.getElementById('tabRelatorios').style.display = 'block'; updateReportDashboard(); }
-            else if (tab === 'gerenciamento') { document.getElementById('btnTabGerenciamento').classList.add('active'); document.getElementById('tabGerenciamento').style.display = 'block'; }
+            else if (tab === 'gerenciamento' && currentUser === 'admin') { document.getElementById('btnTabGerenciamento').classList.add('active'); document.getElementById('tabGerenciamento').style.display = 'block'; }
         }
 
         function verificarAlertasCriticos() {
@@ -556,7 +569,7 @@
 
                 let interrupcoesHTML = '';
                 if(task.pauses) {
-                    interrupcoesHTML = Object.values(task.pauses).map(p => `<div class="task-pause-box"><strong>Motivo da Pausa:</strong> ${p.reason} (${p.duration || 'Em andamento'})</div>`).join('');
+                    interrupcoesHTML = Object.values(task.pauses).map(p => `<div class="task-pause-box"><strong>Pausa Ativa/Histórico:</strong> ${p.reason} (${p.duration || 'Em andamento'})</div>`).join('');
                 }
 
                 let botoesAcaoHTML = '';
@@ -609,7 +622,7 @@
 
             if (acao === 'pause') {
                 const motivo = prompt("Digite o motivo da interrupção/pausa de maneira livre:");
-                if (!motivo || motivo.trim() === "") { alert("É obrigatório informar um motivo para pausar!"); return; }
+                if (!motivo || motivo.trim() === "") { alert("É necessário informar um motivo para pausar!"); return; }
                 
                 if (!task.pauses) task.pauses = {};
                 const pauseId = '_' + Math.random().toString(36).substr(2, 9);
@@ -635,16 +648,13 @@
             const now = new Date().getTime();
             if(!compTask.timeLogs || compTask.timeLogs.length === 0) { alert("Você precisa clicar em 'Iniciar Task' antes de concluí-la para computar o tempo!"); return; }
 
-            // Fecha última pausa se houver
             if (compTask.pauses) {
-                Object.values(compTask.pauses).forEach(p => { if(!p.end) p.end = now; });
+                Object.values(compTask.pauses).forEach(p => { if(!p.end) { p.end = now; p.duration = Math.round((now - p.start) / 1000 / 60) + " min"; } });
             }
 
             let tempoTrabalhoMs = 0;
             let tempoPausaMs = 0;
-            let inicioReal = compTask.timeLogs[0].time;
 
-            // Calcula tempo líquido de trabalho baseado nos blocos start->pause
             for (let i = 0; i < compTask.timeLogs.length; i++) {
                 if (compTask.timeLogs[i].type === 'start') {
                     let fimBloco = (i + 1 < compTask.timeLogs.length) ? compTask.timeLogs[i+1].time : now;
@@ -717,7 +727,6 @@
                 options: { responsive: true, maintainAspectRatio: false }
             });
 
-            // GESTÃO DE TEMPO (Mostrar todos os usuários)
             const tbody = document.getElementById('timeTableBody');
             tbody.innerHTML = '';
 
@@ -725,16 +734,42 @@
 
             Object.keys(jornadas).forEach(userKey => {
                 const tarefasDoUser = metrics.concluidasNoPeriodo.filter(t => t.userWhoFinished === userKey);
+                
+                // Encontra a primeira vez absoluta que o usuário interagiu com alguma task (clique em start)
+                let primeiroStartAbsoluto = null;
+                tarefasDoUser.forEach(t => {
+                    if (t.timeLogs) {
+                        const logsDoUser = t.timeLogs.filter(l => l.by === userKey && l.type === 'start');
+                        logsDoUser.forEach(l => {
+                            if (!primeiroStartAbsoluto || l.time < primeiroStartAbsoluto) {
+                                primeiroStartAbsoluto = l.time;
+                            }
+                        });
+                    }
+                });
+
                 let totalTrabalhoMin = tarefasDoUser.reduce((acc, t) => acc + (t.workMinutes || 0), 0);
                 let totalPausaMin = tarefasDoUser.reduce((acc, t) => acc + (t.pauseMinutes || 0), 0);
 
-                // Calcula a jornada total do funcionário em minutos
-                const [hIn, mIn] = jornadas[userKey].in.split(':').map(Number);
-                const [hOut, mOut] = jornadas[userKey].out.split(':').map(Number);
-                const totalJornadaMin = Math.max(0, (hOut * 60 + mOut) - (hIn * 60 + mIn));
+                let totalOciosoMin = 0;
 
-                // Ocioso = Jornada total cadastrada menos o tempo que passou executando tarefas
-                let totalOciosoMin = Math.max(0, totalJornadaMin - totalTrabalhoMin);
+                // NOVA REGRA CRÍTICA: Se ele nunca clicou em iniciar, a ociosidade é 0.
+                if (primeiroStartAbsoluto) {
+                    const [hOut, mOut] = jornadas[userKey].out.split(':').map(Number);
+                    
+                    // Converte o momento do primeiro clique em um objeto Date do dia correspondente
+                    const dataPrimeiroStart = new Date(primeiroStartAbsoluto);
+                    
+                    // Define o fim da jornada para aquele dia específico
+                    const dataFimJornada = new Date(primeiroStartAbsoluto);
+                    dataFimJornada.setHours(hOut, mOut, 0, 0);
+
+                    // A janela produtiva total do funcionário vai do primeiro clique até o final do expediente dele
+                    const janelaTotalMonitoradaMin = Math.max(0, Math.round((dataFimJornada.getTime() - dataPrimeiroStart.getTime()) / 1000 / 60));
+                    
+                    // Ociosidade é o que restou dessa janela após subtrair o tempo em trabalho
+                    totalOciosoMin = Math.max(0, janelaTotalMonitoradaMin - totalTrabalhoMin);
+                }
 
                 labelsTime.push(nomesExibicao[userKey]);
                 dataWork.push(totalTrabalhoMin);
@@ -743,7 +778,7 @@
                 const tr = document.createElement('tr');
                 tr.style.borderBottom = "1px solid #ddd";
                 tr.innerHTML = `
-                    <td style="padding:10px;"><strong>${nomesExibicao[userKey]}</strong><br><small style="color:#777;">Jornada: ${jornadas[userKey].in} às ${jornadas[userKey].out}</small></td>
+                    <td style="padding:10px;"><strong>${nomesExibicao[userKey]}</strong><br><small style="color:#777;">Expediente: ${jornadas[userKey].in} às ${jornadas[userKey].out}</small></td>
                     <td style="padding:10px; text-align:center; color:#2ecc71; font-weight:bold;">${converterMinutosParaTexto(totalTrabalhoMin)}</td>
                     <td style="padding:10px; text-align:center; color:#e74c3c; font-weight:bold;">${converterMinutosParaTexto(totalOciosoMin)}</td>
                     <td style="padding:10px; text-align:center; color:#f39c12;">${converterMinutosParaTexto(totalPausaMin)}</td>
@@ -757,8 +792,8 @@
                 data: {
                     labels: labelsTime,
                     datasets: [
-                        { label: 'Tempo Trabalhando (Minutos)', data: dataWork, backgroundColor: '#2ecc71' },
-                        { label: 'Tempo Ocioso (Minutos)', data: dataOcioso, backgroundColor: '#e74c3c' }
+                        { label: 'Minutos em Trabalho', data: dataWork, backgroundColor: '#2ecc71' },
+                        { label: 'Minutos Ocioso Real', data: dataOcioso, backgroundColor: '#e74c3c' }
                     ]
                 },
                 options: { responsive: true, maintainAspectRatio: false, scales: { y: { stacked: true }, x: { stacked: true } } }
@@ -766,25 +801,22 @@
         }
 
         function exportExcel() {
+            if(currentUser === 'visitante') return;
             const metrics = getFilteredMetrics();
-            let linhas = [["RELATÓRIO DE PERFORMANCE E CONTROLE DE TEMPOS"], [], ["Funcionário", "Tarefa / Referência", "Tempo em Trabalho (Minutos)", "Tempo em Pausa/Interrupção (Minutos)", "Data Conclusão", "Status Prazo"]];
-            
-            metrics.concluidasNoPeriodo.forEach(t => {
-                linhas.push([t.userWhoFinishedName, t.title, t.workMinutes || 0, t.pauseMinutes || 0, t.dateFinished, t.onTime ? "No Prazo" : "Atrasado"]);
-            });
-
+            let linhas = [["RELATÓRIO GERAL"], [], ["Funcionário", "Tarefa / Referência", "Tempo em Trabalho (Minutos)", "Tempo em Pausa (Minutos)", "Data Conclusão", "Status Prazo"]];
+            metrics.concluidasNoPeriodo.forEach(t => { linhas.push([t.userWhoFinishedName, t.title, t.workMinutes || 0, t.pauseMinutes || 0, t.dateFinished, t.onTime ? "No Prazo" : "Atrasado"]); });
             const wb = XLSX.utils.book_new(); const ws = XLSX.utils.aoa_to_sheet(linhas);
             XLSX.utils.book_append_sheet(wb, ws, "Dados"); XLSX.writeFile(wb, "Relatorio_Produtividade.xlsx");
         }
 
         function exportPDF() {
+            if(currentUser === 'visitante') return;
             const { jsPDF } = window.jspdf; const doc = new jsPDF();
             const metrics = getFilteredMetrics();
             doc.setFont("Helvetica", "bold"); doc.setFontSize(14); doc.text("RELATÓRIO GERAL DE PRODUTIVIDADE E TEMPOS", 14, 20);
-            
             let corpo = metrics.concluidasNoPeriodo.map(t => [t.userWhoFinishedName, t.title, (t.workMinutes || 0)+" min", (t.pauseMinutes || 0)+" min", t.onTime?"No Prazo":"Atrasado"]);
             doc.autoTable({ startY: 30, head: [['Funcionário', 'Tarefa/Modelo', 'Tempo Líquido', 'Interrupções', 'Prazo']], body: corpo });
-            doc.save("Relatorio_Tempos_Foco.pdf");
+            doc.save("Relatorio_Tempos.pdf");
         }
 
         function salvarConfiguracaoEquipe() {
@@ -798,7 +830,7 @@
                     }
                 };
             }
-            database.ref('configuracoes/equipe').set(configEquipe).then(() => { alert("Nomes e Horários atualizados no Firebase!"); });
+            database.ref('configuracoes/equipe').set(configEquipe).then(() => { alert("Configurações salvas no Firebase!"); });
         }
 
         function salvarSenhaAdmin() {
