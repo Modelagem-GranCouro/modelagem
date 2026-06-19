@@ -60,10 +60,15 @@
         button.btn-submit { width: 100%; padding: 12px; background-color: #3498db; color: white; border: none; border-radius: 4px; font-size: 1rem; cursor: pointer; font-weight: bold; transition: background 0.2s; }
         button.btn-submit:hover { background-color: #2980b9; }
 
-        .meal-control-panel { background: #ebf5fb; border: 1px solid #aed6f1; padding: 15px; border-radius: 6px; margin-bottom: 20px; display: flex; align-items: center; justify-content: space-between; }
-        .btn-meal { padding: 10px 20px; border: none; border-radius: 4px; font-weight: bold; cursor: pointer; color: white; }
+        .control-panels-container { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; width: 100%; }
+        .meal-control-panel { background: #ebf5fb; border: 1px solid #aed6f1; padding: 15px; border-radius: 6px; display: flex; align-items: center; justify-content: space-between; }
+        .descanso-control-panel { background: #fef9e7; border: 1px solid #f9e79f; padding: 15px; border-radius: 6px; display: flex; align-items: center; justify-content: space-between; }
+        
+        .btn-meal, .btn-descanso { padding: 10px 20px; border: none; border-radius: 4px; font-weight: bold; cursor: pointer; color: white; }
         .btn-meal-start { background-color: #e67e22; }
         .btn-meal-end { background-color: #2ecc71; }
+        .btn-descanso-start { background-color: #9b59b6; }
+        .btn-descanso-end { background-color: #2ecc71; }
 
         .alert-panel { display: none; max-width: 1600px; margin: 0 auto 20px auto; background: #fff5f5; border: 2px dashed #e74c3c; padding: 15px; border-radius: 8px; color: #c0392b; }
 
@@ -76,7 +81,7 @@
 
         .task-info-line { margin-bottom: 8px; font-size: 1rem; }
         .task-desc-box { background: #f8f9fa; border-left: 3px solid #3498db; padding: 10px; margin-top: 10px; font-size: 0.95rem; color: #555; border-radius: 0 4px 4px 0; }
-        .task-pause-box { background: #fff5f5; border-left: 3px solid #e67e22; padding: 8px; margin-top: 5px; font-size: 0.85rem; color: #c0392b; border-radius: 4px; }
+        .task-pause-box { background: #f0f4f8; border-left: 3px solid #3498db; padding: 8px; margin-top: 5px; font-size: 0.85rem; color: #2c3e50; border-radius: 4px; }
 
         .task-meta { display: flex; flex-wrap: wrap; gap: 15px; font-size: 0.9rem; color: #7f8c8d; background: #f1f3f5; padding: 8px 12px; border-radius: 4px; margin-top: 12px; justify-content: space-between; align-items: center; }
         .deadline-alert { color: #e74c3c; font-weight: bold; }
@@ -115,6 +120,14 @@
 </head>
 <body>
 
+    <div class="modal-overlay" id="descansoAlertModal">
+        <div class="modal-content" style="border-top: 8px solid #9b59b6;">
+            <h2>⏰ MOMENTO DO DESCANSO LEGAL!</h2>
+            <p style="margin-bottom: 20px; font-size: 1.05rem; color: #555;">Está no horário do seu intervalo obrigatório de 10 minutos. Por favor, clique no botão abaixo para iniciar o registro.</p>
+            <button class="btn-submit" style="background-color: #9b59b6;" onclick="iniciarDescansoPeloPopup()">Iniciar Descanso Agora ☕</button>
+        </div>
+    </div>
+
     <div class="modal-overlay" id="loginModal">
         <div class="modal-content">
             <button class="close-modal" onclick="fecharModalLogin()">&times;</button>
@@ -122,12 +135,12 @@
             <div class="form-group">
                 <label for="loginUser">Quem está acessando?</label>
                 <select id="loginUser" onchange="toggleLoginPasswordView()">
-                    <option value="admin">Administrador</option>
-                    <option value="usuario_1">Modelista</option>
-                    <option value="usuario_2">Auxiliar 1 (Cadastro)</option>
-                    <option value="usuario_3">Digitalizador</option>
-                    <option value="usuario_4">Desenhista</option>
-                    <option value="usuario_5">Auxiliar 2 (Personalizado)</option>
+                    <option value="admin">Líder do Setor</option>
+                    <option value="usuario_1">Carregando...</option>
+                    <option value="usuario_2">Carregando...</option>
+                    <option value="usuario_3">Carregando...</option>
+                    <option value="usuario_4">Carregando...</option>
+                    <option value="usuario_5">Carregando...</option>
                 </select>
             </div>
             <div class="form-group" id="loginPasswordGroup">
@@ -170,7 +183,7 @@
                         <label for="taskCategory">Categoria</label>
                         <select id="taskCategory" required>
                             <option value="KIT">KIT</option>
-                            <option value="PISO">PISO</option>
+                            <option value="Coleção Normal">Coleção Normal</option>
                         </select>
                     </div>
                     <div class="form-group">
@@ -210,13 +223,22 @@
             </div>
 
             <div class="box" style="flex: 1;" id="taskListBox">
-                <div class="meal-control-panel" id="mealPanel" style="display: none;">
-                    <div>
-                        <strong id="mealStatusLabel">Status do Almoço: Pronto para o intervalo</strong>
+                
+                <div class="control-panels-container" id="userControlPanels" style="display: none;">
+                    <div class="meal-control-panel">
+                        <div><strong id="mealStatusLabel">Status do Almoço: Pronto para o intervalo</strong></div>
+                        <div>
+                            <button class="btn-meal btn-meal-start" id="btnStartMeal" onclick="registrarAlmoço('start')">Ir para o Almoço 🍽️</button>
+                            <button class="btn-meal btn-meal-end" id="btnEndMeal" style="display: none;" onclick="registrarAlmoço('end')">Voltar do Almoço 🟢</button>
+                        </div>
                     </div>
-                    <div>
-                        <button class="btn-meal btn-meal-start" id="btnStartMeal" onclick="registrarAlmoço('start')">Ir para o Almoço 🍽️</button>
-                        <button class="btn-meal btn-meal-end" id="btnEndMeal" style="display: none;" onclick="registrarAlmoço('end')">Voltar do Almoço 🟢</button>
+                    
+                    <div class="descanso-control-panel">
+                        <div><strong id="descansoStatusLabel">Status do Descanso (10 min): Liberado</strong></div>
+                        <div>
+                            <button class="btn-descanso btn-descanso-start" id="btnStartDescanso" onclick="registrarDescanso('start')">Iniciar Descanso ☕</button>
+                            <button class="btn-descanso btn-descanso-end" id="btnEndDescanso" style="display: none;" onclick="registrarDescanso('end')">Retornar ao Trabalho 🟢</button>
+                        </div>
                     </div>
                 </div>
 
@@ -383,7 +405,7 @@
         };
 
         let nomesExibicao = {
-            "admin": "Administrador",
+            "admin": "Líder do Setor",
             "usuario_1": "Modelista",
             "usuario_2": "Auxiliar 1 (Cadastro)",
             "usuario_3": "Digitalizador",
@@ -393,6 +415,7 @@
         };
 
         let jornadas = {
+            "admin": { in: "07:12", out: "17:00" },
             "usuario_1": { in: "07:12", out: "17:00" },
             "usuario_2": { in: "07:12", out: "17:00" },
             "usuario_3": { in: "07:12", out: "17:00" },
@@ -404,9 +427,11 @@
         let tasks = [];
         let historicTasks = [];
         let mealLogs = {};
+        let descansoLogs = {};
         let currentUser = 'visitante';
         let myChart = null;
         let timeChart = null;
+        let popupDisparadoHoje = { manha: false, tarde: false };
 
         database.ref('configuracoes/equipe').on('value', (snapshot) => {
             const data = snapshot.val();
@@ -415,6 +440,8 @@
                     if(data[k]) nomesExibicao[k] = data[k].nome || nomesExibicao[k];
                     if(data[k] && data[k].jornada) jornadas[k] = data[k].jornada;
                 });
+                if(!data['admin']) nomesExibicao['admin'] = "Líder do Setor";
+                
                 for(let i=1; i<=5; i++) {
                     if (document.getElementById(`cfg_user${i}`)) document.getElementById(`cfg_user${i}`).value = nomesExibicao[`usuario_${i}`];
                     if (document.getElementById(`cfg_in${i}`)) document.getElementById(`cfg_in${i}`).value = jornadas[`usuario_${i}`].in;
@@ -450,8 +477,15 @@
             updateReportDashboard();
         });
 
+        database.ref('descanso/historico').on('value', (snapshot) => {
+            descansoLogs = snapshot.val() || {};
+            atualizarPainelDescansoInterface();
+            updateReportDashboard();
+        });
+
         function atualizarNomesNoSeletorLogin() {
             const select = document.getElementById('loginUser');
+            select.options[0].text = nomesExibicao['admin'];
             for(let i=1; i<=5; i++) { select.options[i].text = nomesExibicao[`usuario_${i}`]; }
         }
 
@@ -464,7 +498,11 @@
             const savedUser = sessionStorage.getItem('modelagem_current_user') || 'visitante';
             currentUser = savedUser;
             configurarInterfacePorUsuario();
-            setInterval(updateReportDashboard, 15000); 
+            
+            setInterval(() => {
+                verificarHorarioDescansoPopup();
+                updateReportDashboard();
+            }, 5000);
         });
 
         function abrirModalLogin() { document.getElementById('loginModal').style.display = 'flex'; }
@@ -489,11 +527,11 @@
             const btnLoginTrigger = document.getElementById('btnLoginTrigger');
             const btnLogout = document.getElementById('btnLogout');
             const reportButtons = document.getElementById('reportButtonsContainer');
-            const mealPanel = document.getElementById('mealPanel');
+            const userPanels = document.getElementById('userControlPanels');
             const restrictedSection = document.getElementById('restrictedTimeReportSection');
 
             document.getElementById('adminTabs').style.display = 'flex';
-            mealPanel.style.display = 'none';
+            userPanels.style.display = 'none';
 
             if (currentUser === 'admin') {
                 document.getElementById('userDisplay').innerText = nomesExibicao[currentUser];
@@ -502,6 +540,9 @@
                 btnLoginTrigger.style.display = 'none'; btnLogout.style.display = 'block';
                 reportButtons.style.display = 'flex';
                 restrictedSection.style.display = 'block';
+                userPanels.style.display = 'flex';
+                atualizarPainelAlmoçoInterface();
+                atualizarPainelDescansoInterface();
                 switchTab('painel');
             } else if (currentUser === 'visitante') {
                 document.getElementById('userDisplay').innerText = "Monitoramento Geral";
@@ -518,8 +559,9 @@
                 btnLoginTrigger.style.display = 'none'; btnLogout.style.display = 'block';
                 reportButtons.style.display = 'flex';
                 restrictedSection.style.display = 'block';
-                mealPanel.style.display = 'flex';
+                userPanels.style.display = 'flex';
                 atualizarPainelAlmoçoInterface();
+                atualizarPainelDescansoInterface();
                 verificarAlertasCriticos();
             }
             renderTasks();
@@ -544,20 +586,88 @@
             document.getElementById('criticalAlertPanel').style.display = temUrgencia ? 'block' : 'none';
         }
 
+        function verificarHorarioDescansoPopup() {
+            if (currentUser === 'visitante') return;
+
+            const agora = new Date();
+            const horas = agora.getHours();
+            const minutos = agora.getMinutes();
+            const totalMinutos = (horas * 60) + minutos;
+
+            const minInicioManha = (9 * 60) + 50;  
+            const minFimManha = (10 * 60) + 0;    
+            const minInicioTarde = (15 * 60) + 30; 
+            const minFimTarde = (15 * 60) + 40;   
+
+            if (totalMinutos >= minInicioManha && totalMinutos < minFimManha && !popupDisparadoHoje.manha) {
+                document.getElementById('descansoAlertModal').style.display = 'flex';
+            } else if (totalMinutos >= minInicioTarde && totalMinutos < minFimTarde && !popupDisparadoHoje.tarde) {
+                document.getElementById('descansoAlertModal').style.display = 'flex';
+            } else {
+                document.getElementById('descansoAlertModal').style.display = 'none';
+            }
+        }
+
+        function iniciarDescansoPeloPopup() {
+            document.getElementById('descansoAlertModal').style.display = 'none';
+            const agora = new Date();
+            if (agora.getHours() < 12) popupDisparadoHoje.manha = true;
+            else popupDisparadoHoje.tarde = true;
+            registrarDescanso('start');
+        }
+
+        function verificarJanelaPermitidaDescanso() {
+            const agora = new Date();
+            const horas = agora.getHours();
+            const minutos = agora.getMinutes();
+            const totalMinutos = (horas * 60) + minutos;
+
+            return ((totalMinutos >= (9 * 60) + 50) && (totalMinutos < (10 * 60))) || 
+                   ((totalMinutos >= (15 * 60) + 30) && (totalMinutos < (15 * 60) + 40));
+        }
+
+        function registrarDescanso(status) {
+            if (status === 'start' && !verificarJanelaPermitidaDescanso()) {
+                alert("⚠️ Alerta: Você está registrando o Descanso de 10 minutos fora da janela padrão do setor (09:50-10:00 ou 15:30-15:40). O registro foi salvo.");
+            }
+            const hojeStr = new Date().toISOString().split('T')[0];
+            const now = new Date().getTime();
+            const refPath = `descanso/historico/${hojeStr}/${currentUser}`;
+            if (status === 'start') { database.ref(refPath).set({ start: now }); } 
+            else { database.ref(refPath).update({ end: now }); }
+        }
+
+        function atualizarPainelDescansoInterface() {
+            if (currentUser === 'visitante') return;
+            const hojeStr = new Date().toISOString().split('T')[0];
+            const logHoje = descansoLogs[hojeStr] ? descansoLogs[hojeStr][currentUser] : null;
+
+            const btnStart = document.getElementById('btnStartDescanso');
+            const btnEnd = document.getElementById('btnEndDescanso');
+            const label = document.getElementById('descansoStatusLabel');
+
+            if (!logHoje) {
+                btnStart.style.display = 'inline-block'; btnEnd.style.display = 'none';
+                label.innerText = "Status do Descanso: Disponível";
+            } else if (logHoje.start && !logHoje.end) {
+                btnStart.style.display = 'none'; btnEnd.style.display = 'inline-block';
+                label.innerText = "Status do Descanso: ☕ Em Intervalo de 10 min...";
+            } else if (logHoje.start && logHoje.end) {
+                btnStart.style.display = 'none'; btnEnd.style.display = 'none';
+                label.innerText = "Status do Descanso: ✓ Intervalo realizado.";
+            }
+        }
+
         function registrarAlmoço(status) {
             const hojeStr = new Date().toISOString().split('T')[0];
             const now = new Date().getTime();
             const refPath = `almoço/historico/${hojeStr}/${currentUser}`;
-            
-            if (status === 'start') {
-                database.ref(refPath).set({ start: now });
-            } else {
-                database.ref(refPath).update({ end: now });
-            }
+            if (status === 'start') { database.ref(refPath).set({ start: now }); } 
+            else { database.ref(refPath).update({ end: now }); }
         }
 
         function atualizarPainelAlmoçoInterface() {
-            if (currentUser === 'admin' || currentUser === 'visitante') return;
+            if (currentUser === 'visitante') return;
             const hojeStr = new Date().toISOString().split('T')[0];
             const logHoje = mealLogs[hojeStr] ? mealLogs[hojeStr][currentUser] : null;
 
@@ -582,7 +692,7 @@
             taskList.innerHTML = '';
             let filteredTasks = [];
 
-            if (currentUser === 'admin' || currentUser === 'visitante') { filteredTasks = [...tasks]; }
+            if (currentUser === 'visitante') { filteredTasks = [...tasks]; }
             else if (currentUser === 'usuario_2' || currentUser === 'usuario_5') {
                 filteredTasks = tasks.filter(t => t.responsibles && (t.responsibles.includes('usuario_2') || t.responsibles.includes('usuario_5')));
             } else { filteredTasks = tasks.filter(t => t.responsibles && t.responsibles.includes(currentUser)); }
@@ -601,16 +711,15 @@
                 let statusCronometro = "Aguardando Início";
                 if (task.timeLogs && task.timeLogs.length > 0) {
                     const ultimoLog = task.timeLogs[task.timeLogs.length - 1];
-                    statusCronometro = ultimoLog.type === 'start' ? `<span style="color:#2ecc71; font-weight:bold;">▶️ Em execução por ${ultimoLog.byName}</span>` : `<span style="color:#e67e22; font-weight:bold;">⏸️ Pausado por ${ultimoLog.byName}</span>`;
+                    statusCronometro = ultimoLog.type === 'start' ? `<span style="color:#2ecc71; font-weight:bold;">▶️ Em execução por ${ultimoLog.byName}</span>` : `<span style="color:#e67e22; font-weight:bold;">⏸️ Pausado (Trabalhando) por ${ultimoLog.byName}</span>`;
                 }
 
                 let interrupcoesHTML = '';
-                if(task.pauses) {
-                    interrupcoesHTML = Object.values(task.pauses).map(p => `<div class="task-pause-box"><strong>Interrupção (${p.byName}):</strong> ${p.reason} (${p.duration || 'Em andamento'})</div>`).join('');
+                if(task.pauses_list) {
+                    interrupcoesHTML = Object.values(task.pauses_list).map(p => `<div class="task-pause-box" style="color: #2c3e50; background: #f0f4f8; border-left: 3px solid #3498db;"><strong>Nota de Pausa (${p.byName}):</strong> ${p.reason}</div>`).join('');
                 }
 
                 let botoesAcaoHTML = '';
-                // Admin pode controlar tudo de qualquer um. Colaboradores controlam apenas suas próprias responsabilidades.
                 const canControl = (currentUser === 'admin') || (task.responsibles && task.responsibles.includes(currentUser));
                 
                 if(currentUser !== 'visitante' && canControl) {
@@ -647,20 +756,13 @@
             if (!task.timeLogs) task.timeLogs = [];
 
             if (acao === 'pause') {
-                const motivo = prompt("Informe o motivo da interrupção técnica:");
-                if (!motivo || motivo.trim() === "") { alert("O motivo é obrigatório!"); return; }
-                if (!task.pauses) task.pauses = {};
+                const motivo = prompt("Informe uma observação/motivo para pausar esta tarefa (Ela continuará contando como tempo trabalhado):");
+                if (!motivo || motivo.trim() === "") { alert("A anotação é obrigatória!"); return; }
+                if (!task.pauses_list) task.pauses_list = {};
                 const pauseId = '_' + Math.random().toString(36).substr(2, 9);
-                task.pauses[pauseId] = { id: pauseId, reason: motivo, start: now, user: currentUser, byName: nomesExibicao[currentUser] };
+                task.pauses_list[pauseId] = { id: pauseId, reason: motivo, start: now, user: currentUser, byName: nomesExibicao[currentUser] };
                 task.timeLogs.push({ type: 'pause', time: now, by: currentUser, byName: nomesExibicao[currentUser] });
             } else {
-                if (task.timeLogs.length > 0 && task.timeLogs[task.timeLogs.length - 1].type === 'pause' && task.pauses) {
-                    const ultimaPausa = Object.values(task.pauses).find(p => !p.end && (p.user === currentUser || currentUser === 'admin'));
-                    if (ultimaPausa) {
-                        ultimaPausa.end = now;
-                        ultimaPausa.duration = Math.round((now - ultimaPausa.start) / 1000 / 60) + " min";
-                    }
-                }
                 task.timeLogs.push({ type: 'start', time: now, by: currentUser, byName: nomesExibicao[currentUser] });
             }
             database.ref('tasks/ativas/' + id).set(task);
@@ -672,30 +774,19 @@
             const now = new Date().getTime();
             if(!compTask.timeLogs || compTask.timeLogs.length === 0) { alert("Inicie a tarefa antes de concluir!"); return; }
 
-            if (compTask.pauses) {
-                Object.values(compTask.pauses).forEach(p => { if(!p.end) { p.end = now; p.duration = Math.round((now - p.start) / 1000 / 60) + " min"; } });
-            }
-
-            let tempoTrabalhoMs = 0; let tempoPausaMs = 0;
-            for (let i = 0; i < compTask.timeLogs.length; i++) {
-                if (compTask.timeLogs[i].type === 'start') {
-                    let fimBloco = (i + 1 < compTask.timeLogs.length) ? compTask.timeLogs[i+1].time : now;
-                    tempoTrabalhoMs += (fimBloco - compTask.timeLogs[i].time);
-                }
-            }
-            if(compTask.pauses) { Object.values(compTask.pauses).forEach(p => { tempoPausaMs += (p.end - p.start); }); }
-            tempoTrabalhoMs = Math.max(0, tempoTrabalhoMs - tempoPausaMs);
+            let primeiroStart = compTask.timeLogs[0].time;
+            let tempoTotalTarefaMs = now - primeiroStart;
 
             compTask.dateFinished = new Date().toISOString().split('T')[0];
             compTask.onTime = compTask.dateFinished <= compTask.deadline;
-            compTask.workMinutes = Math.round(tempoTrabalhoMs / 1000 / 60);
-            compTask.pauseMinutes = Math.round(tempoPausaMs / 1000 / 60);
-            compTask.userWhoFinished = currentUser === 'admin' ? (compTask.responsibles[0] || 'admin') : currentUser;
-            compTask.userWhoFinishedName = nomesExibicao[compTask.userWhoFinished];
+            compTask.workMinutes = Math.round(tempoTotalTarefaMs / 1000 / 60);
+            compTask.pauseMinutes = 0; 
+            compTask.userWhoFinished = currentUser;
+            compTask.userWhoFinishedName = nomesExibicao[currentUser];
 
             database.ref('tasks/historico/' + id).set(compTask).then(() => {
                 database.ref('tasks/ativas/' + id).remove();
-                alert("Tarefa finalizada com sucesso!");
+                alert("Tarefa concluída!");
             });
         }
 
@@ -705,33 +796,8 @@
 
             tasks.forEach(t => {
                 if (t.responsibles && t.responsibles.includes(userKey) && t.timeLogs && t.timeLogs.length > 0) {
-                    let trabalhoMs = 0; let技术PausaMs = 0;
-                    for (let i = 0; i < t.timeLogs.length; i++) {
-                        if (t.timeLogs[i].type === 'start') {
-                            let fim = (i + 1 < t.timeLogs.length) ? t.timeLogs[i+1].time : agora;
-                            trabalhoMs += (fim - t.timeLogs[i].time);
-                        }
-                    }
-                    if (t.pauses) {
-                        Object.values(t.pauses).forEach(p => {
-                            let fimPausa = p.end ? p.end : agora;
-                            tecnicasPausaMs += (fimPausa - p.start);
-                        });
-                    }
-                    totalMinutos += Math.max(0, Math.round((trabalhoMs - tecnicasPausaMs) / 1000 / 60));
-                }
-            });
-            return totalMinutos;
-        }
-
-        function calcularTempoPausasAtivas(userKey) {
-            let totalMinutos = 0; const agora = new Date().getTime();
-            tasks.forEach(t => {
-                if (t.responsibles && t.responsibles.includes(userKey) && t.pauses) {
-                    Object.values(t.pauses).forEach(p => {
-                        let fim = p.end ? p.end : agora;
-                        totalMinutos += Math.max(0, Math.round((fim - p.start) / 1000 / 60));
-                    });
+                    let primeiroStart = t.timeLogs[0].time;
+                    totalMinutos += Math.round((agora - primeiroStart) / 1000 / 60);
                 }
             });
             return totalMinutos;
@@ -772,7 +838,6 @@
                 else { ratingBox.innerText = `REGULARIDADE DO SETOR: RUIM (${taxa.toFixed(1)}% no prazo)`; ratingBox.className = "rating-box rating-ruim"; }
             }
 
-            // Gráfico de Rosca (Visível para todos)
             const ctxEff = document.getElementById('efficiencyChart');
             if (ctxEff) {
                 if (myChart) myChart.destroy();
@@ -783,45 +848,24 @@
                 });
             }
 
-            // SEGURANÇA E PRIVACIDADE: Ocultar ou Mostrar o Gráfico de Tempo para Visitantes
             const restrictedSection = document.getElementById('restrictedTimeReportSection');
-            if (currentUser === 'visitante') {
-                restrictedSection.style.display = 'none';
-                return;
-            } else {
-                restrictedSection.style.display = 'block';
-            }
+            if (currentUser === 'visitante') { restrictedSection.style.display = 'none'; return; } 
+            else { restrictedSection.style.display = 'block'; }
 
-            // Processamento da Tabela de Tempo e Gráfico Stacked (Apenas logados)
             const tbody = document.getElementById('timeTableBody'); 
             if (!tbody) return;
             tbody.innerHTML = '';
             
-            let labelsTime = []; 
-            let dataWork = []; 
-            let dataAlmoco = [];
-            let dataDescanso = [];
-            let dataInterrupcoes = [];
-            let dataOcioso = [];
-            
+            let labelsTime = []; let dataWork = []; let dataAlmoco = []; let dataDescanso = []; let dataOcioso = [];
             const hojeStr = new Date().toISOString().split('T')[0];
             const agoraMs = new Date().getTime();
 
-            Object.keys(jornadas).forEach(userKey => {
+            const chavesEquipe = ['admin', 'usuario_1', 'usuario_2', 'usuario_3', 'usuario_4', 'usuario_5'];
+
+            chavesEquipe.forEach(userKey => {
                 const concluidasDoUser = metrics.concluidasNoPeriodo ? metrics.concluidasNoPeriodo.filter(t => t.userWhoFinished === userKey) : [];
                 
                 let totalTrabalhoMin = concluidasDoUser.reduce((acc, t) => acc + (parseInt(t.workMinutes) || 0), 0) + calcularTempoTrabalhoRealAtivo(userKey);
-                let totalPausaMin = concluidasDoUser.reduce((acc, t) => acc + (parseInt(t.pauseMinutes) || 0), 0) + calcularTempoPausasAtivas(userKey);
-
-                let primeiroStartAbsoluto = null;
-                concluidasDoUser.forEach(t => {
-                    if(t.timeLogs) t.timeLogs.forEach(l => { if(l.by === userKey && l.type === 'start' && (!primeiroStartAbsoluto || l.time < primeiroStartAbsoluto)) primeiroStartAbsoluto = l.time; });
-                });
-                tasks.forEach(t => {
-                    if(t.responsibles && t.responsibles.includes(userKey) && t.timeLogs) {
-                        t.timeLogs.forEach(l => { if(l.by === userKey && l.type === 'start' && (!primeiroStartAbsoluto || l.time < primeiroStartAbsoluto)) primeiroStartAbsoluto = l.time; });
-                    }
-                });
 
                 let totalAlmoçoMin = 0;
                 if (mealLogs && mealLogs[hojeStr] && mealLogs[hojeStr][userKey]) {
@@ -830,25 +874,36 @@
                     totalAlmoçoMin = Math.max(0, Math.round((fimAlmoço - mLog.start) / 1000 / 60));
                 }
 
-                let descansoLegalMin = primeiroStartAbsoluto ? 20 : 0; // 2 descansos regulamentares de 10 min se o funcionário iniciou atividade
-                let totalOciosoMin = 0;
-
-                if (primeiroStartAbsoluto) {
-                    const [hOut, mOut] = jornadas[userKey].out.split(':').map(Number);
-                    const dataFimJornada = new Date(primeiroStartAbsoluto);
-                    dataFimJornada.setHours(hOut, mOut, 0, 0);
-
-                    let pontoFinalJanela = Math.min(dataFimJornada.getTime(), agoraMs);
-                    let janelaTotalMonitoradaMin = Math.max(0, Math.round((pontoFinalJanela - primeiroStartAbsoluto) / 1000 / 60));
-
-                    totalOciosoMin = Math.max(0, janelaTotalMonitoradaMin - totalTrabalhoMin - totalAlmoçoMin - totalPausaMin - descansoLegalMin);
+                let descansoLegalMin = 0;
+                if (descansoLogs && descansoLogs[hojeStr] && descansoLogs[hojeStr][userKey]) {
+                    let dLog = descansoLogs[hojeStr][userKey];
+                    let fimDescanso = dLog.end ? dLog.end : agoraMs;
+                    descansoLegalMin = Math.max(0, Math.round((fimDescanso - dLog.start) / 1000 / 60));
                 }
+
+                const [hIn, mIn] = jornadas[userKey].in.split(':').map(Number);
+                const [hOut, mOut] = jornadas[userKey].out.split(':').map(Number);
+                
+                const dataInicioJornada = new Date();
+                dataInicioJornada.setHours(hIn, mIn, 0, 0);
+                
+                const dataFimJornada = new Date();
+                dataFimJornada.setHours(hOut, mOut, 0, 0);
+
+                let tempoInicialCalculo = dataInicioJornada.getTime();
+                let tempoFinalCalculo = Math.min(dataFimJornada.getTime(), agoraMs);
+
+                let janelaTotalMinutos = 0;
+                if (agoraMs > tempoInicialCalculo) {
+                    janelaTotalMinutos = Math.max(0, Math.round((tempoFinalCalculo - tempoInicialCalculo) / 1000 / 60));
+                }
+
+                let totalOciosoMin = Math.max(0, janelaTotalMinutos - totalTrabalhoMin - totalAlmoçoMin - descansoLegalMin);
 
                 labelsTime.push(nomesExibicao[userKey] || userKey);
                 dataWork.push(totalTrabalhoMin);
                 dataAlmoco.push(totalAlmoçoMin);
                 dataDescanso.push(descansoLegalMin);
-                dataInterrupcoes.push(totalPausaMin);
                 dataOcioso.push(totalOciosoMin);
 
                 const formatTime = (min) => min > 0 ? `${Math.floor(min/60)}h ${min%60}m` : "0m";
@@ -863,13 +918,12 @@
                     <td style="padding:12px; text-align:center; color:#2ecc71; font-weight:bold;">${formatTime(totalTrabalhoMin)}</td>
                     <td style="padding:12px; text-align:center; color:#e67e22;">${formatTime(totalAlmoçoMin)}</td>
                     <td style="padding:12px; text-align:center; color:#3498db;">${formatTime(descansoLegalMin)}</td>
-                    <td style="padding:12px; text-align:center; color:#95a5a6;">${formatTime(totalPausaMin)}</td>
+                    <td style="padding:12px; text-align:center; color:#95a5a6;">Contado em Trabalho</td>
                     <td style="padding:12px; text-align:center; color:#e74c3c; font-weight:bold;">${formatTime(totalOciosoMin)}</td>
                 `;
                 tbody.appendChild(tr);
             });
 
-            // Atualização do Gráfico de Barras Empilhadas Discriminado
             const ctxTime = document.getElementById('timeChart');
             if (ctxTime) {
                 if(timeChart) timeChart.destroy();
@@ -878,20 +932,16 @@
                     data: { 
                         labels: labelsTime, 
                         datasets: [
-                            { label: 'Trabalho Efetivo', data: dataWork, backgroundColor: '#2ecc71' },
+                            { label: 'Trabalho Efetivo (Execução/Pausa)', data: dataWork, backgroundColor: '#2ecc71' },
                             { label: 'Almoço', data: dataAlmoco, backgroundColor: '#e67e22' },
-                            { label: 'Descanso Legal', data: dataDescanso, backgroundColor: '#3498db' },
-                            { label: 'Interrupções/Pausas', data: dataInterrupcoes, backgroundColor: '#95a5a6' },
+                            { label: 'Descanso 10m', data: dataDescanso, backgroundColor: '#9b59b6' },
                             { label: 'Ociosidade Real', data: dataOcioso, backgroundColor: '#e74c3c' }
                         ] 
                     },
                     options: { 
                         responsive: true, 
                         maintainAspectRatio: false, 
-                        scales: { 
-                            y: { stacked: true, title: { display: true, text: 'Minutos Totais' } }, 
-                            x: { stacked: true } 
-                        } 
+                        scales: { y: { stacked: true, title: { display: true, text: 'Minutos Totais' } }, x: { stacked: true } } 
                     }
                 });
             }
@@ -900,8 +950,8 @@
         function exportExcel() {
             if(currentUser === 'visitante') return;
             const metrics = getFilteredMetrics();
-            let linhas = [["RELATÓRIO DE PERFORMANCE"], [], ["Funcionário", "Tarefa / Referência", "Tempo Trabalho (Min)", "Tempo Pausa (Min)", "Data Conclusão", "Status"]];
-            metrics.concluidasNoPeriodo.forEach(t => { linhas.push([t.userWhoFinishedName, t.title, t.workMinutes || 0, t.pauseMinutes || 0, t.dateFinished, t.onTime ? "No Prazo" : "Atrasado"]); });
+            let linhas = [["RELATÓRIO DE PERFORMANCE"], [], ["Funcionário", "Tarefa / Referência", "Tempo Trabalho (Min)", "Data Conclusão", "Status"]];
+            metrics.concluidasNoPeriodo.forEach(t => { linhas.push([t.userWhoFinishedName, t.title, t.workMinutes || 0, t.dateFinished, t.onTime ? "No Prazo" : "Atrasado"]); });
             const wb = XLSX.utils.book_new(); const ws = XLSX.utils.aoa_to_sheet(linhas);
             XLSX.utils.book_append_sheet(wb, ws, "Produtividade"); XLSX.writeFile(wb, "Relatorio_Produtividade_Setor.xlsx");
         }
@@ -911,8 +961,8 @@
             const { jsPDF } = window.jspdf; const doc = new jsPDF();
             const metrics = getFilteredMetrics();
             doc.setFont("Helvetica", "bold"); doc.setFontSize(14); doc.text("RELATÓRIO OPERACIONAL - MONITORAMENTO DE TEMPOS", 14, 20);
-            let corpo = metrics.concluidasNoPeriodo.map(t => [t.userWhoFinishedName, t.title, (t.workMinutes || 0)+" min", (t.pauseMinutes || 0)+" min", t.onTime?"No Prazo":"Atrasado"]);
-            doc.autoTable({ startY: 30, head: [['Funcionário', 'Tarefa/Modelo', 'Tempo Líquido', 'Interrupções', 'Status']], body: corpo });
+            let corpo = metrics.concluidasNoPeriodo.map(t => [t.userWhoFinishedName, t.title, (t.workMinutes || 0)+" min", t.onTime?"No Prazo":"Atrasado"]);
+            doc.autoTable({ startY: 30, head: [['Funcionário', 'Tarefa/Modelo', 'Tempo Líquido', 'Status']], body: corpo });
             doc.save("Relatorio_Operacional_Tempos.pdf");
         }
 
@@ -924,13 +974,13 @@
                     jornada: { in: document.getElementById(`cfg_in${i}`).value, out: document.getElementById(`cfg_out${i}`).value }
                 };
             }
-            database.ref('configuracoes/equipe').set(configEquipe).then(() => { alert("Configurações atualizadas no banco de dados!"); });
+            database.ref('configuracoes/equipe').set(configEquipe).then(() => { alert("Configurações atualizadas!"); });
         }
 
         function salvarSenhaAdmin() {
             const novaSenha = document.getElementById('cfg_adminPassword').value;
             if(!novaSenha) return;
-            database.ref('configuracoes/seguranca/adminPassword').set(novaSenha).then(() => { alert("Senha do Administrador modificada!"); document.getElementById('cfg_adminPassword').value = ''; });
+            database.ref('configuracoes/seguranca/adminPassword').set(novaSenha).then(() => { alert("Senha modificada!"); document.getElementById('cfg_adminPassword').value = ''; });
         }
 
         function criarBackupFirebase() {
@@ -959,7 +1009,7 @@
                 desc: document.getElementById('taskDesc').value, responsibles: roteamentoUsuarios[acao] || [], timestampCreated: new Date().getTime(), timeLogs: []
             });
             document.getElementById('taskForm').reset();
-            alert("Tarefa registrada e vinculada ao fluxo de trabalho.");
+            alert("Tarefa registrada.");
         });
     </script>
 </body>
