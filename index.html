@@ -41,14 +41,12 @@
         .logout-btn { background: #e74c3c; width: auto; padding: 10px 20px; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 0.9rem; }
         .logout-btn:hover { background: #c0392b; }
 
-        /* Estilos do Popup de Login (Modal) */
         .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; justify-content: center; align-items: center; padding: 15px; }
         .modal-content { background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); width: 100%; max-width: 450px; text-align: center; position: relative; }
         .modal-content h2 { margin-bottom: 20px; color: #2c3e50; font-size: 1.3rem; }
         .close-modal { position: absolute; top: 12px; right: 15px; font-size: 1.4rem; background: none; border: none; color: #aaa; cursor: pointer; font-weight: bold; }
         .close-modal:hover { color: #666; }
 
-        /* Containers Principais Ampliados */
         .container { max-width: 1600px; margin: 0 auto; display: grid; grid-template-columns: 1fr 2.5fr; gap: 20px; width: 100%; }
         .full-width { grid-template-columns: 1fr !important; }
 
@@ -64,7 +62,6 @@
 
         .alert-panel { display: none; max-width: 1600px; margin: 0 auto 20px auto; background: #fff5f5; border: 2px dashed #e74c3c; padding: 15px; border-radius: 8px; color: #c0392b; }
 
-        /* Cards e Listas */
         .task-list { display: grid; grid-template-columns: 1fr; gap: 15px; }
         .task-card { background: #fdfdfd; border-left: 6px solid #95a5a6; padding: 18px; border-radius: 4px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
         .prio-1 { border-left-color: #e74c3c; background-color: #fffafb; } 
@@ -77,16 +74,18 @@
 
         .task-info-line { margin-bottom: 8px; font-size: 1rem; }
         .task-desc-box { background: #f8f9fa; border-left: 3px solid #3498db; padding: 10px; margin-top: 10px; font-size: 0.95rem; color: #555; border-radius: 0 4px 4px 0; }
+        .task-pause-box { background: #fff5f5; border-left: 3px solid #e74c3c; padding: 8px; margin-top: 5px; font-size: 0.85rem; color: #c0392b; border-radius: 4px; }
 
         .task-meta { display: flex; flex-wrap: wrap; gap: 15px; font-size: 0.9rem; color: #7f8c8d; background: #f1f3f5; padding: 8px 12px; border-radius: 4px; margin-top: 12px; justify-content: space-between; align-items: center; }
         .deadline-alert { color: #e74c3c; font-weight: bold; }
-        .task-actions { margin-top: 12px; display: flex; gap: 10px; justify-content: flex-end; }
+        .task-actions { margin-top: 12px; display: flex; gap: 10px; justify-content: flex-end; flex-wrap: wrap; }
         .btn-action { width: auto; padding: 8px 16px; font-size: 0.85rem; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; color: white; }
+        .btn-start { background-color: #3498db; }
+        .btn-pause { background-color: #e67e22; }
         .btn-done { background-color: #2ecc71; }
         .btn-delete { background-color: #95a5a6; }
 
-        /* Relatórios */
-        .report-layout { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; }
+        .report-layout { display: grid; grid-template-columns: 1.2fr 1fr; gap: 20px; margin-top: 15px; }
         .report-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin-bottom: 20px; }
         .metric-card { background: #f8f9fa; border: 1px solid #e2e8f0; padding: 15px; border-radius: 6px; text-align: center; }
         .metric-card h4 { font-size: 0.9rem; color: #64748b; margin-bottom: 5px; }
@@ -102,30 +101,17 @@
         .btn-pdf { background-color: #e74c3c; }
         .btn-excel { background-color: #27ae60; }
 
-        .chart-container { background: #f8f9fa; padding: 15px; border-radius: 8px; border: 1px solid #e2e8f0; display: flex; align-items: center; justify-content: center; height: 320px; }
+        .chart-container { background: #f8f9fa; padding: 15px; border-radius: 8px; border: 1px solid #e2e8f0; display: flex; align-items: center; justify-content: center; height: 340px; }
 
-        /* Configurações */
+        .grid-jornada { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; background: #f8f9fa; padding: 10px; border-radius: 6px; margin-bottom: 10px; border: 1px solid #ddd; }
+
         .btn-manage { background-color: #9b59b6; color: white; border: none; padding: 10px 15px; border-radius: 4px; font-weight: bold; cursor: pointer; margin-right: 5px; transition: opacity 0.2s; }
         .btn-manage:hover { opacity: 0.9; }
         .btn-danger-zone { background-color: #e74c3c; color: white; border: none; padding: 10px 15px; border-radius: 4px; font-weight: bold; cursor: pointer; }
 
-        /* --- MEDIA QUERIES PARA ADAPTAÇÃO COMPLETA (CELULAR/TABLET) --- */
         @media (max-width: 992px) {
-            .container { grid-template-columns: 1fr; }
-            .report-layout { grid-template-columns: 1fr; }
+            .container, .report-layout { grid-template-columns: 1fr; }
             header { flex-direction: column; text-align: center; }
-            h1 { font-size: 1.2rem; }
-        }
-
-        @media (max-width: 576px) {
-            body { padding: 10px; }
-            header { padding: 12px; }
-            .box { padding: 15px; }
-            .report-grid { grid-template-columns: 1fr; }
-            .report-actions { flex-direction: column; }
-            .task-meta { flex-direction: column; align-items: flex-start; gap: 8px; }
-            .task-actions { width: 100%; }
-            .btn-action { flex: 1; text-align: center; }
         }
     </style>
 </head>
@@ -244,37 +230,46 @@
                 </select>
             </div>
 
-            <div id="sectorRating" class="rating-box">CALCULANDO REGULARIDADE...</div>
+            <hr style="margin: 20px 0; border: 0; border-top: 1px solid #ddd;">
 
+            <h3>1. Relatório de Volume de Tarefas</h3>
+            <div id="sectorRating" class="rating-box" style="margin-top: 10px;">CALCULANDO REGULARIDADE...</div>
             <div class="report-layout">
                 <div>
                     <div class="report-grid">
-                        <div class="metric-card">
-                            <h4>No Prazo</h4>
-                            <p id="mNoPrazo" style="color: #2ecc71;">0</p>
-                        </div>
-                        <div class="metric-card">
-                            <h4>Atrasadas</h4>
-                            <p id="mForaPrazo" style="color: #e74c3c;">0</p>
-                        </div>
-                        <div class="metric-card">
-                            <h4>Em Fila (Pendente)</h4>
-                            <p id="mPendentes" style="color: #f39c12;">0</p>
-                        </div>
-                        <div class="metric-card">
-                            <h4>Volumetria Total</h4>
-                            <p id="mTotal">0</p>
-                        </div>
-                    </div>
-                    <div class="report-actions">
-                        <button class="btn-report btn-pdf" onclick="exportPDF()">Exportar Relatório PDF</button>
-                        <button class="btn-report btn-excel" onclick="exportExcel()">Exportar Planilha Excel</button>
+                        <div class="metric-card"><h4>No Prazo</h4><p id="mNoPrazo" style="color: #2ecc71;">0</p></div>
+                        <div class="metric-card"><h4>Atrasadas</h4><p id="mForaPrazo" style="color: #e74c3c;">0</p></div>
+                        <div class="metric-card"><h4>Em Fila (Pendente)</h4><p id="mPendentes" style="color: #f39c12;">0</p></div>
+                        <div class="metric-card"><h4>Volumetria Total</h4><p id="mTotal">0</p></div>
                     </div>
                 </div>
+                <div class="chart-container"><canvas id="efficiencyChart"></canvas></div>
+            </div>
 
-                <div class="chart-container">
-                    <canvas id="efficiencyChart"></canvas>
+            <hr style="margin: 30px 0; border: 0; border-top: 1px solid #ddd;">
+
+            <h3>2. Relatório de Gestão de Tempo da Equipe (Trabalho vs. Ociosidade)</h3>
+            <div class="report-layout">
+                <div style="overflow-x: auto;">
+                    <table style="width: 100%; border-collapse: collapse; background: white; font-size: 0.9rem;" id="timeTable">
+                        <thead>
+                            <tr style="background: #2c3e50; color: white;">
+                                <th style="padding: 10px; text-align: left;">Funcionário</th>
+                                <th style="padding: 10px; text-align: center;">Tempo em Trabalho</th>
+                                <th style="padding: 10px; text-align: center;">Tempo Ocioso</th>
+                                <th style="padding: 10px; text-align: center;">Interrupções</th>
+                            </tr>
+                        </thead>
+                        <tbody id="timeTableBody">
+                            </tbody>
+                    </table>
                 </div>
+                <div class="chart-container"><canvas id="timeChart"></canvas></div>
+            </div>
+
+            <div class="report-actions">
+                <button class="btn-report btn-pdf" onclick="exportPDF()">Exportar Relatório PDF</button>
+                <button class="btn-report btn-excel" onclick="exportExcel()">Exportar Planilha Excel</button>
             </div>
         </div>
 
@@ -282,16 +277,51 @@
             <h2>Configurações de Controle Operacional</h2>
             
             <div class="box" style="background: #fdfdfd; border: 1px solid #ddd; margin-top: 15px;">
-                <h3>Nomes Atuais da Equipe</h3>
-                <p style="font-size: 0.85rem; color: #777; margin-bottom: 15px;">Altere o nome das pessoas abaixo conforme a equipe mudar. O sistema se adaptará automaticamente.</p>
+                <h3>Configurações de Jornada & Nomes da Equipe</h3>
+                <p style="font-size: 0.85rem; color: #777; margin-bottom: 15px;">Ajuste o nome exibido e o horário de expediente de cada colaborador. O cálculo de tempo ocioso usará esses valores.</p>
                 
-                <div class="form-group"><label>Usuário 1 - Modelista:</label><input type="text" id="cfg_user1"></div>
-                <div class="form-group"><label>Usuário 2 - Auxiliar (Cadastro):</label><input type="text" id="cfg_user2"></div>
-                <div class="form-group"><label>Usuário 3 - Digitalizador:</label><input type="text" id="cfg_user3"></div>
-                <div class="form-group"><label>Usuário 4 - Desenhista:</label><input type="text" id="cfg_user4"></div>
-                <div class="form-group"><label>Usuário 5 - Auxiliar (Personalizado):</label><input type="text" id="cfg_user5"></div>
+                <div class="form-group">
+                    <label>Usuário 1 - Modelista:</label>
+                    <div class="grid-jornada">
+                        <input type="text" id="cfg_user1" placeholder="Nome">
+                        <label>Entrada: <input type="time" id="cfg_in1"></label>
+                        <label>Saída: <input type="time" id="cfg_out1"></label>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Usuário 2 - Auxiliar 1 (Cadastro):</label>
+                    <div class="grid-jornada">
+                        <input type="text" id="cfg_user2" placeholder="Nome">
+                        <label>Entrada: <input type="time" id="cfg_in2"></label>
+                        <label>Saída: <input type="time" id="cfg_out2"></label>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Usuário 3 - Digitalizador:</label>
+                    <div class="grid-jornada">
+                        <input type="text" id="cfg_user3" placeholder="Nome">
+                        <label>Entrada: <input type="time" id="cfg_in3"></label>
+                        <label>Saída: <input type="time" id="cfg_out3"></label>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Usuário 4 - Desenhista:</label>
+                    <div class="grid-jornada">
+                        <input type="text" id="cfg_user4" placeholder="Nome">
+                        <label>Entrada: <input type="time" id="cfg_in4"></label>
+                        <label>Saída: <input type="time" id="cfg_out4"></label>
+                    </div>
+                </div>
+                <div class="form-group">
+                    <label>Usuário 5 - Auxiliar 2 (Personalizado):</label>
+                    <div class="grid-jornada">
+                        <input type="text" id="cfg_user5" placeholder="Nome">
+                        <label>Entrada: <input type="time" id="cfg_in5"></label>
+                        <label>Saída: <input type="time" id="cfg_out5"></label>
+                    </div>
+                </div>
                 
-                <button class="btn-manage" style="width:100%; padding:12px; margin-top:5px;" onclick="salvarConfiguracaoEquipe()">Salvar Alterações de Nomes</button>
+                <button class="btn-manage" style="width:100%; padding:12px; margin-top:5px;" onclick="salvarConfiguracaoEquipe()">Salvar Alterações de Nomes e Jornadas</button>
             </div>
 
             <div class="box" style="background: #fdfdfd; border: 1px solid #ddd;">
@@ -305,9 +335,7 @@
 
             <div class="box" style="background: #fdfdfd; border: 1px solid #e74c3c;">
                 <h3 style="color: #c0392b;">Gerenciamento de Arquivos de Backup (Nuvem)</h3>
-                <p style="font-size: 0.85rem; color: #555; margin-bottom: 15px;">Crie pontos de restauração das tarefas ativas e do histórico diretamente no Firebase.</p>
-                
-                <div style="display: flex; gap: 10px; flex-wrap: wrap;">
+                <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px;">
                     <button class="btn-manage" style="background-color: #27ae60;" onclick="criarBackupFirebase()">Criar/Substituir Backup Atual</button>
                     <button class="btn-manage" style="background-color: #f39c12;" onclick="restaurarBackupFirebase()">Restaurar Último Backup</button>
                     <button class="btn-danger-zone" onclick="apagarBackupFirebase()">Apagar Backup do Banco</button>
@@ -318,7 +346,6 @@
     </div>
 
     <script>
-        // --- COLOQUE AS CREDENCIAIS DA SUA CONTA DO FIREBASE AQUI ---
         const firebaseConfig = {
             apiKey: "COLE_AQUI_SUA_API_KEY", 
             authDomain: "engenhariagrancouro.firebaseapp.com",
@@ -332,7 +359,6 @@
         firebase.initializeApp(firebaseConfig);
         const database = firebase.database();
 
-        // Roteamento de Tarefas Atualizado
         const roteamentoUsuarios = {
             "Fazer modelo novo": ["usuario_1"],
             "Alterar modelo existente": ["usuario_1"],
@@ -357,26 +383,34 @@
             "visitante": "Visitante (Apenas Leitura)"
         };
 
+        let jornadas = {
+            "usuario_1": { in: "07:12", out: "17:00" },
+            "usuario_2": { in: "07:12", out: "17:00" },
+            "usuario_3": { in: "07:12", out: "17:00" },
+            "usuario_4": { in: "07:12", out: "17:00" },
+            "usuario_5": { in: "14:00", out: "18:00" } // Caso padrão do Isaías adaptável
+        };
+
         let adminPasswordDB = "admin123"; 
         let tasks = [];
         let historicTasks = [];
         let currentUser = 'visitante';
         let myChart = null;
+        let timeChart = null;
 
         database.ref('configuracoes/equipe').on('value', (snapshot) => {
             const data = snapshot.val();
             if (data) {
-                nomesExibicao.usuario_1 = data.usuario_1 || nomesExibicao.usuario_1;
-                nomesExibicao.usuario_2 = data.usuario_2 || nomesExibicao.usuario_2;
-                nomesExibicao.usuario_3 = data.usuario_3 || nomesExibicao.usuario_3;
-                nomesExibicao.usuario_4 = data.usuario_4 || nomesExibicao.usuario_4;
-                nomesExibicao.usuario_5 = data.usuario_5 || nomesExibicao.usuario_5;
+                Object.keys(jornadas).forEach(k => {
+                    if(data[k]) nomesExibicao[k] = data[k].nome || nomesExibicao[k];
+                    if(data[k] && data[k].jornada) jornadas[k] = data[k].jornada;
+                });
                 
-                document.getElementById('cfg_user1').value = nomesExibicao.usuario_1;
-                document.getElementById('cfg_user2').value = nomesExibicao.usuario_2;
-                document.getElementById('cfg_user3').value = nomesExibicao.usuario_3;
-                document.getElementById('cfg_user4').value = nomesExibicao.usuario_4;
-                document.getElementById('cfg_user5').value = nomesExibicao.usuario_5;
+                for(let i=1; i<=5; i++) {
+                    document.getElementById(`cfg_user${i}`).value = nomesExibicao[`usuario_${i}`];
+                    document.getElementById(`cfg_in${i}`).value = jornadas[`usuario_${i}`].in;
+                    document.getElementById(`cfg_out${i}`).value = jornadas[`usuario_${i}`].out;
+                }
                 
                 atualizarNomesNoSeletorLogin();
                 if(currentUser) renderTasks();
@@ -386,16 +420,6 @@
         database.ref('configuracoes/seguranca/adminPassword').on('value', (snapshot) => {
             const val = snapshot.val();
             if(val) adminPasswordDB = val;
-        });
-
-        database.ref('backup_sistema/info').on('value', (snapshot) => {
-            const info = snapshot.val();
-            const statusDiv = document.getElementById('backupStatus');
-            if (info) {
-                statusDiv.innerHTML = `Backup disponível salvo em: <span style="color:#27ae60;">${info.data}</span>`;
-            } else {
-                statusDiv.innerHTML = "Nenhum arquivo de backup encontrado no Firebase.";
-            }
         });
 
         database.ref('tasks/ativas').on('value', (snapshot) => {
@@ -414,27 +438,17 @@
 
         function atualizarNomesNoSeletorLogin() {
             const select = document.getElementById('loginUser');
-            select.options[1].text = nomesExibicao.usuario_1;
-            select.options[2].text = nomesExibicao.usuario_2;
-            select.options[3].text = nomesExibicao.usuario_3;
-            select.options[4].text = nomesExibicao.usuario_4;
-            select.options[5].text = nomesExibicao.usuario_5;
+            for(let i=1; i<=5; i++) { select.options[i].text = nomesExibicao[`usuario_${i}`]; }
         }
 
         function toggleLoginPasswordView() {
             const user = document.getElementById('loginUser').value;
-            const passGroup = document.getElementById('loginPasswordGroup');
-            passGroup.style.display = (user === 'admin') ? 'block' : 'none';
+            document.getElementById('loginPasswordGroup').style.display = (user === 'admin') ? 'block' : 'none';
         }
         toggleLoginPasswordView();
 
-        // Escutadores para ativar o login ao pressionar a tecla Enter
-        document.getElementById('loginUser').addEventListener('keydown', function(e) {
-            if (e.key === 'Enter') { login(); }
-        });
-        document.getElementById('loginPassword').addEventListener('keydown', function(e) {
-            if (e.key === 'Enter') { login(); }
-        });
+        document.getElementById('loginUser').addEventListener('keydown', function(e) { if (e.key === 'Enter') { login(); } });
+        document.getElementById('loginPassword').addEventListener('keydown', function(e) { if (e.key === 'Enter') { login(); } });
 
         window.addEventListener('DOMContentLoaded', () => {
             const savedUser = sessionStorage.getItem('modelagem_current_user');
@@ -442,34 +456,20 @@
             if (savedUser && savedUser !== 'visitante') {
                 currentUser = savedUser;
                 configurarInterfacePorUsuario();
-                if(currentUser === 'admin' && savedTab !== 'painel') {
-                    switchTab(savedTab);
-                }
+                if(currentUser === 'admin' && savedTab !== 'painel') { switchTab(savedTab); }
             } else {
                 currentUser = 'visitante';
                 configurarInterfacePorUsuario();
             }
         });
 
-        function abrirModalLogin() {
-            document.getElementById('loginModal').style.display = 'flex';
-            // Coloca o foco automático no seletor de usuário ao abrir
-            document.getElementById('loginUser').focus();
-        }
-
-        function fecharModalLogin() {
-            document.getElementById('loginModal').style.display = 'none';
-            document.getElementById('loginPassword').value = '';
-        }
+        function abrirModalLogin() { document.getElementById('loginModal').style.display = 'flex'; document.getElementById('loginUser').focus(); }
+        function fecharModalLogin() { document.getElementById('loginModal').style.display = 'none'; document.getElementById('loginPassword').value = ''; }
 
         function login() {
             const userSelected = document.getElementById('loginUser').value;
             if (userSelected === 'admin') {
-                const passInput = document.getElementById('loginPassword').value;
-                if (passInput !== adminPasswordDB) {
-                    alert("Senha incorreta do Administrador!");
-                    return;
-                }
+                if (document.getElementById('loginPassword').value !== adminPasswordDB) { alert("Senha incorreta do Administrador!"); return; }
             }
             currentUser = userSelected;
             sessionStorage.setItem('modelagem_current_user', currentUser);
@@ -479,120 +479,66 @@
 
         function configurarInterfacePorUsuario() {
             document.getElementById('mainDashboard').style.display = 'block';
-            
             const container = document.getElementById('tabPainel');
             const adminBox = document.getElementById('adminFormBox');
             const tabs = document.getElementById('adminTabs');
-            const btnLoginTrigger = document.getElementById('btnLoginTrigger');
-            const btnLogout = document.getElementById('btnLogout');
-
+            
             if (currentUser === 'admin') {
                 document.getElementById('userDisplay').innerText = nomesExibicao[currentUser];
-                document.getElementById('userDisplay').style.color = '#3498db';
-                if(adminBox) adminBox.style.display = 'block';
-                tabs.style.display = 'flex';
-                if(container) container.classList.remove('full-width');
+                adminBox.style.display = 'block'; tabs.style.display = 'flex'; container.classList.remove('full-width');
                 document.getElementById('listTitle').innerText = "Visão Geral do Setor";
                 document.getElementById('criticalAlertPanel').style.display = 'none';
-                btnLoginTrigger.style.display = 'none';
-                btnLogout.style.display = 'block';
+                document.getElementById('btnLoginTrigger').style.display = 'none'; document.getElementById('btnLogout').style.display = 'block';
                 switchTab(sessionStorage.getItem('modelagem_current_tab') || 'painel');
             } else if (currentUser === 'visitante') {
                 document.getElementById('userDisplay').innerText = "Visitante (Apenas Leitura)";
-                document.getElementById('userDisplay').style.color = '#27ae60';
-                if(adminBox) adminBox.style.display = 'none';
-                tabs.style.display = 'none';
-                if(container) container.classList.add('full-width');
+                adminBox.style.display = 'none'; tabs.style.display = 'none'; container.classList.add('full-width');
                 document.getElementById('listTitle').innerText = "Fila Geral de Monitoramento (Apenas Leitura)";
-                document.getElementById('tabRelatorios').style.display = 'none';
-                document.getElementById('tabGerenciamento').style.display = 'none';
-                document.getElementById('tabPainel').style.display = 'grid';
                 document.getElementById('criticalAlertPanel').style.display = 'none';
-                btnLoginTrigger.style.display = 'block';
-                btnLogout.style.display = 'none';
+                document.getElementById('btnLoginTrigger').style.display = 'block'; document.getElementById('btnLogout').style.display = 'none';
             } else {
                 document.getElementById('userDisplay').innerText = nomesExibicao[currentUser];
-                document.getElementById('userDisplay').style.color = '#e67e22';
-                if(adminBox) adminBox.style.display = 'none';
-                tabs.style.display = 'none';
-                if(container) container.classList.add('full-width');
+                adminBox.style.display = 'none'; tabs.style.display = 'none'; container.classList.add('full-width');
                 document.getElementById('listTitle').innerText = "Suas Demandas Ativas";
-                document.getElementById('tabRelatorios').style.display = 'none';
-                document.getElementById('tabGerenciamento').style.display = 'none';
-                document.getElementById('tabPainel').style.display = 'grid';
-                btnLoginTrigger.style.display = 'none';
-                btnLogout.style.display = 'block';
+                document.getElementById('btnLoginTrigger').style.display = 'none'; document.getElementById('btnLogout').style.display = 'block';
                 verificarAlertasCriticos();
             }
             renderTasks();
         }
 
-        function logout() {
-            sessionStorage.setItem('modelagem_current_user', 'visitante');
-            sessionStorage.removeItem('modelagem_current_tab');
-            currentUser = 'visitante';
-            configurarInterfacePorUsuario();
-        }
+        function logout() { sessionStorage.setItem('modelagem_current_user', 'visitante'); currentUser = 'visitante'; configurarInterfacePorUsuario(); }
 
         function switchTab(tab) {
             if(currentUser !== 'admin') return;
             sessionStorage.setItem('modelagem_current_tab', tab);
-            
             document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-            document.getElementById('tabPainel').style.display = 'none';
-            document.getElementById('tabRelatorios').style.display = 'none';
-            document.getElementById('tabGerenciamento').style.display = 'none';
+            document.getElementById('tabPainel').style.display = 'none'; document.getElementById('tabRelatorios').style.display = 'none'; document.getElementById('tabGerenciamento').style.display = 'none';
 
-            if (tab === 'painel') {
-                document.getElementById('btnTabPainel').classList.add('active');
-                document.getElementById('tabPainel').style.display = 'grid';
-            } else if (tab === 'relatorios') {
-                document.getElementById('btnTabRelatorios').classList.add('active');
-                document.getElementById('tabRelatorios').style.display = 'block';
-                updateReportDashboard();
-            } else if (tab === 'gerenciamento') {
-                document.getElementById('btnTabGerenciamento').classList.add('active');
-                document.getElementById('tabGerenciamento').style.display = 'block';
-            }
+            if (tab === 'painel') { document.getElementById('btnTabPainel').classList.add('active'); document.getElementById('tabPainel').style.display = 'grid'; }
+            else if (tab === 'relatorios') { document.getElementById('btnTabRelatorios').classList.add('active'); document.getElementById('tabRelatorios').style.display = 'block'; updateReportDashboard(); }
+            else if (tab === 'gerenciamento') { document.getElementById('btnTabGerenciamento').classList.add('active'); document.getElementById('tabGerenciamento').style.display = 'block'; }
         }
 
         function verificarAlertasCriticos() {
             if(currentUser === 'visitante' || currentUser === 'admin') return;
             const hoje = new Date().toISOString().split('T')[0];
-            
-            // Lógica unificada para alertas de auxiliares
-            let checkUser = [currentUser];
-            if(currentUser === 'usuario_2' || currentUser === 'usuario_5') {
-                checkUser = ['usuario_2', 'usuario_5'];
-            }
-
-            const temUrgencia = tasks.some(t => 
-                t.responsibles && t.responsibles.some(r => checkUser.includes(r)) && t.priority === "1" && t.deadline <= hoje
-            );
+            let checkUser = (currentUser === 'usuario_2' || currentUser === 'usuario_5') ? ['usuario_2', 'usuario_5'] : [currentUser];
+            const temUrgencia = tasks.some(t => t.responsibles && t.responsibles.some(r => checkUser.includes(r)) && t.priority === "1" && t.deadline <= hoje);
             document.getElementById('criticalAlertPanel').style.display = temUrgencia ? 'block' : 'none';
         }
 
         function renderTasks() {
             const taskList = document.getElementById('taskList');
             taskList.innerHTML = '';
-
             let filteredTasks = [];
 
-            // NOVA LÓGICA DE FILTRAGEM: Agrupar tarefas do Usuário 2 e Usuário 5 na mesma tela
-            if (currentUser === 'admin' || currentUser === 'visitante') {
-                filteredTasks = [...tasks];
-            } else if (currentUser === 'usuario_2' || currentUser === 'usuario_5') {
+            if (currentUser === 'admin' || currentUser === 'visitante') { filteredTasks = [...tasks]; }
+            else if (currentUser === 'usuario_2' || currentUser === 'usuario_5') {
                 filteredTasks = tasks.filter(t => t.responsibles && (t.responsibles.includes('usuario_2') || t.responsibles.includes('usuario_5')));
-            } else {
-                filteredTasks = tasks.filter(t => t.responsibles && t.responsibles.includes(currentUser));
-            }
+            } else { filteredTasks = tasks.filter(t => t.responsibles && t.responsibles.includes(currentUser)); }
 
             filteredTasks.sort((a, b) => a.priority - b.priority || new Date(a.deadline) - new Date(b.deadline));
-
-            if (filteredTasks.length === 0) {
-                taskList.innerHTML = '<p style="color: #999; text-align: center; padding: 35px; font-size: 1.1rem;">Nenhuma atividade pendente.</p>';
-                return;
-            }
+            if (filteredTasks.length === 0) { taskList.innerHTML = '<p style="color: #999; text-align: center; padding: 35px;">Nenhuma atividade pendente.</p>'; return; }
 
             const hoje = new Date().toISOString().split('T')[0];
 
@@ -600,23 +546,26 @@
                 const card = document.createElement('div');
                 card.className = `task-card prio-${task.priority}`;
                 const dataBr = task.deadline.split('-').reverse().join('/');
-                let prazoStatus = `Prazo: ${dataBr}`;
-                
-                if (task.deadline < hoje) prazoStatus = `<span class="deadline-alert">⚠️ ATRASADA (${dataBr})</span>`;
-                else if (task.deadline === hoje) prazoStatus = `<span class="deadline-alert">🚨 ENTREGA HOJE</span>`;
+                let prazoStatus = task.deadline < hoje ? `<span class="deadline-alert">⚠️ ATRASADA (${dataBr})</span>` : (task.deadline === hoje ? `<span class="deadline-alert">🚨 ENTREGA HOJE</span>` : `Prazo: ${dataBr}`);
 
-                let nomesResponsaveis = task.responsibles ? task.responsibles.map(r => nomesExibicao[r] || r).join(' / ') : "Não definido";
+                let statusCronometro = "Aguardando Início";
+                if (task.timeLogs && task.timeLogs.length > 0) {
+                    const ultimoLog = task.timeLogs[task.timeLogs.length - 1];
+                    statusCronometro = ultimoLog.type === 'start' ? `<span style="color:#2ecc71; font-weight:bold;">▶️ Em execução por ${ultimoLog.byName}</span>` : `<span style="color:#e67e22; font-weight:bold;">⏸️ Pausado por ${ultimoLog.byName}</span>`;
+                }
 
-                let instrucoesHTML = '';
-                if (task.desc && task.desc.trim() !== "") {
-                    instrucoesHTML = `<div class="task-desc-box"><strong>Instruções Adicionais:</strong> ${task.desc}</div>`;
+                let interrupcoesHTML = '';
+                if(task.pauses) {
+                    interrupcoesHTML = Object.values(task.pauses).map(p => `<div class="task-pause-box"><strong>Motivo da Pausa:</strong> ${p.reason} (${p.duration || 'Em andamento'})</div>`).join('');
                 }
 
                 let botoesAcaoHTML = '';
                 if(currentUser !== 'visitante') {
+                    const isRunning = task.timeLogs && task.timeLogs.length > 0 && task.timeLogs[task.timeLogs.length - 1].type === 'start';
                     botoesAcaoHTML = `
                         <div class="task-actions">
                             ${currentUser === 'admin' ? `<button class="btn-action btn-delete" onclick="deleteTask('${task.id}')">Excluir</button>` : ''}
+                            ${!isRunning ? `<button class="btn-action btn-start" onclick="alterarCronometro('${task.id}', 'start')">Iniciar Task ▶️</button>` : `<button class="btn-action btn-pause" onclick="alterarCronometro('${task.id}', 'pause')">Pausar com Motivo ⏸️</button>`}
                             <button class="btn-action btn-done" onclick="finishTask('${task.id}')">Concluir ✓</button>
                         </div>
                     `;
@@ -624,11 +573,12 @@
 
                 card.innerHTML = `
                     <span class="prio-badge">Prioridade ${task.priority}</span>
-                    <h3>${task.title} <span style="font-size:0.85rem; color:#3498db; font-weight:bold; background:#e8f4fd; padding:3px 8px; border-radius:4px; margin-left:5px;">${task.category || 'Não Informado'}</span></h3>
-                    <div class="task-info-line" style="margin-top: 8px;"><strong>Ação:</strong> ${task.action}</div>
-                    ${instrucoesHTML}
+                    <h3>${task.title} <span style="font-size:0.85rem; color:#3498db; font-weight:bold; background:#e8f4fd; padding:3px 8px; border-radius:4px;">${task.category || 'KIT'}</span></h3>
+                    <div class="task-info-line" style="margin-top: 8px;"><strong>Ação:</strong> ${task.action} | <strong>Status:</strong> ${statusCronometro}</div>
+                    ${task.desc ? `<div class="task-desc-box"><strong>Instruções:</strong> ${task.desc}</div>` : ''}
+                    ${interrupcoesHTML}
                     <div class="task-meta">
-                        <span>👥 Responsáveis: <strong>${nomesResponsaveis}</strong></span>
+                        <span>👥 Responsáveis: <strong>${task.responsibles ? task.responsibles.map(r => nomesExibicao[r]).join(' / ') : ''}</strong></span>
                         <span>${prazoStatus}</span>
                     </div>
                     ${botoesAcaoHTML}
@@ -641,249 +591,237 @@
             e.preventDefault();
             const acao = document.getElementById('taskAction').value;
             const taskId = '_' + Math.random().toString(36).substr(2, 9);
-            
             const newTask = {
-                id: taskId,
-                title: document.getElementById('taskTitle').value,
-                category: document.getElementById('taskCategory').value,
-                action: acao,
-                priority: document.getElementById('taskPriority').value,
-                deadline: document.getElementById('taskDeadline').value,
-                desc: document.getElementById('taskDesc').value,
-                responsibles: roteamentoUsuarios[acao] || [],
-                timestampCreated: new Date().getTime()
+                id: taskId, title: document.getElementById('taskTitle').value, category: document.getElementById('taskCategory').value,
+                action: acao, priority: document.getElementById('taskPriority').value, deadline: document.getElementById('taskDeadline').value,
+                desc: document.getElementById('taskDesc').value, responsibles: roteamentoUsuarios[acao] || [], timestampCreated: new Date().getTime(), timeLogs: []
             };
-
             database.ref('tasks/ativas/' + taskId).set(newTask);
             document.getElementById('taskForm').reset();
-            alert("Tarefa registrada no banco de dados.");
+            alert("Tarefa registrada.");
         });
 
-        function calcularTempoEHoraExtra(inicioMs, fimMs) {
-            const dataInicio = new Date(inicioMs);
-            const dataFim = new Date(fimMs);
-            const diferencaTotalMs = fimMs - inicioMs;
-            
-            const totalMinutosGerais = Math.floor(diferencaTotalMs / 1000 / 60);
-            const dias = Math.floor(totalMinutosGerais / (24 * 60));
-            const horas = Math.floor((totalMinutosGerais % (24 * 60)) / 60);
-            const minutos = totalMinutosGerais % 60;
-            
-            let tempoFormatado = `${dias}d ${horas}h ${minutos}m`;
-            let hExtraDetectada = "Não";
-            
-            const tempoFechamentoNum = dataFim.getHours() + (dataFim.getMinutes() / 60);
-            const tempoAberturaNum = dataInicio.getHours() + (dataInicio.getMinutes() / 60);
+        function alterarCronometro(id, acao) {
+            const task = tasks.find(t => t.id === id);
+            if (!task) return;
+            const now = new Date().getTime();
+            if (!task.timeLogs) task.timeLogs = [];
 
-            if (tempoFechamentoNum > 17.0 || tempoFechamentoNum < 7.2 || tempoAberturaNum > 17.0 || tempoAberturaNum < 7.2 || dataFim.getDay() === 0 || dataFim.getDay() === 6) {
-                hExtraDetectada = "Sim";
+            if (acao === 'pause') {
+                const motivo = prompt("Digite o motivo da interrupção/pausa de maneira livre:");
+                if (!motivo || motivo.trim() === "") { alert("É obrigatório informar um motivo para pausar!"); return; }
+                
+                if (!task.pauses) task.pauses = {};
+                const pauseId = '_' + Math.random().toString(36).substr(2, 9);
+                task.pauses[pauseId] = { id: pauseId, reason: motivo, start: now, user: currentUser };
+                task.timeLogs.push({ type: 'pause', time: now, by: currentUser, byName: nomesExibicao[currentUser] });
+            } else {
+                if (task.timeLogs.length > 0 && task.timeLogs[task.timeLogs.length - 1].type === 'pause' && task.pauses) {
+                    const listaPausas = Object.values(task.pauses);
+                    const ultimaPausa = listaPausas.find(p => !p.end && p.user === currentUser);
+                    if (ultimaPausa) {
+                        ultimaPausa.end = now;
+                        ultimaPausa.duration = Math.round((now - ultimaPausa.start) / 1000 / 60) + " min";
+                    }
+                }
+                task.timeLogs.push({ type: 'start', time: now, by: currentUser, byName: nomesExibicao[currentUser] });
             }
-
-            return { tempoFormatado, hExtraDetectada };
+            database.ref('tasks/ativas/' + id).set(task);
         }
 
         window.finishTask = function(id) {
-            if(currentUser === 'visitante') return;
             const compTask = tasks.find(t => t.id === id);
-            if (compTask) {
-                const timestampFim = new Date().getTime();
-                const calculos = calcularTempoEHoraExtra(compTask.timestampCreated, timestampFim);
-                
-                compTask.dateFinished = new Date().toISOString().split('T')[0];
-                compTask.onTime = compTask.dateFinished <= compTask.deadline;
-                compTask.timeSpent = calculos.tempoFormatado;
-                compTask.hasOvertime = calculos.hExtraDetectada;
-                compTask.userWhoFinished = nomesExibicao[currentUser] || currentUser;
+            if (!compTask) return;
+            const now = new Date().getTime();
+            if(!compTask.timeLogs || compTask.timeLogs.length === 0) { alert("Você precisa clicar em 'Iniciar Task' antes de concluí-la para computar o tempo!"); return; }
 
-                database.ref('tasks/historico/' + id).set(compTask).then(() => {
-                    database.ref('tasks/ativas/' + id).remove();
-                    alert("Tarefa finalizada com sucesso!");
-                });
+            // Fecha última pausa se houver
+            if (compTask.pauses) {
+                Object.values(compTask.pauses).forEach(p => { if(!p.end) p.end = now; });
             }
+
+            let tempoTrabalhoMs = 0;
+            let tempoPausaMs = 0;
+            let inicioReal = compTask.timeLogs[0].time;
+
+            // Calcula tempo líquido de trabalho baseado nos blocos start->pause
+            for (let i = 0; i < compTask.timeLogs.length; i++) {
+                if (compTask.timeLogs[i].type === 'start') {
+                    let fimBloco = (i + 1 < compTask.timeLogs.length) ? compTask.timeLogs[i+1].time : now;
+                    tempoTrabalhoMs += (fimBloco - compTask.timeLogs[i].time);
+                }
+            }
+
+            if(compTask.pauses) {
+                Object.values(compTask.pauses).forEach(p => { tempoPausaMs += (p.end - p.start); });
+            }
+
+            tempoTrabalhoMs = Math.max(0, tempoTrabalhoMs - tempoPausaMs);
+
+            compTask.dateFinished = new Date().toISOString().split('T')[0];
+            compTask.onTime = compTask.dateFinished <= compTask.deadline;
+            compTask.workMinutes = Math.round(tempoTrabalhoMs / 1000 / 60);
+            compTask.pauseMinutes = Math.round(tempoPausaMs / 1000 / 60);
+            compTask.userWhoFinished = currentUser;
+            compTask.userWhoFinishedName = nomesExibicao[currentUser];
+
+            database.ref('tasks/historico/' + id).set(compTask).then(() => {
+                database.ref('tasks/ativas/' + id).remove();
+                alert("Tarefa finalizada!");
+            });
         }
 
-        window.deleteTask = function(id) {
-            if(currentUser === 'visitante') return;
-            if(confirm("Apagar permanentemente?")) {
-                database.ref('tasks/ativas/' + id).remove();
-            }
+        window.deleteTask = function(id) { if(confirm("Apagar permanentemente?")) database.ref('tasks/ativas/' + id).remove(); }
+
+        function converterMinutosParaTexto(minutos) {
+            if (minutos < 60) return `${minutos}m`;
+            const h = Math.floor(minutos / 60); const m = minutos % 60;
+            return `${h}h ${m}m`;
         }
 
         function getFilteredMetrics() {
             const periodo = document.getElementById('reportPeriod').value;
-            const hoje = new Date();
-            let limiteDias = 7;
-            
-            if (periodo === 'quinzenal') limiteDias = 15;
-            else if (periodo === 'mensal') limiteDias = 30;
-            else if (periodo === 'anual') limiteDias = 365;
+            const hoje = new Date(); let limiteDias = 7;
+            if (periodo === 'quinzenal') limiteDias = 15; else if (periodo === 'mensal') limiteDias = 30; else if (periodo === 'anual') limiteDias = 365;
 
             const dataCorte = new Date(hoje.setDate(hoje.getDate() - limiteDias)).toISOString().split('T')[0];
             const concluidasNoPeriodo = historicTasks.filter(t => t.dateFinished >= dataCorte);
             
-            const noPrazo = concluidasNoPeriodo.filter(t => t.onTime).length;
-            const foraPrazo = concluidasNoPeriodo.filter(t => !t.onTime).length;
-            const pendentes = tasks.length;
-
-            return { noPrazo, foraPrazo, pendentes, total: noPrazo + foraPrazo + pendentes, concluidasNoPeriodo };
+            return {
+                noPrazo: concluidasNoPeriodo.filter(t => t.onTime).length,
+                foraPrazo: concluidasNoPeriodo.filter(t => !t.onTime).length,
+                pendentes: tasks.length,
+                concluidasNoPeriodo
+            };
         }
 
         function updateReportDashboard() {
             const metrics = getFilteredMetrics();
+            const total = metrics.noPrazo + metrics.foraPrazo + metrics.pendentes;
             
             document.getElementById('mNoPrazo').innerText = metrics.noPrazo;
             document.getElementById('mForaPrazo').innerText = metrics.foraPrazo;
             document.getElementById('mPendentes').innerText = metrics.pendentes;
-            document.getElementById('mTotal').innerText = metrics.total;
+            document.getElementById('mTotal').innerText = total;
 
-            const totalEntregue = metrics.noPrazo + metrics.foraPrazo;
-            let taxa = totalEntregue > 0 ? (metrics.noPrazo / totalEntregue) * 100 : 100;
-
+            let taxa = (metrics.noPrazo + metrics.foraPrazo) > 0 ? (metrics.noPrazo / (metrics.noPrazo + metrics.foraPrazo)) * 100 : 100;
             const ratingBox = document.getElementById('sectorRating');
             if (taxa >= 85) { ratingBox.innerText = `REGULARIDADE: BOA (${taxa.toFixed(1)}% no prazo)`; ratingBox.className = "rating-box rating-boa"; }
             else if (taxa >= 60) { ratingBox.innerText = `REGULARIDADE: MÉDIA (${taxa.toFixed(1)}% no prazo)`; ratingBox.className = "rating-box rating-media"; }
             else { ratingBox.innerText = `REGULARIDADE: RUIM (${taxa.toFixed(1)}% no prazo)`; ratingBox.className = "rating-box rating-ruim"; }
 
             if (myChart) myChart.destroy();
-            const ctx = document.getElementById('efficiencyChart').getContext('2d');
-            myChart = new Chart(ctx, {
+            myChart = new Chart(document.getElementById('efficiencyChart').getContext('2d'), {
                 type: 'doughnut',
-                data: {
-                    labels: ['No Prazo', 'Atrasado', 'Pendente'],
-                    datasets: [{
-                        data: [metrics.noPrazo, metrics.foraPrazo, metrics.pendentes],
-                        backgroundColor: ['#2ecc71', '#e74c3c', '#f39c12']
-                    }]
-                },
+                data: { labels: ['No Prazo', 'Atrasado', 'Pendente'], datasets: [{ data: [metrics.noPrazo, metrics.foraPrazo, metrics.pendentes], backgroundColor: ['#2ecc71', '#e74c3c', '#f39c12'] }] },
                 options: { responsive: true, maintainAspectRatio: false }
+            });
+
+            // GESTÃO DE TEMPO (Mostrar todos os usuários)
+            const tbody = document.getElementById('timeTableBody');
+            tbody.innerHTML = '';
+
+            let labelsTime = []; let dataWork = []; let dataOcioso = [];
+
+            Object.keys(jornadas).forEach(userKey => {
+                const tarefasDoUser = metrics.concluidasNoPeriodo.filter(t => t.userWhoFinished === userKey);
+                let totalTrabalhoMin = tarefasDoUser.reduce((acc, t) => acc + (t.workMinutes || 0), 0);
+                let totalPausaMin = tarefasDoUser.reduce((acc, t) => acc + (t.pauseMinutes || 0), 0);
+
+                // Calcula a jornada total do funcionário em minutos
+                const [hIn, mIn] = jornadas[userKey].in.split(':').map(Number);
+                const [hOut, mOut] = jornadas[userKey].out.split(':').map(Number);
+                const totalJornadaMin = Math.max(0, (hOut * 60 + mOut) - (hIn * 60 + mIn));
+
+                // Ocioso = Jornada total cadastrada menos o tempo que passou executando tarefas
+                let totalOciosoMin = Math.max(0, totalJornadaMin - totalTrabalhoMin);
+
+                labelsTime.push(nomesExibicao[userKey]);
+                dataWork.push(totalTrabalhoMin);
+                dataOcioso.push(totalOciosoMin);
+
+                const tr = document.createElement('tr');
+                tr.style.borderBottom = "1px solid #ddd";
+                tr.innerHTML = `
+                    <td style="padding:10px;"><strong>${nomesExibicao[userKey]}</strong><br><small style="color:#777;">Jornada: ${jornadas[userKey].in} às ${jornadas[userKey].out}</small></td>
+                    <td style="padding:10px; text-align:center; color:#2ecc71; font-weight:bold;">${converterMinutosParaTexto(totalTrabalhoMin)}</td>
+                    <td style="padding:10px; text-align:center; color:#e74c3c; font-weight:bold;">${converterMinutosParaTexto(totalOciosoMin)}</td>
+                    <td style="padding:10px; text-align:center; color:#f39c12;">${converterMinutosParaTexto(totalPausaMin)}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+            if(timeChart) timeChart.destroy();
+            timeChart = new Chart(document.getElementById('timeChart').getContext('2d'), {
+                type: 'bar',
+                data: {
+                    labels: labelsTime,
+                    datasets: [
+                        { label: 'Tempo Trabalhando (Minutos)', data: dataWork, backgroundColor: '#2ecc71' },
+                        { label: 'Tempo Ocioso (Minutos)', data: dataOcioso, backgroundColor: '#e74c3c' }
+                    ]
+                },
+                options: { responsive: true, maintainAspectRatio: false, scales: { y: { stacked: true }, x: { stacked: true } } }
             });
         }
 
         function exportExcel() {
             const metrics = getFilteredMetrics();
-            const p = document.getElementById('reportPeriod').value.toUpperCase();
+            let linhas = [["RELATÓRIO DE PERFORMANCE E CONTROLE DE TEMPOS"], [], ["Funcionário", "Tarefa / Referência", "Tempo em Trabalho (Minutos)", "Tempo em Pausa/Interrupção (Minutos)", "Data Conclusão", "Status Prazo"]];
             
-            let linhas = [
-                ["RELATÓRIO DE AUDITORIA OPERACIONAL - INDUSTRIAL (" + p + ")"],
-                [],
-                ["Responsável Conclusão", "Categoria", "Tarefa / Ação", "Tempo Total Gasto", "Hora Extra Realizada?", "Status de Prazo"],
-            ];
-
             metrics.concluidasNoPeriodo.forEach(t => {
-                linhas.push([t.userWhoFinished, t.category || "Não Informado", t.action, t.timeSpent, t.hasOvertime, t.onTime ? "No Prazo" : "Fora do Prazo"]);
+                linhas.push([t.userWhoFinishedName, t.title, t.workMinutes || 0, t.pauseMinutes || 0, t.dateFinished, t.onTime ? "No Prazo" : "Atrasado"]);
             });
 
-            const wb = XLSX.utils.book_new();
-            const ws = XLSX.utils.aoa_to_sheet(linhas);
-            XLSX.utils.book_append_sheet(wb, ws, "Desempenho");
-            XLSX.writeFile(wb, `Planilha_Diretoria_${p.toLowerCase()}.xlsx`);
+            const wb = XLSX.utils.book_new(); const ws = XLSX.utils.aoa_to_sheet(linhas);
+            XLSX.utils.book_append_sheet(wb, ws, "Dados"); XLSX.writeFile(wb, "Relatorio_Produtividade.xlsx");
         }
 
         function exportPDF() {
-            const { jsPDF } = window.jspdf;
-            const doc = new jsPDF();
+            const { jsPDF } = window.jspdf; const doc = new jsPDF();
             const metrics = getFilteredMetrics();
-            const p = document.getElementById('reportPeriod').value.toUpperCase();
+            doc.setFont("Helvetica", "bold"); doc.setFontSize(14); doc.text("RELATÓRIO GERAL DE PRODUTIVIDADE E TEMPOS", 14, 20);
             
-            doc.setFont("Helvetica", "bold"); doc.setFontSize(16);
-            doc.text("BALANÇO GERAL DE PRODUTIVIDADE E ENTREGAS", 14, 20);
-            
-            doc.setFontSize(10); doc.setFont("Helvetica", "normal");
-            doc.text(`Período Solicitado: ${p} | Expediente Padrão: 07:12 às 17:00`, 14, 26);
-
-            let matrizCorpo = [];
-            metrics.concluidasNoPeriodo.forEach(t => {
-                matrizCorpo.push([t.userWhoFinished, t.category || "Não Informado", t.action, t.timeSpent, t.hasOvertime, t.onTime ? "No Prazo" : "Atrasado"]);
-            });
-
-            doc.autoTable({
-                startY: 35,
-                head: [['Responsável', 'Categoria', 'Nome da Tarefa', 'Tempo Gasto', 'H. Extra', 'Prazo']],
-                body: matrizCorpo,
-                headStyles: { fillColor: [44, 62, 80] }
-            });
-
-            doc.save(`Relatorio_Rendimento_${p.toLowerCase()}.pdf`);
+            let corpo = metrics.concluidasNoPeriodo.map(t => [t.userWhoFinishedName, t.title, (t.workMinutes || 0)+" min", (t.pauseMinutes || 0)+" min", t.onTime?"No Prazo":"Atrasado"]);
+            doc.autoTable({ startY: 30, head: [['Funcionário', 'Tarefa/Modelo', 'Tempo Líquido', 'Interrupções', 'Prazo']], body: corpo });
+            doc.save("Relatorio_Tempos_Foco.pdf");
         }
 
         function salvarConfiguracaoEquipe() {
-            if(currentUser !== 'admin') return;
-            const configEquipe = {
-                usuario_1: document.getElementById('cfg_user1').value,
-                usuario_2: document.getElementById('cfg_user2').value,
-                usuario_3: document.getElementById('cfg_user3').value,
-                usuario_4: document.getElementById('cfg_user4').value,
-                usuario_5: document.getElementById('cfg_user5').value
-            };
-            
-            database.ref('configuracoes/equipe').set(configEquipe).then(() => {
-                alert("Nomes da equipe atualizados com sucesso na nuvem!");
-            });
+            const configEquipe = {};
+            for(let i=1; i<=5; i++) {
+                configEquipe[`usuario_${i}`] = {
+                    nome: document.getElementById(`cfg_user${i}`).value,
+                    jornada: {
+                        in: document.getElementById(`cfg_in${i}`).value,
+                        out: document.getElementById(`cfg_out${i}`).value
+                    }
+                };
+            }
+            database.ref('configuracoes/equipe').set(configEquipe).then(() => { alert("Nomes e Horários atualizados no Firebase!"); });
         }
 
         function salvarSenhaAdmin() {
-            if(currentUser !== 'admin') return;
             const novaSenha = document.getElementById('cfg_adminPassword').value;
-            if(!novaSenha) {
-                alert("Digite uma senha válida.");
-                return;
-            }
-            database.ref('configuracoes/seguranca/adminPassword').set(novaSenha).then(() => {
-                alert("Senha do Administrador atualizada com sucesso!");
-                document.getElementById('cfg_adminPassword').value = '';
-            });
+            if(!novaSenha) return;
+            database.ref('configuracoes/seguranca/adminPassword').set(novaSenha).then(() => { alert("Senha atualizada!"); document.getElementById('cfg_adminPassword').value = ''; });
         }
 
         function criarBackupFirebase() {
-            if(currentUser !== 'admin') return;
-            
-            Promise.all([
-                database.ref('tasks/ativas').once('value'),
-                database.ref('tasks/historico').once('value')
-            ]).then(([snapshotAtivas, snapshotHist]) => {
-                const dadosBackup = {
-                    info: {
-                        data: new Date().toLocaleString('pt-BR'),
-                        criadoPor: nomesExibicao[currentUser]
-                    },
-                    ativas: snapshotAtivas.val() || {},
-                    historico: snapshotHist.val() || {}
-                };
-
-                database.ref('backup_sistema').set(dadosBackup).then(() => {
-                    alert("Arquivo de Backup criado e substituído no Firebase com sucesso!");
-                });
+            Promise.all([database.ref('tasks/ativas').once('value'), database.ref('tasks/historico').once('value')]).then(([sA, sH]) => {
+                database.ref('backup_sistema').set({ info: { data: new Date().toLocaleString('pt-BR') }, ativas: sA.val()||{}, historico: sH.val()||{} }).then(() => { alert("Backup Criado!"); });
             });
         }
 
         function restaurarBackupFirebase() {
-            if(currentUser !== 'admin') return;
-            if(!confirm("⚠️ ATENÇÃO: Restaurar o backup apagará os dados atuais da tela para colocar os dados salvos no backup. Deseja continuar?")) return;
-
+            if(!confirm("Restaurar dados antigos?")) return;
             database.ref('backup_sistema').once('value').then((snapshot) => {
-                const bkp = snapshot.val();
-                if(!bkp) {
-                    alert("Nenhum backup encontrado para restaurar.");
-                    return;
-                }
-
-                Promise.all([
-                    database.ref('tasks/ativas').set(bkp.ativas || null),
-                    database.ref('tasks/historico').set(bkp.historico || null)
-                ]).then(() => {
-                    alert("Sistema restaurado com sucesso para a versão de: " + bkp.info.data);
-                });
+                const bkp = snapshot.val(); if(!bkp) return;
+                Promise.all([database.ref('tasks/ativas').set(bkp.ativas||null), database.ref('tasks/historico').set(bkp.historico||null)]).then(() => { alert("Restaurado!"); });
             });
         }
 
-        function apagarBackupFirebase() {
-            if(currentUser !== 'admin') return;
-            if(!confirm("Tem certeza que deseja deletar o arquivo de backup do Firebase permanentemente?")) return;
-
-            database.ref('backup_sistema').remove().then(() => {
-                alert("Arquivo de backup excluído da nuvem.");
-            });
-        }
+        function apagarBackupFirebase() { if(confirm("Apagar backup?")) database.ref('backup_sistema').remove(); }
     </script>
 </body>
 </html>
