@@ -551,7 +551,6 @@
             document.getElementById('criticalAlertPanel').style.display = temUrgencia ? 'block' : 'none';
         }
 
-        // FUNÇÃO ATUALIZADA: Alerta ignora o Admin e o Visitante, aplicando-se apenas aos funcionários alocados
         function verificarHorarioDescansoPopup() {
             if (currentUser === 'visitante' || currentUser === 'admin') return;
 
@@ -688,49 +687,70 @@
             });
         }
 
+        // ================= FUNÇÕES DE CÁLCULO DE TEMPO CORRIGIDAS =================
         function calcularMilissegundosUteisNoPeriodo(startMs, endMs, userKey, apenasHoje = false) {
+            if (startMs >= endMs) return 0;
+            
             let totalMs = 0;
             const itemJornada = jornadas[userKey] || { in: "07:12", out: "17:00" };
             const [hIn, mIn] = itemJornada.in.split(':').map(Number);
             const [hOut, mOut] = itemJornada.out.split(':').map(Number);
 
-            let ponteiro = new Date(startMs); const fimJanela = new Date(endMs);
+            let ponteiro = new Date(startMs);
+            const fimJanela = new Date(endMs);
             const hojeStr = new Date().toISOString().split('T')[0];
 
-            while (ponteiro < fimJanela) {
+            while (ponteiro <= fimJanela) {
                 const diaSemana = ponteiro.getDay();
                 const dataLoopStr = ponteiro.toISOString().split('T')[0];
 
-                if (diaSemana >= 1 && diaSemana <= 5 && (!apenasHoje || dataLoopStr === hojeStr)) {
+                if (diaSemana >= 1 && diaSemana <= 6 && (!apenasHoje || dataLoopStr === hojeStr)) {
                     const inicioComercial = new Date(ponteiro); inicioComercial.setHours(hIn, mIn, 0, 0);
                     const fimComercial = new Date(ponteiro); fimComercial.setHours(hOut, mOut, 0, 0);
 
-                    const maxStart = Math.max(ponteiro.getTime(), inicioComercial.getTime());
-                    const minEnd = Math.min(fimJanela.getTime(), fimComercial.getTime());
+                    const maxStart = Math.max(startMs, inicioComercial.getTime());
+                    const minEnd = Math.min(endMs, fimComercial.getTime());
 
-                    if (maxStart < minEnd) totalMs += (minEnd - maxStart);
+                    if (maxStart < minEnd) {
+                        totalMs += (minEnd - maxStart);
+                    }
                 }
-                ponteiro.setDate(ponteiro.getDate() + 1); ponteiro.setHours(0,0,0,0);
+                
+                ponteiro.setDate(ponteiro.getDate() + 1); 
+                ponteiro.setHours(0,0,0,0);
+                
+                if (ponteiro.getTime() > fimJanela.getTime() && ponteiro.toISOString().split('T')[0] !== fimJanela.toISOString().split('T')[0]) {
+                    break;
+                }
             }
             return totalMs;
         }
 
         function calcularTempoTrabalhoEfetivoTotal(userKey, deDataStr, apenasHoje = false) {
-            let totalMinutos = 0; const agoraMs = new Date().getTime();
+            let totalMinutos = 0; 
+            const agoraMs = new Date().getTime();
+            
             const processarLogs = (t) => {
                 if (t.timeLogs) {
                     for (let i = 0; i < t.timeLogs.length; i++) {
                         if (t.timeLogs[i].by === userKey && t.timeLogs[i].type === 'start') {
                             let fimTrecho = (i + 1 < t.timeLogs.length) ? t.timeLogs[i+1].time : agoraMs;
-                            totalMinutos += Math.round(calcularMilissegundosUteisNoPeriodo(t.timeLogs[i].time, fimTrecho, userKey, apenasHoje) / 1000 / 60);
+                            
+                            if (fimTrecho > agoraMs) fimTrecho = agoraMs; 
+
+                            const msUteis = calcularMilissegundosUteisNoPeriodo(t.timeLogs[i].time, fimTrecho, userKey, apenasHoje);
+                            totalMinutos += Math.max(0, Math.round(msUteis / 1000 / 60));
                         }
                     }
                 }
             };
+
             historicTasks.forEach(t => { if(t.dateFinished >= deDataStr) processarLogs(t); });
             tasks.forEach(processarLogs);
+            
             return totalMinutos;
         }
+        // =========================================================================
 
         function getFilteredMetrics() {
             const periodo = document.getElementById('reportPeriod').value;
