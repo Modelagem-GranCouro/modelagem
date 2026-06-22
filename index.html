@@ -3,374 +3,378 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Sistema Avançado de Gestão - Modelagem (Firebase)</title>
-    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.29/jspdf.plugin.autotable.min.js"></script>
+    <title>Painel de Gestão de Tempo e Produtividade</title>
     
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.23.0/firebase-database-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.5/xlsx.full.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.23/jspdf.plugin.autotable.min.js"></script>
 
     <style>
-        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
-        body { background-color: #f4f6f9; padding: 15px; color: #333; }
-        
-        header { 
-            max-width: 1600px;
-            margin: 0 auto 20px auto;
-            display: flex; 
-            flex-direction: row;
-            justify-content: space-between; 
-            align-items: center; 
-            background: white; 
-            padding: 15px 20px; 
-            border-radius: 8px; 
-            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
-            flex-wrap: wrap;
-            gap: 15px;
+        :root {
+            --primary-color: #2980b9;
+            --secondary-color: #2c3e50;
+            --success-color: #2ecc71;
+            --danger-color: #e74c3c;
+            --warning-color: #f1c40f;
+            --neutral-light: #f5f7fa;
+            --dark-text: #333;
         }
-        h1 { color: #2c3e50; font-size: 1.4rem; }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background-color: var(--neutral-light); color: var(--dark-text); padding: 20px; }
+
+        header { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.08); margin-bottom: 20px; display: flex; justify-content: space-between; align-items: center; }
+        .user-badge { background: #e8f4fd; color: var(--primary-color); padding: 8px 15px; border-radius: 20px; font-weight: bold; }
         
-        .nav-tabs { max-width: 1600px; margin: 0 auto 20px auto; display: flex; gap: 10px; flex-wrap: wrap; }
-        .tab-btn { padding: 12px 24px; background: #e0e0e0; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; color: #555; transition: background 0.2s; font-size: 0.9rem; }
-        .tab-btn.active { background: #3498db; color: white; }
+        .nav-tabs { display: flex; gap: 10px; margin-bottom: 20px; }
+        .tab-btn { padding: 12px 24px; background: #e0e0e0; border: none; border-radius: 6px; cursor: pointer; font-weight: 600; color: #666; transition: all 0.3s; }
+        .tab-btn.active { background: var(--primary-color); color: white; }
+
+        .dashboard-layout { display: grid; grid-template-columns: 350px 1fr; gap: 20px; }
+        .dashboard-layout.full-width { grid-template-columns: 1fr; }
+
+        .panel-box { background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); margin-bottom: 20px; }
+        .panel-box h2 { font-size: 1.2rem; margin-bottom: 15px; color: var(--secondary-color); border-bottom: 2px solid var(--neutral-light); padding-bottom: 8px; }
+
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; margin-bottom: 5px; font-weight: 600; font-size: 0.9rem; }
+        .form-control { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; font-size: 0.95rem; }
+        .btn-submit { width: 100%; padding: 12px; background: var(--primary-color); color: white; border: none; border-radius: 4px; font-weight: bold; cursor: pointer; font-size: 1rem; }
+
+        .task-card { background: white; border-left: 5px solid #ccc; padding: 15px; border-radius: 6px; box-shadow: 0 2px 5px rgba(0,0,0,0.05); margin-bottom: 15px; position: relative; }
+        .task-card.prio-1 { border-left-color: var(--danger-color); background: #fff9f9; }
+        .task-card.prio-2 { border-left-color: var(--warning-color); background: #fffdf0; }
+        .task-card.prio-3 { border-left-color: var(--success-color); background: #f9fff9; }
+        .prio-badge { position: absolute; top: 15px; right: 15px; font-size: 0.75rem; font-weight: bold; padding: 3px 8px; border-radius: 3px; background: #ddd; }
+        .task-desc-box { background: #f8f9fa; padding: 10px; border-radius: 4px; margin: 10px 0; font-size: 0.9rem; border: 1px dashed #ddd; }
+        .task-pause-box { padding: 8px; margin: 5px 0; border-radius: 4px; font-size: 0.85rem; }
+        .task-meta { display: flex; justify-content: space-between; font-size: 0.8rem; color: #777; margin-top: 10px; }
+        .task-actions { display: flex; gap: 10px; margin-top: 12px; }
+        .btn-action { padding: 6px 12px; border: none; border-radius: 4px; font-size: 0.85rem; font-weight: bold; cursor: pointer; }
+        .btn-start { background: var(--success-color); color: white; }
+        .btn-pause { background: var(--warning-color); color: #333; }
+        .btn-done { background: var(--primary-color); color: white; }
+        .btn-delete { background: #95a5a6; color: white; }
+        .btn-disabled { background: #e0e0e0 !important; color: #aaa !important; cursor: not-allowed !important; }
+
+        .aux-panels { display: flex; gap: 15px; margin-bottom: 20px; }
+        .aux-card { flex: 1; background: #fff; padding: 15px; border-radius: 6px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+        .btn-aux { padding: 8px 16px; border: none; border-radius: 4px; font-weight: bold; cursor: pointer; color: white; }
+        .btn-meal { background: #e67e22; }
+        .btn-descanso { background: #9b59b6; }
+
+        .metrics-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 15px; margin-bottom: 20px; }
+        .metric-card { background: white; padding: 20px; border-radius: 8px; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,0.05); cursor: pointer; transition: transform 0.2s; }
+        .metric-card:hover { transform: translateY(-3px); box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+        .metric-card h3 { font-size: 2rem; color: var(--secondary-color); margin-bottom: 5px; }
+        .metric-card p { font-size: 0.85rem; color: #777; font-weight: bold; }
+
+        .charts-section { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px; }
+        .chart-container { background: white; padding: 20px; border-radius: 8px; height: 320px; position: relative; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+        .table-responsive { width: 100%; overflow-x: auto; background: white; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+        table { width: 100%; border-collapse: collapse; }
+        th { background: var(--secondary-color); color: white; padding: 12px; text-align: center; font-size: 0.9rem; }
+
+        .modal-overlay { position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); display:none; justify-content:center; align-items:center; z-index:1000; }
+        .modal-box { background:white; padding:25px; border-radius:8px; width:400px; box-shadow:0 4px 15px rgba(0,0,0,0.2); }
+
+        /* Modal Detalhado Fullscreen */
+        .fullscreen-overlay { position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(255,255,255,0.98); display:none; flex-direction:column; padding:40px; z-index:2000; overflow-y:auto; }
+        .fullscreen-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; border-bottom:2px solid #eee; padding-bottom:15px; }
+
+        .deadline-alert { color: var(--danger-color); font-weight: bold; }
+        .rating-box { padding: 12px; border-radius: 6px; text-align: center; font-weight: bold; margin-bottom: 15px; }
+        .rating-boa { background: #e8f8f5; color: #117a65; }
+        .rating-media { background: #fef9e7; color: #b7950b; }
+        .rating-ruim { background: #fadbd8; color: #78281f; }
         
-        .login-trigger-btn { background: #3498db; padding: 10px 20px; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 0.9rem; }
-        .login-trigger-btn:hover { background: #2980b9; }
-        .logout-btn { background: #e74c3c; width: auto; padding: 10px 20px; color: white; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; font-size: 0.9rem; }
-        .logout-btn:hover { background: #c0392b; }
-
-        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000; justify-content: center; align-items: center; padding: 15px; }
-        .modal-content { background: white; padding: 30px; border-radius: 8px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); width: 100%; max-width: 450px; text-align: center; position: relative; }
-        .modal-content h2 { margin-bottom: 20px; color: #2c3e50; font-size: 1.3rem; }
-        .close-modal { position: absolute; top: 12px; right: 15px; font-size: 1.4rem; background: none; border: none; color: #aaa; cursor: pointer; font-weight: bold; }
-        .close-modal:hover { color: #666; }
-
-        .container { max-width: 1600px; margin: 0 auto; display: grid; grid-template-columns: 1fr 2.5fr; gap: 20px; width: 100%; }
-        .full-width { grid-template-columns: 1fr !important; }
-
-        .box { background: white; padding: 25px; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.05); height: fit-content; margin-bottom: 20px; }
-        .box h2 { margin-bottom: 15px; font-size: 1.2rem; color: #34495e; border-bottom: 2px solid #ecf0f1; padding-bottom: 5px; }
-
-        .form-group { margin-bottom: 15px; text-align: left; }
-        .form-group label { display: block; margin-bottom: 6px; font-weight: 600; font-size: 0.9rem; color: #444; }
-        .form-group input, .form-group select, .form-group textarea { width: 100%; padding: 10px; border: 1px solid #ccc; border-radius: 4px; font-size: 0.95rem; background-color: #fff; }
-        
-        button.btn-submit { width: 100%; padding: 12px; background-color: #3498db; color: white; border: none; border-radius: 4px; font-size: 1rem; cursor: pointer; font-weight: bold; transition: background 0.2s; }
-        button.btn-submit:hover { background-color: #2980b9; }
-
-        .control-panels-container { display: flex; flex-direction: column; gap: 10px; margin-bottom: 20px; width: 100%; }
-        .meal-control-panel { background: #ebf5fb; border: 1px solid #aed6f1; padding: 15px; border-radius: 6px; display: flex; align-items: center; justify-content: space-between; }
-        .descanso-control-panel { background: #fef9e7; border: 1px solid #f9e79f; padding: 15px; border-radius: 6px; display: flex; align-items: center; justify-content: space-between; }
-        
-        .btn-meal, .btn-descanso { padding: 10px 20px; border: none; border-radius: 4px; font-weight: bold; cursor: pointer; color: white; }
-        .btn-meal-start { background-color: #e67e22; }
-        .btn-meal-end { background-color: #2ecc71; }
-        .btn-descanso-start { background-color: #9b59b6; }
-        .btn-descanso-end { background-color: #2ecc71; }
-
-        .alert-panel { display: none; max-width: 1600px; margin: 0 auto 20px auto; background: #fff5f5; border: 2px dashed #e74c3c; padding: 15px; border-radius: 8px; color: #c0392b; }
-
-        .task-list { display: grid; grid-template-columns: 1fr; gap: 15px; }
-        .task-card { background: #fdfdfd; border-left: 6px solid #95a5a6; padding: 18px; border-radius: 4px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
-        .prio-1 { border-left-color: #e74c3c; background-color: #fffafb; } 
-        .prio-2 { border-left-color: #f39c12; background-color: #fffbf5; } 
-        .prio-3 { border-left-color: #2ecc71; background-color: #f6fdf8; } 
-        .prio-badge { display: inline-block; padding: 3px 10px; border-radius: 12px; font-size: 0.75rem; color: white; font-weight: bold; margin-bottom: 10px; }
-
-        .task-info-line { margin-bottom: 8px; font-size: 1rem; }
-        .task-desc-box { background: #f8f9fa; border-left: 3px solid #3498db; padding: 10px; margin-top: 10px; font-size: 0.95rem; color: #555; border-radius: 0 4px 4px 0; }
-        .task-pause-box { background: #f0f4f8; border-left: 3px solid #3498db; padding: 8px; margin-top: 5px; font-size: 0.85rem; color: #2c3e50; border-radius: 4px; }
-
-        .task-meta { display: flex; flex-wrap: wrap; gap: 15px; font-size: 0.9rem; color: #7f8c8d; background: #f1f3f5; padding: 8px 12px; border-radius: 4px; margin-top: 12px; justify-content: space-between; align-items: center; }
-        .deadline-alert { color: #e74c3c; font-weight: bold; }
-        .task-actions { margin-top: 12px; display: flex; gap: 10px; justify-content: flex-end; flex-wrap: wrap; }
-        .btn-action { width: auto; padding: 8px 16px; font-size: 0.85rem; border: none; border-radius: 4px; cursor: pointer; font-weight: bold; color: white; }
-        .btn-start { background-color: #3498db; }
-        .btn-pause { background-color: #e67e22; }
-        .btn-done { background-color: #2ecc71; }
-        .btn-delete { background-color: #95a5a6; }
-
-        .report-layout { display: grid; grid-template-columns: 1.2fr 1fr; gap: 20px; margin-top: 15px; }
-        .report-layout-full { grid-template-columns: 1fr !important; }
-        .report-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: 15px; margin-bottom: 20px; }
-        .metric-card { background: #f8f9fa; border: 1px solid #e2e8f0; padding: 15px; border-radius: 6px; text-align: center; }
-        .metric-card h4 { font-size: 0.9rem; color: #64748b; margin-bottom: 5px; }
-        .metric-card p { font-size: 1.8rem; font-weight: bold; color: #1e293b; }
-        
-        .rating-box { padding: 15px; border-radius: 6px; text-align: center; font-weight: bold; font-size: 1.1rem; margin-bottom: 20px; color: white; }
-        .rating-boa { background-color: #2ecc71; }
-        .rating-media { background-color: #f39c12; }
-        .rating-ruim { background-color: #e74c3c; }
-
-        .report-actions { display: flex; gap: 10px; margin-top: 20px; }
-        .btn-report { flex: 1; padding: 12px; border: none; border-radius: 4px; font-weight: bold; color: white; cursor: pointer; font-size: 0.9rem; }
-        .btn-pdf { background-color: #e74c3c; }
-        .btn-excel { background-color: #27ae60; }
-
-        .chart-container { background: #f8f9fa; padding: 15px; border-radius: 8px; border: 1px solid #e2e8f0; display: flex; align-items: center; justify-content: center; height: 340px; }
-
-        .grid-jornada { display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 10px; background: #f8f9fa; padding: 10px; border-radius: 6px; margin-bottom: 10px; border: 1px solid #ddd; }
-
-        .btn-manage { background-color: #9b59b6; color: white; border: none; padding: 10px 15px; border-radius: 4px; font-weight: bold; cursor: pointer; margin-right: 5px; transition: opacity 0.2s; }
-        .btn-manage:hover { opacity: 0.9; }
-        .btn-danger-zone { background-color: #e74c3c; color: white; border: none; padding: 10px 15px; border-radius: 4px; font-weight: bold; cursor: pointer; }
+        .action-bar { display: flex; gap: 10px; margin-bottom: 15px; }
+        .btn-export { padding: 10px 20px; border: none; border-radius: 4px; color: white; font-weight: bold; cursor: pointer; }
     </style>
 </head>
 <body>
 
-    <div class="modal-overlay" id="descansoAlertModal">
-        <div class="modal-content" style="border-top: 8px solid #9b59b6;">
-            <h2>⏰ MOMENTO DO DESCANSO LEGAL!</h2>
-            <p style="margin-bottom: 20px; font-size: 1.05rem; color: #555;">Está no horário do seu intervalo obrigatório de 10 minutos. Por favor, clique no botão abaixo para iniciar o registro.</p>
-            <button class="btn-submit" style="background-color: #9b59b6;" onclick="iniciarDescansoPeloPopup()">Iniciar Descanso Agora ☕</button>
+    <header>
+        <div>
+            <h1 style="font-size: 1.5rem; color: var(--secondary-color);">Engenharia e Modelagem</h1>
+            <p style="font-size: 0.85rem; color: #777;">Gestão Inteligente de Tempo Comercial</p>
+        </div>
+        <div style="display: flex; align-items: center; gap: 15px;">
+            <span id="userDisplay" class="user-badge">Monitoramento Geral</span>
+            <button id="btnLoginTrigger" class="tab-btn" style="padding: 8px 15px;" onclick="abrirModalLogin()">Entrar / Trocar Setor 🔑</button>
+            <button id="btnLogout" class="tab-btn" style="padding: 8px 15px; background: #e74c3c; color: white; display: none;" onclick="logout()">Sair 🚪</button>
+        </div>
+    </header>
+
+    <div class="nav-tabs" id="adminTabs">
+        <button id="btnTabPainel" class="tab-btn active" onclick="switchTab('painel')">Painel de Monitoramento Geral</button>
+        <button id="btnTabRelatorios" class="tab-btn" onclick="switchTab('relatorios')">Relatórios & Gráficos Estatísticos</button>
+        <button id="btnTabGerenciamento" class="tab-btn" onclick="switchTab('gerenciamento')" style="display: none;">Gerenciar Equipe & Backup</button>
+    </div>
+
+    <div id="tabPainel" class="dashboard-layout full-width">
+        <div id="adminFormBox" class="panel-box" style="display: none;">
+            <h2>Lançar Nova Tarefa no Setor</h2>
+            <form id="taskForm">
+                <div class="form-group">
+                    <label>Referência / Nome do Modelo</label>
+                    <input type="text" id="taskTitle" class="form-control" placeholder="Ex: Referência do modelo" required>
+                </div>
+                <div class="form-group">
+                    <label>Categoria</label>
+                    <select id="taskCategory" class="form-control">
+                        <option value="KIT">KIT</option>
+                        <option value="GOLA">GOLA</option>
+                        <option value="PUNHO">PUNHO</option>
+                        <option value="BORDADO">BORDADO</option>
+                        <option value="SUBLIMAÇÃO">SUBLIMAÇÃO</option>
+                        <option value="OUTROS">OUTROS</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Especificação da Tarefa</label>
+                    <select id="taskAction" class="form-control">
+                        <option value="Fazer modelo novo">Fazer modelo novo</option>
+                        <option value="Alterar modelo existente">Alterar modelo existente</option>
+                        <option value="Cadastrar modelo novo">Cadastrar modelo novo</option>
+                        <option value="Alterar cadastro de um modelo existente">Alterar cadastro de um modelo existente</option>
+                        <option value="Digitalizar modelo novo">Digitalizar modelo novo</option>
+                        <option value="Alterar modelo ja digitalizado">Alterar modelo ja digitalizado</option>
+                        <option value="Fazer personalizado">Fazer personalizado</option>
+                        <option value="Desenvolver nova arte personalizada">Desenvolver nova arte personalizada</option>
+                        <option value="alterar personalizado existente">alterar personalizado existente</option>
+                        <option value="Criar bordado a partir da imagem disponibilizada">Criar bordado a partir da imagem disponibilizada</option>
+                        <option value="Medição de consumo">Medição de consumo</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Sequência de Prioridade</label>
+                    <select id="taskPriority" class="form-control">
+                        <option value="1">Prioridade 1 (Máxima)</option>
+                        <option value="2">Prioridade 2 (Média)</option>
+                        <option value="3">Prioridade 3 (Normal)</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label>Prazo Limite para Entrega</label>
+                    <input type="date" id="taskDeadline" class="form-control" required>
+                </div>
+                <div class="form-group">
+                    <label>Instruções Adicionais</label>
+                    <textarea id="taskDesc" class="form-control" rows="3" placeholder="Informações adicionais relevantes"></textarea>
+                </div>
+                <button type="submit" class="btn-submit">Direcionar e Enviar</button>
+            </form>
+        </div>
+
+        <div>
+            <div id="criticalAlertPanel" class="panel-box" style="border: 2px solid var(--danger-color); background: #fdf2f2; display: none;">
+                <h3 style="color: var(--danger-color); font-size: 1.05rem; margin-bottom: 5px;">⚠️ ATENÇÃO COM AS PRIORIDADES!</h3>
+                <p style="font-size: 0.9rem; color: #555;">Você possui tarefas de **Prioridade 1** com prazo estourado ou vencendo hoje na sua fila. Finalize-as o quanto antes.</p>
+            </div>
+
+            <div id="userControlPanels" class="aux-panels" style="display: none;">
+                <div class="aux-card" style="border-left: 4px solid #e67e22;">
+                    <div><p id="mealStatusLabel" style="font-weight: bold;">Status do Almoço: Pronto</p></div>
+                    <div>
+                        <button id="btnStartMeal" class="btn-aux btn-meal" onclick="registrarAlmoço('start')">Ir para o Almoço 🍽️</button>
+                        <button id="btnEndMeal" class="btn-aux btn-meal" style="background:#27ae60; display:none;" onclick="registrarAlmoço('end')">Voltar do Almoço ↩</button>
+                    </div>
+                </div>
+                <div class="aux-card" style="border-left: 4px solid #9b59b6;">
+                    <div><p id="descansoStatusLabel" style="font-weight: bold;">Status do Descanso: Disponível</p></div>
+                    <div>
+                        <button id="btnStartDescanso" class="btn-aux btn-descanso" onclick="registrarDescanso('start')">Iniciar Descanso ☕</button>
+                        <button id="btnEndDescanso" class="btn-aux btn-descanso" style="background:#27ae60; display:none;" onclick="registrarDescanso('end')">Finalizar Descanso ↩</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="panel-box">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                    <h2>Fila Geral de Monitoramento em Tempo Real</h2>
+                    <div>
+                        <select id="queueUserFilter" class="form-control" style="width: 250px;" onchange="renderTasks()">
+                            <option value="todos">👁️ Ver todas as tarefas do setor</option>
+                            <option value="minhas">👤 Ver apenas minhas tarefas</option>
+                            <option value="usuario_1">Filtrar: Modelista</option>
+                            <option value="usuario_2">Filtrar: Auxiliar 1 (Cadastro)</option>
+                            <option value="usuario_3">Filtrar: Digitalizador</option>
+                            <option value="usuario_4">Filtrar: Desenhista</option>
+                            <option value="usuario_5">Filtrar: Auxiliar 2 (Personalizado)</option>
+                        </select>
+                    </div>
+                </div>
+                <div id="taskList">
+                    </div>
+            </div>
+        </div>
+    </div>
+
+    <div id="tabRelatorios" style="display: none;">
+        <div class="panel-box" style="display: flex; justify-content: space-between; align-items: center;">
+            <div>
+                <h2>Indicadores de Produtividade do Setor</h2>
+                <p style="font-size:0.85rem; color:#666;">Selecione a granularidade temporal do relatório de produtividade.</p>
+            </div>
+            <div>
+                <select id="reportPeriod" class="form-control" style="width: 200px;" onchange="updateReportDashboard()">
+                    <option value="hoje">Apenas Hoje</option>
+                    <option value="semanal">Esta Semana (Últimos 7 dias)</option>
+                    <option value="quinzenal">Quinzena (Últimos 15 dias)</option>
+                    <option value="mensal">Mês Atual (Últimos 30 dias)</option>
+                    <option value="anual">Visão Anual</option>
+                </select>
+            </div>
+        </div>
+
+        <div id="sectorRating" class="rating-box rating-boa">
+            REGULARIDADE DO SETOR: CALIBRANDO DADOS...
+        </div>
+
+        <div class="metrics-grid">
+            <div class="metric-card" onclick="abrirDetalhamentoStatus('noPrazo')">
+                <h3 id="mNoPrazo" style="color: var(--success-color);">0</h3>
+                <p>CONCLUÍDAS NO PRAZO 🔍</p>
+            </div>
+            <div class="metric-card" onclick="abrirDetalhamentoStatus('foraPrazo')">
+                <h3 id="mForaPrazo" style="color: var(--danger-color);">0</h3>
+                <p>CONCLUÍDAS FORA DO PRAZO 🔍</p>
+            </div>
+            <div class="metric-card" onclick="abrirDetalhamentoStatus('pendentes')">
+                <h3 id="mPendentes" style="color: var(--warning-color);">0</h3>
+                <p>DEMANDAS PENDENTES 🔍</p>
+            </div>
+            <div class="metric-card" onclick="abrirDetalhamentoStatus('total')">
+                <h3 id="mTotal">0</h3>
+                <p>TOTAL FILTRADO 🔍</p>
+            </div>
+        </div>
+
+        <div class="charts-section">
+            <div class="chart-container">
+                <h4 style="margin-bottom:10px; font-size:0.95rem; color:#555;">Gráfico de Eficiência Operacional (Clique na fatia para abrir)</h4>
+                <canvas id="efficiencyChart"></canvas>
+            </div>
+            <div class="chart-container">
+                <h4 style="margin-bottom:10px; font-size:0.95rem; color:#555;">Gráfico Comparativo de Gestão de Tempo Acumulado</h4>
+                <canvas id="timeChart"></canvas>
+            </div>
+        </div>
+
+        <div class="panel-box" id="restrictedTimeReportSection">
+            <h2>Relatório de Tempo por Colaborador</h2>
+            <div class="action-bar" id="reportButtonsContainer">
+                <button class="btn-export" style="background:#e74c3c;" onclick="exportPDF()">Exportar PDF 📄</button>
+                <button class="btn-export" style="background:#2ecc71;" onclick="exportExcel()">Exportar Excel 📊</button>
+            </div>
+            <div class="table-responsive">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Funcionário</th>
+                            <th>Tempo em Trabalho</th>
+                            <th>Tempo Almoço</th>
+                            <th>Descanso Legal</th>
+                            <th>Interrupções</th>
+                            <th>Ociosidade Real</th>
+                        </tr>
+                    </thead>
+                    <tbody id="timeTableBody">
+                        </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <div id="tabGerenciamento" style="display: none;">
+        <div class="dashboard-layout" style="grid-template-columns: 1fr 1fr;">
+            <div class="panel-box">
+                <h2>Customizar Integrantes da Equipe e Jornadas</h2>
+                <div style="max-height: 500px; overflow-y: auto; padding-right: 10px;" id="userFieldsContainer">
+                    </div>
+                <button class="btn-submit" style="margin-top:15px; background:var(--success-color);" onclick="salvarConfiguracaoEquipe()">Gravar Configurações da Equipe</button>
+            </div>
+
+            <div>
+                <div class="panel-box">
+                    <h2>Segurança do Painel</h2>
+                    <div class="form-group">
+                        <label>Alterar Senha do Administrador</label>
+                        <input type="password" id="cfg_adminPassword" class="form-control" placeholder="Digite a nova senha">
+                    </div>
+                    <button class="btn-submit" style="background:var(--secondary-color);" onclick="salvarSenhaAdmin()">Atualizar Senha Master</button>
+                </div>
+
+                <div class="panel-box">
+                    <h2>Backup Preventivo e Restauração Segura</h2>
+                    <div style="display:flex; gap:10px;">
+                        <button class="btn-submit" style="background:#34495e;" onclick="criarBackupFirebase()">Gerar Ponto de Backup 💾</button>
+                        <button class="btn-submit" style="background:#95a5a6;" onclick="restaurarBackupFirebase()">Restaurar Backup 🔄</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="fullscreen-overlay" id="fullscreenDetailsModal">
+        <div class="fullscreen-header">
+            <h2 id="fullscreenModalTitle" style="color: var(--secondary-color);">Detalhamento de Atividades</h2>
+            <button class="tab-btn" style="background: var(--danger-color); color: white; padding: 8px 20px;" onclick="fecharFullscreenDetails()">Fechar Tela Cheia ✕</button>
+        </div>
+        <div class="table-responsive" style="box-shadow: none;">
+            <table>
+                <thead>
+                    <tr>
+                        <th style="text-align: left; padding: 12px;">Tarefa / Modelo</th>
+                        <th>Categoria</th>
+                        <th>Especificação</th>
+                        <th>Responsáveis</th>
+                        <th>Prazo Final</th>
+                        <th>Status Técnico</th>
+                    </tr>
+                </thead>
+                <tbody id="fullscreenDetailsTableBody">
+                    </tbody>
+            </table>
         </div>
     </div>
 
     <div class="modal-overlay" id="loginModal">
-        <div class="modal-content">
-            <button class="close-modal" onclick="fecharModalLogin()">&times;</button>
-            <h2>Acesso Restrito ao Painel</h2>
+        <div class="modal-box">
+            <h2 style="margin-bottom:15px; font-size:1.2rem;">Autenticação Corporativa</h2>
             <div class="form-group">
-                <label for="loginUser">Quem está acessando?</label>
-                <select id="loginUser" onchange="toggleLoginPasswordView()">
+                <label>Selecione seu Usuário/Setor</label>
+                <select id="loginUser" class="form-control" onchange="toggleLoginPasswordView()">
                     <option value="admin">Líder do Setor</option>
-                    <option value="usuario_1">Carregando...</option>
-                    <option value="usuario_2">Carregando...</option>
-                    <option value="usuario_3">Carregando...</option>
-                    <option value="usuario_4">Carregando...</option>
-                    <option value="usuario_5">Carregando...</option>
+                    <option value="usuario_1">Modelista</option>
+                    <option value="usuario_2">Auxiliar 1 (Cadastro)</option>
+                    <option value="usuario_3">Digitalizador</option>
+                    <option value="usuario_4">Desenhista</option>
+                    <option value="usuario_5">Auxiliar 2 (Personalizado)</option>
                 </select>
             </div>
             <div class="form-group" id="loginPasswordGroup">
-                <label for="loginPassword">Senha do Administrador</label>
-                <input type="password" id="loginPassword" placeholder="Digite sua senha de admin">
+                <label>Senha de Acesso</label>
+                <input type="password" id="loginPassword" class="form-control" placeholder="••••••">
             </div>
-            <button class="btn-submit" onclick="login()">Confirmar e Entrar</button>
+            <div style="display:flex; gap:10px; margin-top:20px;">
+                <button class="btn-submit" style="background:#7f8c8d;" onclick="fecharModalLogin()">Cancelar</button>
+                <button class="btn-submit" onclick="login()">Confirmar Entrada</button>
+            </div>
         </div>
     </div>
 
-    <div id="mainDashboard">
-        <header>
-            <h1>Painel de Modelagem: <span id="userDisplay" style="color: #3498db;">Monitoramento Geral</span></h1>
-            <div id="headerActions">
-                <button class="login-trigger-btn" id="btnLoginTrigger" onclick="abrirModalLogin()">Acessar Painel Restrito</button>
-                <button class="logout-btn" id="btnLogout" style="display: none;" onclick="logout()">Sair / Painel Geral</button>
-            </div>
-        </header>
-
-        <div class="nav-tabs" id="adminTabs">
-            <button class="tab-btn active" id="btnTabPainel" onclick="switchTab('painel')">Painel de Monitoramento Geral</button>
-            <button class="tab-btn" id="btnTabRelatorios" onclick="switchTab('relatorios')">Relatórios & Gráficos Estatísticos</button>
-            <button class="tab-btn" id="btnTabGerenciamento" onclick="switchTab('gerenciamento')" style="background: #9b59b6; color: white; display: none;">Gerenciar Equipe & Backup</button>
-        </div>
-
-        <div class="alert-panel" id="criticalAlertPanel">
-            <h3>⚠️ ATENÇÃO E FOCO MÁXIMO!</h3>
-            <p>Você possui tarefas de <strong>Prioridade 1</strong> urgentes vencendo hoje ou já atrasadas.</p>
-        </div>
-
-        <div id="tabPainel" class="container full-width">
-            <div class="box" id="adminFormBox" style="display: none;">
-                <h2>Lançar Nova Tarefa no Setor</h2>
-                <form id="taskForm">
-                    <div class="form-group">
-                        <label for="taskTitle">Referência / Nome do Modelo</label>
-                        <input type="text" id="taskTitle" required placeholder="Ex: Referência do modelo">
-                    </div>
-                    <div class="form-group">
-                        <label for="taskCategory">Categoria</label>
-                        <select id="taskCategory" required>
-                            <option value="KIT">KIT</option>
-                            <option value="Coleção Normal">Coleção Normal</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="taskAction">Especificação da Tarefa</label>
-                        <select id="taskAction" required>
-                            <option value="Fazer modelo novo">Fazer modelo novo</option>
-                            <option value="Alterar modelo existente">Alterar modelo existente</option>
-                            <option value="Cadastrar modelo novo">Cadastrar modelo novo</option>
-                            <option value="Alterar cadastro de um modelo existente">Alterar cadastro de um modelo existente</option>
-                            <option value="Digitalizar modelo novo">Digitalizar modelo novo</option>
-                            <option value="Alterar modelo ja digitalizado">Alterar modelo ja digitalizado</option>
-                            <option value="Fazer personalizado">Fazer personalizado</option>
-                            <option value="Desenvolver nova arte personalizada">Desenvolver nova arte personalizada</option>
-                            <option value="alterar personalizado existente">Alterar personalizado existente</option>
-                            <option value="Criar bordado a partir da imagem disponibilizada">Criar bordado a partir da imagem disponibilizada</option>
-                            <option value="Medição de consumo">Medição de consumo</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="taskPriority">Sequência de Prioridade</label>
-                        <select id="taskPriority" required>
-                            <option value="1">Prioridade 1 (Máxima)</option>
-                            <option value="2">Prioridade 2 (Média)</option>
-                            <option value="3">Prioridade 3 (Normal)</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
-                        <label for="taskDeadline">Prazo Limite para Entrega</label>
-                        <input type="date" id="taskDeadline" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="taskDesc">Instruções Adicionais</label>
-                        <textarea id="taskDesc" rows="3" placeholder="Informações adicionais relevantes"></textarea>
-                    </div>
-                    <button type="submit" class="btn-submit">Direcionar e Enviar</button>
-                </form>
-            </div>
-
-            <div class="box" style="flex: 1;" id="taskListBox">
-                
-                <div class="control-panels-container" id="userControlPanels" style="display: none;">
-                    <div class="meal-control-panel">
-                        <div><strong id="mealStatusLabel">Status do Almoço: Pronto para o intervalo</strong></div>
-                        <div>
-                            <button class="btn-meal btn-meal-start" id="btnStartMeal" onclick="registrarAlmoço('start')">Ir para o Almoço 🍽️</button>
-                            <button class="btn-meal btn-meal-end" id="btnEndMeal" style="display: none;" onclick="registrarAlmoço('end')">Voltar do Almoço 🟢</button>
-                        </div>
-                    </div>
-                    
-                    <div class="descanso-control-panel">
-                        <div><strong id="descansoStatusLabel">Status do Descanso (10 min): Liberado</strong></div>
-                        <div>
-                            <button class="btn-descanso btn-descanso-start" id="btnStartDescanso" onclick="registrarDescanso('start')">Iniciar Descanso ☕</button>
-                            <button class="btn-descanso btn-descanso-end" id="btnEndDescanso" style="display: none;" onclick="registrarDescanso('end')">Retornar ao Trabalho 🟢</button>
-                        </div>
-                    </div>
-                </div>
-
-                <h2 id="listTitle">Fila Geral de Monitoramento em Tempo Real</h2>
-                <div class="task-list" id="taskList"></div>
-            </div>
-        </div>
-
-        <div id="tabRelatorios" class="box" style="display: none; max-width: 1600px; margin: 0 auto;">
-            <h2>Painel Estatístico Avançado de Performance</h2>
-            
-            <div class="form-group" style="max-width: 300px; margin-bottom: 20px;">
-                <label for="reportPeriod">Selecionar Abrangência Temporal:</label>
-                <select id="reportPeriod" onchange="updateReportDashboard()">
-                    <option value="semanal">Últimos 7 dias (Semanal)</option>
-                    <option value="quinzenal">Últimos 15 dias (Quinzenal)</option>
-                    <option value="mensal">Últimos 30 dias (Mensal)</option>
-                    <option value="anual">Últimos 365 dias (Anual)</option>
-                </select>
-            </div>
-
-            <hr style="margin: 20px 0; border: 0; border-top: 1px solid #ddd;">
-
-            <h3>1. Relatório de Volume de Tarefas</h3>
-            <div id="sectorRating" class="rating-box" style="margin-top: 10px;">CALCULANDO REGULARIDADE...</div>
-            <div class="report-layout report-layout-full">
-                <div>
-                    <div class="report-grid">
-                        <div class="metric-card"><h4>No Prazo</h4><p id="mNoPrazo" style="color: #2ecc71;">0</p></div>
-                        <div class="metric-card"><h4>Atrasadas</h4><p id="mForaPrazo" style="color: #e74c3c;">0</p></div>
-                        <div class="metric-card"><h4>Em Fila (Pendente)</h4><p id="mPendentes" style="color: #f39c12;">0</p></div>
-                        <div class="metric-card"><h4>Volumetria Total</h4><p id="mTotal">0</p></div>
-                    </div>
-                </div>
-                <div class="chart-container"><canvas id="efficiencyChart"></canvas></div>
-            </div>
-
-            <div id="restrictedTimeReportSection" style="display: none;">
-                <hr style="margin: 30px 0; border: 0; border-top: 1px solid #ddd;">
-                <h3>2. Relatório de Gestão de Tempo da Equipe (Trabalho vs. Descanso vs. Almoço vs. Ociosidade Real)</h3>
-                <div class="report-layout">
-                    <div style="overflow-x: auto;">
-                        <table style="width: 100%; border-collapse: collapse; background: white; font-size: 0.9rem;" id="timeTable">
-                            <thead>
-                                <tr style="background: #2c3e50; color: white;">
-                                    <th style="padding: 12px; text-align: left;">Funcionário</th>
-                                    <th style="padding: 12px; text-align: center;">Tempo em Trabalho</th>
-                                    <th style="padding: 12px; text-align: center;">Tempo Almoço</th>
-                                    <th style="padding: 12px; text-align: center;">Descanso Legal</th>
-                                    <th style="padding: 12px; text-align: center;">Interrupções</th>
-                                    <th style="padding: 12px; text-align: center;">Ociosidade Real</th>
-                                </tr>
-                            </thead>
-                            <tbody id="timeTableBody">
-                                </tbody>
-                        </table>
-                    </div>
-                    <div class="chart-container"><canvas id="timeChart"></canvas></div>
-                </div>
-            </div>
-
-            <div class="report-actions" id="reportButtonsContainer" style="display: none;">
-                <button class="btn-report btn-pdf" onclick="exportPDF()">Exportar Relatório PDF</button>
-                <button class="btn-report btn-excel" onclick="exportExcel()">Exportar Planilha Excel</button>
-            </div>
-        </div>
-
-        <div id="tabGerenciamento" class="box" style="display: none; max-width: 1000px; margin: 0 auto;">
-            <h2>Configurações de Controle Operacional</h2>
-            
-            <div class="box" style="background: #fdfdfd; border: 1px solid #ddd; margin-top: 15px;">
-                <h3>Configurações de Jornada & Nomes da Equipe</h3>
-                <div class="form-group">
-                    <label id="lbl_user1">Usuário 1:</label>
-                    <div class="grid-jornada">
-                        <input type="text" id="cfg_user1" placeholder="Nome">
-                        <label>Entrada: <input type="time" id="cfg_in1"></label>
-                        <label>Saída: <input type="time" id="cfg_out1"></label>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label id="lbl_user2">Usuário 2:</label>
-                    <div class="grid-jornada">
-                        <input type="text" id="cfg_user2" placeholder="Nome">
-                        <label>Entrada: <input type="time" id="cfg_in2"></label>
-                        <label>Saída: <input type="time" id="cfg_out2"></label>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label id="lbl_user3">Usuário 3:</label>
-                    <div class="grid-jornada">
-                        <input type="text" id="cfg_user3" placeholder="Nome">
-                        <label>Entrada: <input type="time" id="cfg_in3"></label>
-                        <label>Saída: <input type="time" id="cfg_out3"></label>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label id="lbl_user4">Usuário 4:</label>
-                    <div class="grid-jornada">
-                        <input type="text" id="cfg_user4" placeholder="Nome">
-                        <label>Entrada: <input type="time" id="cfg_in4"></label>
-                        <label>Saída: <input type="time" id="cfg_out4"></label>
-                    </div>
-                </div>
-                <div class="form-group">
-                    <label id="lbl_user5">Usuário 5:</label>
-                    <div class="grid-jornada">
-                        <input type="text" id="cfg_user5" placeholder="Nome">
-                        <label>Entrada: <input type="time" id="cfg_in5"></label>
-                        <label>Saída: <input type="time" id="cfg_out5"></label>
-                    </div>
-                </div>
-                
-                <button class="btn-manage" style="width:100%; padding:12px; margin-top:5px;" onclick="salvarConfiguracaoEquipe()">Salvar Alterações de Nomes e Jornadas</button>
-            </div>
-
-            <div class="box" style="background: #fdfdfd; border: 1px solid #ddd;">
-                <h3>Segurança do Administrador</h3>
-                <div class="form-group">
-                    <label for="cfg_adminPassword">Definir Nova Senha de Admin:</label>
-                    <input type="password" id="cfg_adminPassword" placeholder="Deixe em branco para manter a atual">
-                </div>
-                <button class="btn-manage" style="width:100%; padding:12px;" onclick="salvarSenhaAdmin()">Atualizar Senha</button>
-            </div>
-
-            <div class="box" style="background: #fdfdfd; border: 1px solid #e74c3c;">
-                <h3 style="color: #c0392b;">Gerenciamento de Arquivos de Backup (Nuvem)</h3>
-                <div style="display: flex; gap: 10px; flex-wrap: wrap; margin-top: 10px;">
-                    <button class="btn-manage" style="background-color: #27ae60;" onclick="criarBackupFirebase()">Criar/Substituir Backup Atual</button>
-                    <button class="btn-manage" style="background-color: #f39c12;" onclick="restaurarBackupFirebase()">Restaurar Último Backup</button>
-                    <button class="btn-danger-zone" onclick="apagarBackupFirebase()">Apagar Backup do Banco</button>
-                </div>
+    <div class="modal-overlay" id="descansoAlertModal">
+        <div class="modal-box" style="text-align:center; border-top:6px solid #9b59b6;">
+            <h2 style="color:#9b59b6; margin-bottom:10px;">☕ Hora do Descanso Setorial!</h2>
+            <p style="font-size:0.95rem; margin-bottom:20px; color:#555;">O cronômetro padrão de 10 minutos do setor está liberado. Deseja iniciar o seu registro de descanso agora?</p>
+            <div style="display:flex; gap:10px;">
+                <button class="btn-submit" style="background:#7f8c8d;" onclick="document.getElementById('descansoAlertModal').style.display='none'">Ignorar</button>
+                <button class="btn-submit" style="background:#9b59b6;" onclick="iniciarDescansoPeloPopup()">Iniciar Descanso ✓</button>
             </div>
         </div>
     </div>
@@ -433,6 +437,22 @@
         let timeChart = null;
         let popupDisparadoHoje = { manha: false, tarde: false };
 
+        const containerCampos = document.getElementById('userFieldsContainer');
+        if(containerCampos) {
+            for(let i=1; i<=5; i++) {
+                containerCampos.innerHTML += `
+                    <div style="border: 1px solid #eee; padding:10px; border-radius:6px; margin-bottom:10px; background:#fafafa;">
+                        <label id="lbl_user${i}" style="font-weight:bold; font-size:0.85rem;">Funcionário ${i}:</label>
+                        <input type="text" id="cfg_user${i}" class="form-control" style="margin-bottom:5px;" placeholder="Nome">
+                        <div style="display:flex; gap:10px;">
+                            <input type="time" id="cfg_in${i}" class="form-control">
+                            <input type="time" id="cfg_out${i}" class="form-control">
+                        </div>
+                    </div>
+                `;
+            }
+        }
+
         database.ref('configuracoes/equipe').on('value', (snapshot) => {
             const data = snapshot.val();
             if (data) {
@@ -440,8 +460,6 @@
                     if(data[k]) nomesExibicao[k] = data[k].nome || nomesExibicao[k];
                     if(data[k] && data[k].jornada) jornadas[k] = data[k].jornada;
                 });
-                if(!data['admin']) nomesExibicao['admin'] = "Líder do Setor";
-                
                 for(let i=1; i<=5; i++) {
                     if (document.getElementById(`cfg_user${i}`)) document.getElementById(`cfg_user${i}`).value = nomesExibicao[`usuario_${i}`];
                     if (document.getElementById(`cfg_in${i}`)) document.getElementById(`cfg_in${i}`).value = jornadas[`usuario_${i}`].in;
@@ -449,38 +467,30 @@
                     if (document.getElementById(`lbl_user${i}`)) document.getElementById(`lbl_user${i}`).innerText = `Funcionário ${i} (${nomesExibicao[`usuario_${i}`]}):`;
                 }
                 atualizarNomesNoSeletorLogin();
-                if(currentUser) renderTasks();
+                renderTasks();
             }
         });
 
         database.ref('configuracoes/seguranca/adminPassword').on('value', (snapshot) => {
-            const val = snapshot.val();
-            if(val) adminPasswordDB = val;
+            const val = snapshot.val(); if(val) adminPasswordDB = val;
         });
 
         database.ref('tasks/ativas').on('value', (snapshot) => {
-            const data = snapshot.val();
-            tasks = data ? Object.values(data) : [];
-            if(currentUser) { renderTasks(); verificarAlertasCriticos(); }
-            updateReportDashboard();
+            tasks = snapshot.val() ? Object.values(snapshot.val()) : [];
+            renderTasks(); verificarAlertasCriticos(); updateReportDashboard();
         });
 
         database.ref('tasks/historico').on('value', (snapshot) => {
-            const data = snapshot.val();
-            historicTasks = data ? Object.values(data) : [];
+            historicTasks = snapshot.val() ? Object.values(snapshot.val()) : [];
             updateReportDashboard();
         });
 
         database.ref('almoço/historico').on('value', (snapshot) => {
-            mealLogs = snapshot.val() || {};
-            atualizarPainelAlmoçoInterface();
-            updateReportDashboard();
+            mealLogs = snapshot.val() || {}; atualizarPainelAlmoçoInterface(); updateReportDashboard();
         });
 
         database.ref('descanso/historico').on('value', (snapshot) => {
-            descansoLogs = snapshot.val() || {};
-            atualizarPainelDescansoInterface();
-            updateReportDashboard();
+            descansoLogs = snapshot.val() || {}; atualizarPainelDescansoInterface(); updateReportDashboard();
         });
 
         function atualizarNomesNoSeletorLogin() {
@@ -495,14 +505,9 @@
         }
 
         window.addEventListener('DOMContentLoaded', () => {
-            const savedUser = sessionStorage.getItem('modelagem_current_user') || 'visitante';
-            currentUser = savedUser;
+            currentUser = sessionStorage.getItem('modelagem_current_user') || 'visitante';
             configurarInterfacePorUsuario();
-            
-            setInterval(() => {
-                verificarHorarioDescansoPopup();
-                updateReportDashboard();
-            }, 5000);
+            setInterval(() => { verificarHorarioDescansoPopup(); updateReportDashboard(); }, 5000);
         });
 
         function abrirModalLogin() { document.getElementById('loginModal').style.display = 'flex'; }
@@ -520,7 +525,6 @@
         }
 
         function configurarInterfacePorUsuario() {
-            document.getElementById('mainDashboard').style.display = 'block';
             const container = document.getElementById('tabPainel');
             const adminBox = document.getElementById('adminFormBox');
             const btnGerenciamento = document.getElementById('btnTabGerenciamento');
@@ -536,36 +540,25 @@
             if (currentUser === 'admin') {
                 document.getElementById('userDisplay').innerText = nomesExibicao[currentUser];
                 adminBox.style.display = 'block'; container.classList.remove('full-width');
-                btnGerenciamento.style.display = 'block';
-                btnLoginTrigger.style.display = 'none'; btnLogout.style.display = 'block';
-                reportButtons.style.display = 'flex';
-                restrictedSection.style.display = 'block';
-                userPanels.style.display = 'flex';
-                atualizarPainelAlmoçoInterface();
-                atualizarPainelDescansoInterface();
+                btnGerenciamento.style.display = 'block'; btnLoginTrigger.style.display = 'none'; btnLogout.style.display = 'block';
+                reportButtons.style.display = 'flex'; restrictedSection.style.display = 'block'; userPanels.style.display = 'flex';
+                atualizarPainelAlmoçoInterface(); atualizarPainelDescansoInterface();
                 switchTab('painel');
             } else if (currentUser === 'visitante') {
                 document.getElementById('userDisplay').innerText = "Monitoramento Geral";
                 adminBox.style.display = 'none'; container.classList.add('full-width');
-                btnGerenciamento.style.display = 'none';
-                btnLoginTrigger.style.display = 'block'; btnLogout.style.display = 'none';
-                reportButtons.style.display = 'none'; 
-                restrictedSection.style.display = 'none';
+                btnGerenciamento.style.display = 'none'; btnLoginTrigger.style.display = 'block'; btnLogout.style.display = 'none';
+                reportButtons.style.display = 'none'; restrictedSection.style.display = 'none';
                 switchTab('painel');
             } else {
                 document.getElementById('userDisplay').innerText = nomesExibicao[currentUser];
                 adminBox.style.display = 'none'; container.classList.add('full-width');
-                document.getElementById('adminTabs').style.display = 'none'; 
+                document.getElementById('adminTabs').style.display = 'none';
                 btnLoginTrigger.style.display = 'none'; btnLogout.style.display = 'block';
-                reportButtons.style.display = 'flex';
-                restrictedSection.style.display = 'block';
-                userPanels.style.display = 'flex';
-                atualizarPainelAlmoçoInterface();
-                atualizarPainelDescansoInterface();
-                verificarAlertasCriticos();
+                reportButtons.style.display = 'flex'; restrictedSection.style.display = 'block'; userPanels.style.display = 'flex';
+                atualizarPainelAlmoçoInterface(); atualizarPainelDescansoInterface(); verificarAlertasCriticos();
             }
-            renderTasks();
-            updateReportDashboard();
+            renderTasks(); updateReportDashboard();
         }
 
         function logout() { sessionStorage.setItem('modelagem_current_user', 'visitante'); currentUser = 'visitante'; configurarInterfacePorUsuario(); }
@@ -581,120 +574,69 @@
         function verificarAlertasCriticos() {
             if(currentUser === 'visitante' || currentUser === 'admin') return;
             const hoje = new Date().toISOString().split('T')[0];
-            let checkUser = (currentUser === 'usuario_2' || currentUser === 'usuario_5') ? ['usuario_2', 'usuario_5'] : [currentUser];
-            const temUrgencia = tasks.some(t => t.responsibles && t.responsibles.some(r => checkUser.includes(r)) && t.priority === "1" && t.deadline <= hoje);
+            const temUrgencia = tasks.some(t => t.responsibles && t.responsibles.includes(currentUser) && t.priority === "1" && t.deadline <= hoje);
             document.getElementById('criticalAlertPanel').style.display = temUrgencia ? 'block' : 'none';
         }
 
         function verificarHorarioDescansoPopup() {
             if (currentUser === 'visitante') return;
-
             const agora = new Date();
-            const horas = agora.getHours();
-            const minutos = agora.getMinutes();
-            const totalMinutos = (horas * 60) + minutos;
-
-            const minInicioManha = (9 * 60) + 50;  
-            const minFimManha = (10 * 60) + 0;    
-            const minInicioTarde = (15 * 60) + 30; 
-            const minFimTarde = (15 * 60) + 40;   
-
-            if (totalMinutos >= minInicioManha && totalMinutos < minFimManha && !popupDisparadoHoje.manha) {
-                document.getElementById('descansoAlertModal').style.display = 'flex';
-            } else if (totalMinutos >= minInicioTarde && totalMinutos < minFimTarde && !popupDisparadoHoje.tarde) {
-                document.getElementById('descansoAlertModal').style.display = 'flex';
-            } else {
-                document.getElementById('descansoAlertModal').style.display = 'none';
-            }
+            const totalMinutos = (agora.getHours() * 60) + agora.getMinutes();
+            if (totalMinutos >= 590 && totalMinutos < 600 && !popupDisparadoHoje.manha) { document.getElementById('descansoAlertModal').style.display = 'flex'; } 
+            else if (totalMinutos >= 930 && totalMinutos < 940 && !popupDisparadoHoje.tarde) { document.getElementById('descansoAlertModal').style.display = 'flex'; }
         }
 
         function iniciarDescansoPeloPopup() {
             document.getElementById('descansoAlertModal').style.display = 'none';
-            const agora = new Date();
-            if (agora.getHours() < 12) popupDisparadoHoje.manha = true;
-            else popupDisparadoHoje.tarde = true;
+            if (new Date().getHours() < 12) popupDisparadoHoje.manha = true; else popupDisparadoHoje.tarde = true;
             registrarDescanso('start');
         }
 
-        function verificarJanelaPermitidaDescanso() {
-            const agora = new Date();
-            const horas = agora.getHours();
-            const minutos = agora.getMinutes();
-            const totalMinutos = (horas * 60) + minutos;
-
-            return ((totalMinutos >= (9 * 60) + 50) && (totalMinutos < (10 * 60))) || 
-                   ((totalMinutos >= (15 * 60) + 30) && (totalMinutos < (15 * 60) + 40));
-        }
-
         function registrarDescanso(status) {
-            if (status === 'start' && !verificarJanelaPermitidaDescanso()) {
-                alert("⚠️ Alerta: Você está registrando o Descanso de 10 minutos fora da janela padrão do setor (09:50-10:00 ou 15:30-15:40). O registro foi salvo.");
-            }
             const hojeStr = new Date().toISOString().split('T')[0];
-            const now = new Date().getTime();
             const refPath = `descanso/historico/${hojeStr}/${currentUser}`;
-            if (status === 'start') { database.ref(refPath).set({ start: now }); } 
-            else { database.ref(refPath).update({ end: now }); }
+            if (status === 'start') { database.ref(refPath).set({ start: new Date().getTime() }); } 
+            else { database.ref(refPath).update({ end: new Date().getTime() }); }
         }
 
         function atualizarPainelDescansoInterface() {
             if (currentUser === 'visitante') return;
-            const hojeStr = new Date().toISOString().split('T')[0];
-            const logHoje = descansoLogs[hojeStr] ? descansoLogs[hojeStr][currentUser] : null;
-
-            const btnStart = document.getElementById('btnStartDescanso');
-            const btnEnd = document.getElementById('btnEndDescanso');
-            const label = document.getElementById('descansoStatusLabel');
-
-            if (!logHoje) {
-                btnStart.style.display = 'inline-block'; btnEnd.style.display = 'none';
-                label.innerText = "Status do Descanso: Disponível";
-            } else if (logHoje.start && !logHoje.end) {
-                btnStart.style.display = 'none'; btnEnd.style.display = 'inline-block';
-                label.innerText = "Status do Descanso: ☕ Em Intervalo de 10 min...";
-            } else if (logHoje.start && logHoje.end) {
-                btnStart.style.display = 'none'; btnEnd.style.display = 'none';
-                label.innerText = "Status do Descanso: ✓ Intervalo realizado.";
-            }
+            const logHoje = descansoLogs[new Date().toISOString().split('T')[0]]?.[currentUser];
+            const btnStart = document.getElementById('btnStartDescanso'); const btnEnd = document.getElementById('btnEndDescanso'); const label = document.getElementById('descansoStatusLabel');
+            if (!logHoje) { btnStart.style.display = 'inline-block'; btnEnd.style.display = 'none'; label.innerText = "Status do Descanso: Disponível"; } 
+            else if (logHoje.start && !logHoje.end) { btnStart.style.display = 'none'; btnEnd.style.display = 'inline-block'; label.innerText = "Status: ☕ Em Intervalo..."; } 
+            else { btnStart.style.display = 'none'; btnEnd.style.display = 'none'; label.innerText = "Status: ✓ Realizado."; }
         }
 
         function registrarAlmoço(status) {
             const hojeStr = new Date().toISOString().split('T')[0];
-            const now = new Date().getTime();
             const refPath = `almoço/historico/${hojeStr}/${currentUser}`;
-            if (status === 'start') { database.ref(refPath).set({ start: now }); } 
-            else { database.ref(refPath).update({ end: now }); }
+            if (status === 'start') { database.ref(refPath).set({ start: new Date().getTime() }); } 
+            else { database.ref(refPath).update({ end: new Date().getTime() }); }
         }
 
         function atualizarPainelAlmoçoInterface() {
             if (currentUser === 'visitante') return;
-            const hojeStr = new Date().toISOString().split('T')[0];
-            const logHoje = mealLogs[hojeStr] ? mealLogs[hojeStr][currentUser] : null;
-
-            const btnStart = document.getElementById('btnStartMeal');
-            const btnEnd = document.getElementById('btnEndMeal');
-            const label = document.getElementById('mealStatusLabel');
-
-            if (!logHoje) {
-                btnStart.style.display = 'inline-block'; btnEnd.style.display = 'none';
-                label.innerText = "Status do Almoço: Pronto para o intervalo";
-            } else if (logHoje.start && !logHoje.end) {
-                btnStart.style.display = 'none'; btnEnd.style.display = 'inline-block';
-                label.innerText = "Status do Almoço: 🍽️ Em horário de almoço...";
-            } else if (logHoje.start && logHoje.end) {
-                btnStart.style.display = 'none'; btnEnd.style.display = 'none';
-                label.innerText = "Status do Almoço: ✓ Almoço finalizado por hoje.";
-            }
+            const logHoje = mealLogs[new Date().toISOString().split('T')[0]]?.[currentUser];
+            const btnStart = document.getElementById('btnStartMeal'); const btnEnd = document.getElementById('btnEndMeal'); const label = document.getElementById('mealStatusLabel');
+            if (!logHoje) { btnStart.style.display = 'inline-block'; btnEnd.style.display = 'none'; label.innerText = "Status do Almoço: Pronto"; } 
+            else if (logHoje.start && !logHoje.end) { btnStart.style.display = 'none'; btnEnd.style.display = 'inline-block'; label.innerText = "Status: 🍽️ Almoçando..."; } 
+            else { btnStart.style.display = 'none'; btnEnd.style.display = 'none'; label.innerText = "Status: ✓ Finalizado."; }
         }
 
         function renderTasks() {
-            const taskList = document.getElementById('taskList');
+            const taskList = document.getElementById('taskList'); if(!taskList) return;
             taskList.innerHTML = '';
             
-            let filteredTasks = [...tasks];
+            const filtro = document.getElementById('queueUserFilter').value;
+            let filteredTasks = tasks.filter(t => {
+                if (filtro === 'minhas') return t.responsibles && t.responsibles.includes(currentUser);
+                if (filtro !== 'todos' && filtro !== 'minhas') return t.responsibles && t.responsibles.includes(filtro);
+                return true;
+            });
 
             filteredTasks.sort((a, b) => a.priority - b.priority || new Date(a.deadline) - new Date(b.deadline));
-            if (filteredTasks.length === 0) { taskList.innerHTML = '<p style="color: #999; text-align: center; padding: 35px;">Nenhuma atividade ativa no momento.</p>'; return; }
+            if (filteredTasks.length === 0) { taskList.innerHTML = '<p style="color: #999; text-align: center; padding: 35px;">Nenhuma atividade ativa localizada com este filtro.</p>'; return; }
 
             const hoje = new Date().toISOString().split('T')[0];
 
@@ -704,39 +646,34 @@
                 const dataBr = task.deadline.split('-').reverse().join('/');
                 let prazoStatus = task.deadline < hoje ? `<span class="deadline-alert">⚠️ ATRASADA (${dataBr})</span>` : (task.deadline === hoje ? `<span class="deadline-alert">🚨 ENTREGA HOJE</span>` : `Prazo: ${dataBr}`);
 
-                let statusCronometro = "Aguardando Início";
-                if (task.timeLogs && task.timeLogs.length > 0) {
-                    const ultimoLog = task.timeLogs[task.timeLogs.length - 1];
-                    statusCronometro = ultimoLog.type === 'start' ? `<span style="color:#2ecc71; font-weight:bold;">▶️ Em execução por ${ultimoLog.byName}</span>` : `<span style="color:#e67e22; font-weight:bold;">⏸️ Pausado (Trabalhando) por ${ultimoLog.byName}</span>`;
-                }
+                const ultimoLog = task.timeLogs && task.timeLogs.length > 0 ? task.timeLogs[task.timeLogs.length - 1] : null;
+                let statusCronometro = ultimoLog ? (ultimoLog.type === 'start' ? `▶️ Em execução por ${ultimoLog.byName}` : `⏸️ Pausado por ${ultimoLog.byName}`) : "Aguardando Início";
 
-                let interrupcoesHTML = '';
-                if(task.pauses_list) {
-                    interrupcoesHTML = Object.values(task.pauses_list).map(p => `<div class="task-pause-box" style="color: #2c3e50; background: #f0f4f8; border-left: 3px solid #3498db;"><strong>Nota de Pausa (${p.byName}):</strong> ${p.reason}</div>`).join('');
-                }
+                // Permissão: Só o responsável direto da tarefa ou o Admin podem clicar nos botões de controle
+                const ehResponsavel = task.responsibles && task.responsibles.includes(currentUser);
+                const podeControlar = currentUser === 'admin' || ehResponsavel;
+                const classeBotao = podeControlar ? "btn-action" : "btn-action btn-disabled";
+                const atributoDesabilitado = podeControlar ? "" : "disabled";
 
-                let botoesAcaoHTML = '';
-                const canControl = (currentUser !== 'visitante');
-                
-                if(currentUser !== 'visitante' && canControl) {
-                    const isRunning = task.timeLogs && task.timeLogs.length > 0 && task.timeLogs[task.timeLogs.length - 1].type === 'start';
-                    botoesAcaoHTML = `
-                        <div class="task-actions">
-                            ${currentUser === 'admin' ? `<button class="btn-action btn-delete" onclick="deleteTask('${task.id}')">Excluir</button>` : ''}
-                            ${!isRunning ? `<button class="btn-action btn-start" onclick="alterarCronometro('${task.id}', 'start')">Iniciar Task ▶️</button>` : `<button class="btn-action btn-pause" onclick="alterarCronometro('${task.id}', 'pause')">Pausar Task ⏸️</button>`}
-                            <button class="btn-action btn-done" onclick="finishTask('${task.id}')">Concluir ✓</button>
-                        </div>
-                    `;
-                }
+                const isRunning = ultimoLog && ultimoLog.type === 'start';
+                let botoesAcaoHTML = `
+                    <div class="task-actions">
+                        ${currentUser === 'admin' ? `<button class="btn-action btn-delete" onclick="deleteTask('${task.id}')">Excluir</button>` : ''}
+                        ${!isRunning ? 
+                            `<button class="${classeBotao} btn-start" ${atributoDesabilitado} onclick="alterarCronometro('${task.id}', 'start')">Iniciar Task ▶️</button>` : 
+                            `<button class="${classeBotao} btn-pause" ${atributoDesabilitado} onclick="alterarCronometro('${task.id}', 'pause')">Pausar Task ⏸️</button>`
+                        }
+                        <button class="${classeBotao} btn-done" ${atributoDesabilitado} onclick="finishTask('${task.id}')">Concluir ✓</button>
+                    </div>
+                `;
 
                 card.innerHTML = `
                     <span class="prio-badge">Prioridade ${task.priority}</span>
                     <h3>${task.title} <span style="font-size:0.85rem; color:#3498db; font-weight:bold; background:#e8f4fd; padding:3px 8px; border-radius:4px;">${task.category || 'KIT'}</span></h3>
                     <div class="task-info-line" style="margin-top: 8px;"><strong>Ação:</strong> ${task.action} | <strong>Status:</strong> ${statusCronometro}</div>
                     ${task.desc ? `<div class="task-desc-box"><strong>Instruções:</strong> ${task.desc}</div>` : ''}
-                    ${interrupcoesHTML}
                     <div class="task-meta">
-                        <span>👥 Responsáveis Cadastrados: <strong>${task.responsibles ? task.responsibles.map(r => nomesExibicao[r]).join(' / ') : ''}</strong></span>
+                        <span>👥 Alocado para: <strong>${task.responsibles ? task.responsibles.map(r => nomesExibicao[r]).join(' / ') : 'Setor'}</strong></span>
                         <span>${prazoStatus}</span>
                     </div>
                     ${botoesAcaoHTML}
@@ -746,23 +683,16 @@
         }
 
         function alterarCronometro(id, acao) {
-            const task = tasks.find(t => t.id === id);
-            if (!task) return;
+            const task = tasks.find(t => t.id === id); if (!task) return;
             const now = new Date().getTime();
             if (!task.timeLogs) task.timeLogs = [];
-            if (!task.responsibles) task.responsibles = [];
-
-            // INCLUSÃO DINÂMICA: Se o Líder ou outro funcionário iniciar a tarefa, o perfil dele entra na lista de responsáveis se já não estiver lá
-            if (acao === 'start' && !task.responsibles.includes(currentUser)) {
-                task.responsibles.push(currentUser);
-            }
 
             if (acao === 'pause') {
-                const motivo = prompt("Informe uma observação/motivo para pausar esta tarefa (Ela continuará contando como tempo trabalhado):");
-                if (!motivo || motivo.trim() === "") { alert("A anotação é obrigatória!"); return; }
+                const motivo = prompt("Informe o motivo para pausar:");
+                if (!motivo) return;
                 if (!task.pauses_list) task.pauses_list = {};
-                const pauseId = '_' + Math.random().toString(36).substr(2, 9);
-                task.pauses_list[pauseId] = { id: pauseId, reason: motivo, start: now, user: currentUser, byName: nomesExibicao[currentUser] };
+                const pId = '_' + Math.random().toString(36).substr(2, 9);
+                task.pauses_list[pId] = { id: pId, reason: motivo, start: now, user: currentUser, byName: nomesExibicao[currentUser] };
                 task.timeLogs.push({ type: 'pause', time: now, by: currentUser, byName: nomesExibicao[currentUser] });
             } else {
                 task.timeLogs.push({ type: 'start', time: now, by: currentUser, byName: nomesExibicao[currentUser] });
@@ -771,74 +701,94 @@
         }
 
         function finishTask(id) {
-            const compTask = tasks.find(t => t.id === id);
-            if (!compTask) return;
-            const now = new Date().getTime();
-            if(!compTask.timeLogs || compTask.timeLogs.length === 0) { alert("Inicie a tarefa antes de concluir!"); return; }
-
-            let primeiroStart = compTask.timeLogs[0].time;
-            let tempoTotalTarefaMs = now - primeiroStart;
-
+            const compTask = tasks.find(t => t.id === id); if (!compTask) return;
             compTask.dateFinished = new Date().toISOString().split('T')[0];
             compTask.onTime = compTask.dateFinished <= compTask.deadline;
-            compTask.workMinutes = Math.round(tempoTotalTarefaMs / 1000 / 60);
-            compTask.pauseMinutes = 0; 
             compTask.userWhoFinished = currentUser;
             compTask.userWhoFinishedName = nomesExibicao[currentUser];
 
             database.ref('tasks/historico/' + id).set(compTask).then(() => {
                 database.ref('tasks/ativas/' + id).remove();
-                alert("Tarefa concluída!");
+                alert("Tarefa concluída com sucesso!");
             });
         }
 
-        function calcularTempoTrabalhoRealAtivo(userKey) {
-            let totalMinutos = 0;
-            const agora = new Date().getTime();
+        // Nova Inteligência de Cálculo Baseada Estritamente em Horário Comercial do Dia Solicitado
+        function calcularMilissegundosUteisNoPeriodo(startMs, endMs, userKey, apenasHoje = false) {
+            let totalMs = 0;
+            const itemJornada = jornadas[userKey] || { in: "07:12", out: "17:00" };
+            const [hIn, mIn] = itemJornada.in.split(':').map(Number);
+            const [hOut, mOut] = itemJornada.out.split(':').map(Number);
 
-            tasks.forEach(t => {
-                if (t.responsibles && t.responsibles.includes(userKey) && t.timeLogs && t.timeLogs.length > 0) {
-                    let primeiroStart = t.timeLogs[0].time;
-                    totalMinutos += Math.round((agora - primeiroStart) / 1000 / 60);
+            let ponteiro = new Date(startMs);
+            const fimJanela = new Date(endMs);
+            const hojeStr = new Date().toISOString().split('T')[0];
+
+            while (ponteiro < fimJanela) {
+                const diaSemana = ponteiro.getDay();
+                const dataLoopStr = ponteiro.toISOString().split('T')[0];
+
+                if (diaSemana >= 1 && diaSemana <= 5 && (!apenasHoje || dataLoopStr === hojeStr)) {
+                    const inicioComercial = new Date(ponteiro); inicioComercial.setHours(hIn, mIn, 0, 0);
+                    const fimComercial = new Date(ponteiro); fimComercial.setHours(hOut, mOut, 0, 0);
+
+                    const maxStart = Math.max(ponteiro.getTime(), inicioComercial.getTime());
+                    const minEnd = Math.min(fimJanela.getTime(), fimComercial.getTime());
+
+                    if (maxStart < minEnd) totalMs += (minEnd - maxStart);
                 }
-            });
+                ponteiro.setDate(ponteiro.getDate() + 1); ponteiro.setHours(0,0,0,0);
+            }
+            return totalMs;
+        }
+
+        function calcularTempoTrabalhoEfetivoTotal(userKey, deDataStr, apenasHoje = false) {
+            let totalMinutos = 0; const agoraMs = new Date().getTime();
+            const processarLogs = (t) => {
+                if (t.timeLogs) {
+                    for (let i = 0; i < t.timeLogs.length; i++) {
+                        if (t.timeLogs[i].by === userKey && t.timeLogs[i].type === 'start') {
+                            let fimTrecho = (i + 1 < t.timeLogs.length) ? t.timeLogs[i+1].time : agoraMs;
+                            totalMinutos += Math.round(calcularMilissegundosUteisNoPeriodo(t.timeLogs[i].time, fimTrecho, userKey, apenasHoje) / 1000 / 60);
+                        }
+                    }
+                }
+            };
+            historicTasks.forEach(t => { if(t.dateFinished >= deDataStr) processarLogs(t); });
+            tasks.forEach(processarLogs);
             return totalMinutos;
         }
 
         function getFilteredMetrics() {
             const periodo = document.getElementById('reportPeriod').value;
-            const hoje = new Date(); let limiteDias = 7;
-            if (periodo === 'quinzenal') limiteDias = 15; else if (periodo === 'mensal') limiteDias = 30; else if (periodo === 'anual') limiteDias = 365;
+            const hoje = new Date(); let limiteDias = 0; const apenasHoje = (periodo === 'hoje');
 
-            const dataCorte = new Date(hoje.setDate(hoje.getDate() - limiteDias)).toISOString().split('T')[0];
+            if (periodo === 'semanal') limiteDias = 7; 
+            else if (periodo === 'quinzenal') limiteDias = 15; 
+            else if (periodo === 'mensal') limiteDias = 30; 
+            else if (periodo === 'anual') limiteDias = 365;
+
+            const dataCorte = apenasHoje ? new Date().toISOString().split('T')[0] : new Date(hoje.setDate(hoje.getDate() - limiteDias)).toISOString().split('T')[0];
             const concluidasNoPeriodo = historicTasks.filter(t => t.dateFinished >= dataCorte);
             
             return {
                 noPrazo: concluidasNoPeriodo.filter(t => t.onTime).length,
                 foraPrazo: concluidasNoPeriodo.filter(t => !t.onTime).length,
                 pendentes: tasks.length,
-                concluidasNoPeriodo
+                concluidasNoPeriodo,
+                dataCorte,
+                apenasHoje
             };
         }
 
         function updateReportDashboard() {
             if (document.getElementById('tabRelatorios').style.display === 'none') return;
-
             const metrics = getFilteredMetrics();
-            const total = metrics.noPrazo + metrics.foraPrazo + metrics.pendentes;
             
             document.getElementById('mNoPrazo').innerText = metrics.noPrazo;
             document.getElementById('mForaPrazo').innerText = metrics.foraPrazo;
             document.getElementById('mPendentes').innerText = metrics.pendentes;
-            document.getElementById('mTotal').innerText = total;
-
-            let taxa = (metrics.noPrazo + metrics.foraPrazo) > 0 ? (metrics.noPrazo / (metrics.noPrazo + metrics.foraPrazo)) * 100 : 100;
-            const ratingBox = document.getElementById('sectorRating');
-            if (ratingBox) {
-                if (taxa >= 85) { ratingBox.innerText = `REGULARIDADE DO SETOR: BOA (${taxa.toFixed(1)}% no prazo)`; ratingBox.className = "rating-box rating-boa"; }
-                else if (taxa >= 60) { ratingBox.innerText = `REGULARIDADE DO SETOR: MÉDIA (${taxa.toFixed(1)}% no prazo)`; ratingBox.className = "rating-box rating-media"; }
-                else { ratingBox.innerText = `REGULARIDADE DO SETOR: RUIM (${taxa.toFixed(1)}% no prazo)`; ratingBox.className = "rating-box rating-ruim"; }
-            }
+            document.getElementById('mTotal').innerText = metrics.noPrazo + metrics.foraPrazo + metrics.pendentes;
 
             const ctxEff = document.getElementById('efficiencyChart');
             if (ctxEff) {
@@ -846,84 +796,69 @@
                 myChart = new Chart(ctxEff.getContext('2d'), {
                     type: 'doughnut',
                     data: { labels: ['No Prazo', 'Atrasado', 'Pendente'], datasets: [{ data: [metrics.noPrazo, metrics.foraPrazo, metrics.pendentes], backgroundColor: ['#2ecc71', '#e74c3c', '#f39c12'] }] },
-                    options: { responsive: true, maintainAspectRatio: false }
+                    options: { 
+                        responsive: true, maintainAspectRatio: false,
+                        onClick: (evt, item) => {
+                            if(item && item.length > 0) {
+                                const index = item[0].index;
+                                const statusMapeados = ['noPrazo', 'foraPrazo', 'pendentes'];
+                                abrirDetalhamentoStatus(statusMapeados[index]);
+                            }
+                        }
+                    }
                 });
             }
 
-            const restrictedSection = document.getElementById('restrictedTimeReportSection');
-            if (currentUser === 'visitante') { restrictedSection.style.display = 'none'; return; } 
-            else { restrictedSection.style.display = 'block'; }
-
-            const tbody = document.getElementById('timeTableBody'); 
-            if (!tbody) return;
+            const tbody = document.getElementById('timeTableBody'); if (!tbody) return;
             tbody.innerHTML = '';
             
             let labelsTime = []; let dataWork = []; let dataAlmoco = []; let dataDescanso = []; let dataOcioso = [];
-            const hojeStr = new Date().toISOString().split('T')[0];
-            const agoraMs = new Date().getTime();
-
+            const hojeStr = new Date().toISOString().split('T')[0]; const agoraMs = new Date().getTime();
             const chavesEquipe = ['admin', 'usuario_1', 'usuario_2', 'usuario_3', 'usuario_4', 'usuario_5'];
 
             chavesEquipe.forEach(userKey => {
-                const concluidasDoUser = metrics.concluidasNoPeriodo ? metrics.concluidasNoPeriodo.filter(t => t.userWhoFinished === userKey) : [];
-                
-                let totalTrabalhoMin = concluidasDoUser.reduce((acc, t) => acc + (parseInt(t.workMinutes) || 0), 0) + calcularTempoTrabalhoRealAtivo(userKey);
+                let totalTrabalhoMin = calcularTempoTrabalhoEfetivoTotal(userKey, metrics.dataCorte, metrics.apenasHoje);
+                let totalAlmoçoMin = 0; let descansoLegalMin = 0;
 
-                let totalAlmoçoMin = 0;
-                if (mealLogs && mealLogs[hojeStr] && mealLogs[hojeStr][userKey]) {
-                    let mLog = mealLogs[hojeStr][userKey];
-                    let fimAlmoço = mLog.end ? mLog.end : agoraMs;
-                    totalAlmoçoMin = Math.max(0, Math.round((fimAlmoço - mLog.start) / 1000 / 60));
+                // Captura intervalos auxiliares com base na granularidade escolhida
+                if(metrics.apenasHoje) {
+                    if (mealLogs[hojeStr]?.[userKey]) {
+                        let log = mealLogs[hojeStr][userKey];
+                        totalAlmoçoMin = Math.max(0, Math.round(((log.end || agoraMs) - log.start) / 1000 / 60));
+                    }
+                    if (descansoLogs[hojeStr]?.[userKey]) {
+                        let log = descansoLogs[hojeStr][userKey];
+                        descansoLegalMin = Math.max(0, Math.round(((log.end || agoraMs) - log.start) / 1000 / 60));
+                    }
                 }
 
-                let descansoLegalMin = 0;
-                if (descansoLogs && descansoLogs[hojeStr] && descansoLogs[hojeStr][userKey]) {
-                    let dLog = descansoLogs[hojeStr][userKey];
-                    let fimDescanso = dLog.end ? dLog.end : agoraMs;
-                    descansoLegalMin = Math.max(0, Math.round((fimDescanso - dLog.start) / 1000 / 60));
+                const itemJornada = jornadas[userKey] || { in: "07:12", out: "17:00" };
+                const [hIn, mIn] = itemJornada.in.split(':').map(Number);
+                const [hOut, mOut] = itemJornada.out.split(':').map(Number);
+                const dIn = new Date(); dIn.setHours(hIn, mIn, 0, 0); const dOut = new Date(); dOut.setHours(hOut, mOut, 0, 0);
+
+                let janelaTotalMinutosHoje = 0;
+                if (new Date().getDay() >= 1 && new Date().getDay() <= 5 && agoraMs > dIn.getTime()) {
+                    janelaTotalMinutosHoje = Math.max(0, Math.round((Math.min(dOut.getTime(), agoraMs) - dIn.getTime()) / 1000 / 60));
                 }
 
-                const [hIn, mIn] = jornadas[userKey].in.split(':').map(Number);
-                const [hOut, mOut] = jornadas[userKey].out.split(':').map(Number);
-                
-                const dataInicioJornada = new Date();
-                dataInicioJornada.setHours(hIn, mIn, 0, 0);
-                
-                const dataFimJornada = new Date();
-                dataFimJornada.setHours(hOut, mOut, 0, 0);
+                let totalOciosoMin = metrics.apenasHoje ? Math.max(0, janelaTotalMinutosHoje - totalTrabalhoMin - totalAlmoçoMin - descansoLegalMin) : 0;
 
-                let tempoInicialCalculo = dataInicioJornada.getTime();
-                let tempoFinalCalculo = Math.min(dataFimJornada.getTime(), agoraMs);
-
-                let janelaTotalMinutos = 0;
-                if (agoraMs > tempoInicialCalculo) {
-                    janelaTotalMinutos = Math.max(0, Math.round((tempoFinalCalculo - tempoInicialCalculo) / 1000 / 60));
-                }
-
-                let totalOciosoMin = Math.max(0, janelaTotalMinutos - totalTrabalhoMin - totalAlmoçoMin - descansoLegalMin);
-
-                labelsTime.push(nomesExibicao[userKey] || userKey);
-                dataWork.push(totalTrabalhoMin);
-                dataAlmoco.push(totalAlmoçoMin);
-                dataDescanso.push(descansoLegalMin);
-                dataOcioso.push(totalOciosoMin);
+                labelsTime.push(nomesExibicao[userKey]); dataWork.push(totalTrabalhoMin);
+                dataAlmoco.push(totalAlmoçoMin); dataDescanso.push(descansoLegalMin); dataOcioso.push(totalOciosoMin);
 
                 const formatTime = (min) => min > 0 ? `${Math.floor(min/60)}h ${min%60}m` : "0m";
 
-                const tr = document.createElement('tr');
-                tr.style.borderBottom = "1px solid #ddd";
-                tr.innerHTML = `
-                    <td style="padding:12px; text-align:left;">
-                        <strong>${nomesExibicao[userKey]}</strong><br>
-                        <small style="color:#777;">Jornada: ${jornadas[userKey].in} às ${jornadas[userKey].out}</small>
-                    </td>
-                    <td style="padding:12px; text-align:center; color:#2ecc71; font-weight:bold;">${formatTime(totalTrabalhoMin)}</td>
-                    <td style="padding:12px; text-align:center; color:#e67e22;">${formatTime(totalAlmoçoMin)}</td>
-                    <td style="padding:12px; text-align:center; color:#3498db;">${formatTime(descansoLegalMin)}</td>
-                    <td style="padding:12px; text-align:center; color:#95a5a6;">Contado em Trabalho</td>
-                    <td style="padding:12px; text-align:center; color:#e74c3c; font-weight:bold;">${formatTime(totalOciosoMin)}</td>
+                tbody.innerHTML += `
+                    <tr style="border-bottom: 1px solid #ddd; text-align:center;">
+                        <td style="padding:12px; text-align:left;"><strong>${nomesExibicao[userKey]}</strong></td>
+                        <td style="color:#2ecc71; font-weight:bold;">${formatTime(totalTrabalhoMin)}</td>
+                        <td>${formatTime(totalAlmoçoMin)}</td>
+                        <td>${formatTime(descansoLegalMin)}</td>
+                        <td style="color:#aaa;">Contabilizado</td>
+                        <td style="color:#e74c3c; font-weight:bold;">${metrics.apenasHoje ? formatTime(totalOciosoMin) : 'Disponível em visão diária'}</td>
+                    </tr>
                 `;
-                tbody.appendChild(tr);
             });
 
             const ctxTime = document.getElementById('timeChart');
@@ -931,41 +866,60 @@
                 if(timeChart) timeChart.destroy();
                 timeChart = new Chart(ctxTime.getContext('2d'), {
                     type: 'bar',
-                    data: { 
-                        labels: labelsTime, 
-                        datasets: [
-                            { label: 'Trabalho Efetivo (Execução/Pausa)', data: dataWork, backgroundColor: '#2ecc71' },
-                            { label: 'Almoço', data: dataAlmoco, backgroundColor: '#e67e22' },
-                            { label: 'Descanso 10m', data: dataDescanso, backgroundColor: '#9b59b6' },
-                            { label: 'Ociosidade Real', data: dataOcioso, backgroundColor: '#e74c3c' }
-                        ] 
-                    },
-                    options: { 
-                        responsive: true, 
-                        maintainAspectRatio: false, 
-                        scales: { y: { stacked: true, title: { display: true, text: 'Minutos Totais' } }, x: { stacked: true } } 
-                    }
+                    data: { labels: labelsTime, datasets: [{ label: 'Trabalho Efetivo (Minutos)', data: dataWork, backgroundColor: '#2ecc71' }] },
+                    options: { responsive: true, maintainAspectRatio: false }
                 });
             }
         }
 
-        function exportExcel() {
-            if(currentUser === 'visitante') return;
+        // Lógica de Tela Cheia com Filtragem sob Demanda das Tarefas Correspondentes
+        function abrirDetalhamentoStatus(tipoStatus) {
             const metrics = getFilteredMetrics();
-            let linhas = [["RELATÓRIO DE PERFORMANCE"], [], ["Funcionário", "Tarefa / Referência", "Tempo Trabalho (Min)", "Data Conclusão", "Status"]];
-            metrics.concluidasNoPeriodo.forEach(t => { linhas.push([t.userWhoFinishedName, t.title, t.workMinutes || 0, t.dateFinished, t.onTime ? "No Prazo" : "Atrasado"]); });
-            const wb = XLSX.utils.book_new(); const ws = XLSX.utils.aoa_to_sheet(linhas);
-            XLSX.utils.book_append_sheet(wb, ws, "Produtividade"); XLSX.writeFile(wb, "Relatorio_Produtividade_Setor.xlsx");
+            const modal = document.getElementById('fullscreenDetailsModal');
+            const titulo = document.getElementById('fullscreenModalTitle');
+            const tbody = document.getElementById('fullscreenDetailsTableBody');
+            
+            tbody.innerHTML = '';
+            modal.style.display = 'flex';
+
+            let tarefasAlvo = [];
+            if(tipoStatus === 'noPrazo') { titulo.innerText = "Tarefas Entregues No Prazo Corporativo"; tarefasAlvo = metrics.concluidasNoPeriodo.filter(t => t.onTime); } 
+            else if(tipoStatus === 'foraPrazo') { titulo.innerText = "Tarefas Entregues com Atraso Crítico"; tarefasAlvo = metrics.concluidasNoPeriodo.filter(t => !t.onTime); } 
+            else if(tipoStatus === 'pendentes') { titulo.innerText = "Fila Operacional de Demandas Pendentes"; tarefasAlvo = tasks; } 
+            else { titulo.innerText = "Consolidação Geral do Período Filtrado"; tarefasAlvo = [...metrics.concluidasNoPeriodo, ...tasks]; }
+
+            if(tarefasAlvo.length === 0) { tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding:30px; color:#999;">Nenhuma tarefa atende a este critério.</td></tr>`; return; }
+
+            tarefasAlvo.forEach(t => {
+                const statusHTML = t.dateFinished ? `<span style="color:var(--success-color); font-weight:bold;">✓ Concluída em ${t.dateFinished.split('-').reverse().join('/')}</span>` : `<span style="color:var(--warning-color); font-weight:bold;">▶️ Em Fila Ativa</span>`;
+                tbody.innerHTML += `
+                    <tr style="border-bottom:1px solid #eee; text-align:center;">
+                        <td style="text-align:left; padding:12px;"><strong>${t.title}</strong></td>
+                        <td><span style="background:#eee; padding:3px 8px; border-radius:4px;">${t.category}</span></td>
+                        <td>${t.action}</td>
+                        <td>${t.responsibles ? t.responsibles.map(r => nomesExibicao[r]).join(', ') : 'Setor'}</td>
+                        <td>${t.deadline.split('-').reverse().join('/')}</td>
+                        <td>${statusHTML}</td>
+                    </tr>
+                `;
+            });
+        }
+
+        function fecharFullscreenDetails() { document.getElementById('fullscreenDetailsModal').style.display = 'none'; }
+
+        function exportExcel() {
+            let linhas = [["RELATÓRIO DE MONITORAMENTO"], [], ["Funcionário", "Tarefa / Referência", "Data Conclusão", "Status de Prazo"]];
+            historicTasks.forEach(t => { linhas.push([t.userWhoFinishedName || 'Setor', t.title, t.dateFinished, t.onTime ? "No Prazo" : "Atrasado"]); });
+            const ws = XLSX.utils.aoa_to_sheet(linhas); const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, ws, "Produtividade");
+            XLSX.writeFile(wb, "Relatorio_Produtividade_Setor.xlsx");
         }
 
         function exportPDF() {
-            if(currentUser === 'visitante') return;
             const { jsPDF } = window.jspdf; const doc = new jsPDF();
-            const metrics = getFilteredMetrics();
-            doc.setFont("Helvetica", "bold"); doc.setFontSize(14); doc.text("RELATÓRIO OPERACIONAL - MONITORAMENTO DE TEMPOS", 14, 20);
-            let corpo = metrics.concluidasNoPeriodo.map(t => [t.userWhoFinishedName, t.title, (t.workMinutes || 0)+" min", t.onTime?"No Prazo":"Atrasado"]);
-            doc.autoTable({ startY: 30, head: [['Funcionário', 'Tarefa/Modelo', 'Tempo Líquido', 'Status']], body: corpo });
-            doc.save("Relatorio_Operacional_Tempos.pdf");
+            doc.setFont("Helvetica", "bold"); doc.text("RELATÓRIO OPERACIONAL - GESTÃO DE ATIVIDADES", 14, 20);
+            let corpo = historicTasks.map(t => [t.userWhoFinishedName || 'Setor', t.title, t.dateFinished, t.onTime?"No Prazo":"Atrasado"]);
+            doc.autoTable({ startY: 30, head: [['Responsável', 'Modelo/Referência', 'Conclusão', 'Status']], body: corpo });
+            doc.save("Relatorio_Setorial.pdf");
         }
 
         function salvarConfiguracaoEquipe() {
@@ -976,42 +930,38 @@
                     jornada: { in: document.getElementById(`cfg_in${i}`).value, out: document.getElementById(`cfg_out${i}`).value }
                 };
             }
-            database.ref('configuracoes/equipe').set(configEquipe).then(() => { alert("Configurações atualizadas!"); });
+            database.ref('configuracoes/equipe').set(configEquipe).then(() => alert("Configurações atualizadas com sucesso!"));
         }
 
         function salvarSenhaAdmin() {
-            const novaSenha = document.getElementById('cfg_adminPassword').value;
-            if(!novaSenha) return;
-            database.ref('configuracoes/seguranca/adminPassword').set(novaSenha).then(() => { alert("Senha modificada!"); document.getElementById('cfg_adminPassword').value = ''; });
+            const novaSenha = document.getElementById('cfg_adminPassword').value; if(!novaSenha) return;
+            database.ref('configuracoes/seguranca/adminPassword').set(novaSenha).then(() => { alert("Senha atualizada!"); document.getElementById('cfg_adminPassword').value = ''; });
         }
 
         function criarBackupFirebase() {
             Promise.all([database.ref('tasks/ativas').once('value'), database.ref('tasks/historico').once('value')]).then(([sA, sH]) => {
-                database.ref('backup_sistema').set({ ativas: sA.val()||{}, historico: sH.val()||{} }).then(() => { alert("Backup realizado!"); });
+                database.ref('backup_sistema').set({ ativas: sA.val()||{}, historico: sH.val()||{} }).then(() => alert("Ponto de backup gerado com sucesso!"));
             });
         }
 
         function restaurarBackupFirebase() {
-            if(!confirm("Deseja restaurar o último ponto de backup gravado?")) return;
+            if(!confirm("Deseja restaurar do backup de segurança?")) return;
             database.ref('backup_sistema').once('value').then((snapshot) => {
                 const bkp = snapshot.val(); if(!bkp) return;
-                Promise.all([database.ref('tasks/ativas').set(bkp.ativas||null), database.ref('tasks/historico').set(bkp.historico||null)]).then(() => { alert("Restaurado com sucesso!"); });
+                Promise.all([database.ref('tasks/ativas').set(bkp.ativas||null), database.ref('tasks/historico').set(bkp.historico||null)]).then(() => alert("Dados restaurados!"));
             });
         }
 
-        function deleteTask(id) { if(confirm("Apagar permanentemente esta tarefa ativa?")) database.ref('tasks/ativas/' + id).remove(); }
+        function deleteTask(id) { if(confirm("Remover esta tarefa do banco de dados?")) database.ref('tasks/ativas/' + id).remove(); }
         
         document.getElementById('taskForm').addEventListener('submit', (e) => {
-            e.preventDefault();
-            const acao = document.getElementById('taskAction').value;
-            const taskId = '_' + Math.random().toString(36).substr(2, 9);
+            e.preventDefault(); const acao = document.getElementById('taskAction').value; const taskId = '_' + Math.random().toString(36).substr(2, 9);
             database.ref('tasks/ativas/' + taskId).set({
                 id: taskId, title: document.getElementById('taskTitle').value, category: document.getElementById('taskCategory').value,
                 action: acao, priority: document.getElementById('taskPriority').value, deadline: document.getElementById('taskDeadline').value,
                 desc: document.getElementById('taskDesc').value, responsibles: roteamentoUsuarios[acao] || [], timestampCreated: new Date().getTime(), timeLogs: []
             });
-            document.getElementById('taskForm').reset();
-            alert("Tarefa registrada.");
+            document.getElementById('taskForm').reset(); alert("Tarefa encaminhada com sucesso para a fila.");
         });
     </script>
 </body>
