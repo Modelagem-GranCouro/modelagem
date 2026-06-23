@@ -51,7 +51,6 @@
         .prio-badge { position: absolute; top: 15px; right: 15px; font-size: 0.75rem; font-weight: bold; padding: 3px 8px; border-radius: 3px; background: #ddd; }
         .task-desc-box { background: #f8f9fa; padding: 10px; border-radius: 4px; margin: 10px 0; font-size: 0.9rem; border: 1px dashed #ddd; }
         
-        /* Nova estilização para os motivos de pausa */
         .pause-reason-box { background: #fff2e6; padding: 8px 12px; border-radius: 4px; margin: 8px 0; font-size: 0.85rem; border-left: 3px solid #e67e22; color: #c0392b; }
         
         .task-meta { display: flex; justify-content: space-between; font-size: 0.8rem; color: #777; margin-top: 10px; }
@@ -120,8 +119,8 @@
             <h2>Lançar Nova Tarefa no Setor</h2>
             <form id="taskForm">
                 <div class="form-group">
-                    <label>Referência / Nome do Modelo</label>
-                    <input type="text" id="taskTitle" class="form-control" placeholder="Ex: Referência do modelo" required>
+                    <label>Referência / Nome do Modelo / Descrição</label>
+                    <input type="text" id="taskTitle" class="form-control" placeholder="Ex: Referência ou Atividade de Gestão" required>
                 </div>
                 <div class="form-group">
                     <label>Categoria</label>
@@ -130,24 +129,33 @@
                         <option value="PISO">PISO</option>
                         <option value="CAPA DE PROTEÇÃO">CAPA DE PROTEÇÃO</option>
                         <option value="BANCO DE MOTO">BANCO DE MOTO</option>
+                        <option value="GESTÃO INTERNA">GESTÃO INTERNA</option>
                     </select>
                 </div>
                 <div class="form-group">
                     <label>Especificação da Tarefa</label>
                     <select id="taskAction" class="form-control">
-                        <option value="Fazer modelo novo">Fazer modelo novo</option>
-                        <option value="Alterar modelo existente">Alterar modelo existente</option>
-                        <option value="Cadastrar modelo novo">Cadastrar modelo novo</option>
-                        <option value="Alterar cadastro de um modelo existente">Alterar cadastro de um modelo existente</option>
-                        <option value="Digitalizar modelo novo">Digitalizar modelo novo</option>
-                        <option value="Alterar modelo ja digitalizado">Alterar modelo ja digitalizado</option>
-                        <option value="Fazer personalizado">Fazer personalizado</option>
-                        <option value="Desenvolver nova arte personalizada">Desenvolver nova arte personalizada</option>
-                        <option value="alterar personalizado existente">alterar personalizado existente</option>
-                        <option value="Criar bordado a partir da imagem disponibilizada">Criar bordado a partir da imagem disponibilizada</option>
-                        <option value="Medição de consumo">Medição de consumo</option>
-                        <option value="Fazer croqui">Fazer croqui</option>
-                        <option value="Alteração em croqui já existente">Alteração em croqui já existente</option>
+                        <optgroup label="Operações da Equipe">
+                            <option value="Fazer modelo novo">Fazer modelo novo</option>
+                            <option value="Alterar modelo existente">Alterar modelo existente</option>
+                            <option value="Cadastrar modelo novo">Cadastrar modelo novo</option>
+                            <option value="Alterar cadastro de um modelo existente">Alterar cadastro de um modelo existente</option>
+                            <option value="Digitalizar modelo novo">Digitalizar modelo novo</option>
+                            <option value="Alterar modelo ja digitalizado">Alterar modelo ja digitalizado</option>
+                            <option value="Fazer personalizado">Fazer personalizado</option>
+                            <option value="Desenvolver nova arte personalizada">Desenvolver nova arte personalizada</option>
+                            <option value="alterar personalizado existente">alterar personalizado existente</option>
+                            <option value="Criar bordado a partir da imagem disponibilizada">Criar bordado a partir da imagem disponibilizada</option>
+                        </optgroup>
+                        <optgroup label="Atividades do Líder/Gestor">
+                            <option value="Treinamento e Alinhamento da equipe">Treinamento e Alinhamento da equipe</option>
+                            <option value="Desenvolvimento de ferramentas e softwares setoriais">Desenvolvimento de ferramentas e softwares setoriais</option>
+                            <option value="Auxílio técnico aos setores de produção">Auxílio técnico aos setores de produção</option>
+                            <option value="Organização, planejamento e metas do setor">Organização, planejamento e metas do setor</option>
+                            <option value="Medição de consumo">Medição de consumo</option>
+                            <option value="Fazer croqui">Fazer croqui</option>
+                            <option value="Alteração em croqui já existente">Alteração em croqui já existente</option>
+                        </optgroup>
                     </select>
                 </div>
                 <div class="form-group">
@@ -200,6 +208,7 @@
                         <select id="queueUserFilter" class="form-control" style="width: 250px;" onchange="renderTasks()">
                             <option value="todos">👁️ Ver todas as tarefas do setor</option>
                             <option value="minhas">👤 Ver apenas minhas tarefas</option>
+                            <option value="admin">Filtrar: Líder do Setor (Gestão)</option>
                             <option value="usuario_1">Filtrar: Modelista</option>
                             <option value="usuario_2">Filtrar: Auxiliar 1 (Cadastro)</option>
                             <option value="usuario_3">Filtrar: Digitalizador</option>
@@ -387,6 +396,7 @@
         firebase.initializeApp(firebaseConfig);
         const database = firebase.database();
 
+        // Mapeamento atualizado incluindo o direcionamento automático das novas regras de Gestão para o Administrador
         const roteamentoUsuarios = {
             "Fazer modelo novo": ["usuario_1"],
             "Alterar modelo existente": ["usuario_1"],
@@ -398,6 +408,12 @@
             "Desenvolver nova arte personalizada": ["usuario_4"],
             "alterar personalizado existente": ["usuario_2", "usuario_5"],
             "Criar bordado a partir da imagem disponibilizada": ["usuario_4"],
+            
+            // Roteamento exclusivo do Gestor/Líder
+            "Treinamento e Alinhamento da equipe": ["admin"],
+            "Desenvolvimento de ferramentas e softwares setoriais": ["admin"],
+            "Auxílio técnico aos setores de produção": ["admin"],
+            "Organização, planejamento e metas do setor": ["admin"],
             "Medição de consumo": ["admin", "usuario_3"],
             "Fazer croqui": ["admin", "usuario_4"],
             "Alteração em croqui já existente": ["admin", "usuario_4"]
@@ -632,7 +648,6 @@
                 const ultimoLog = task.timeLogs && task.timeLogs.length > 0 ? task.timeLogs[task.timeLogs.length - 1] : null;
                 let statusCronometro = ultimoLog ? (ultimoLog.type === 'start' ? `▶️ Em execução por ${ultimoLog.byName}` : `⏸️ Pausado por ${ultimoLog.byName}`) : "Aguardando Início";
 
-                // Compilar motivos de pausas anteriores para mostrar no card da tarefa
                 let motivosPausaHTML = '';
                 if (task.timeLogs) {
                     const pausas = task.timeLogs.filter(log => log.type === 'pause' && log.reason);
@@ -667,7 +682,8 @@
                     <h3>${task.title} <span style="font-size:0.85rem; color:#3498db; font-weight:bold; background:#e8f4fd; padding:3px 8px; border-radius:4px;">${task.category || 'KIT'}</span></h3>
                     <div class="task-info-line" style="margin-top: 8px;"><strong>Ação:</strong> ${task.action} | <strong>Status:</strong> ${statusCronometro}</div>
                     ${task.desc ? `<div class="task-desc-box"><strong>Instruções:</strong> ${task.desc}</div>` : ''}
-                    ${motivosPausaHTML} <div class="task-meta">
+                    ${motivosPausaHTML}
+                    <div class="task-meta">
                         <span>👥 Alocado para: <strong>${task.responsibles ? task.responsibles.map(r => nomesExibicao[r]).join(' / ') : 'Setor'}</strong></span>
                         <span>${prazoStatus}</span>
                     </div>
@@ -727,7 +743,7 @@
             const hojeStr = new Date().toISOString().split('T')[0];
 
             while (ponteiro <= fimJanela) {
-                const diaSemana = ponteiro.getDay();
+                const diaSemana = pointer = ponteiro.getDay();
                 const dataLoopStr = ponteiro.toISOString().split('T')[0];
 
                 if (diaSemana >= 1 && diaSemana <= 6 && (!apenasHoje || dataLoopStr === hojeStr)) {
