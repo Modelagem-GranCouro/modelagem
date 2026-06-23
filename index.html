@@ -74,6 +74,14 @@
         .metric-card h3 { font-size: 2rem; color: var(--secondary-color); margin-bottom: 5px; }
         .metric-card p { font-size: 0.85rem; color: #777; font-weight: bold; }
 
+        /* Estilos do Novo Módulo de Metas */
+        .goals-section { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-bottom: 20px; }
+        .goal-card { background: white; padding: 15px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+        .goal-header { display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 0.9rem; font-weight: bold; color: var(--secondary-color); }
+        .progress-bar-bg { background: #e0e0e0; height: 12px; border-radius: 6px; overflow: hidden; width: 100%; margin-top: 5px; }
+        .progress-bar-fill { background: var(--primary-color); height: 100%; width: 0%; transition: width 0.5s ease-in-out; }
+        .goal-status { font-size: 0.8rem; margin-top: 5px; text-align: right; font-weight: bold; color: #666; }
+
         .charts-section { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px; }
         .chart-container { background: white; padding: 20px; border-radius: 8px; height: 320px; position: relative; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
         .table-responsive { width: 100%; overflow-x: auto; background: white; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
@@ -239,6 +247,39 @@
             </div>
         </div>
 
+        <div class="goals-section">
+            <div class="goal-card">
+                <div class="goal-header">
+                    <span>🎯 Meta de Eficiência (No Prazo)</span>
+                    <span id="goalEffValue">0%</span>
+                </div>
+                <div class="progress-bar-bg">
+                    <div id="goalEffBar" class="progress-bar-fill" style="background: var(--success-color);"></div>
+                </div>
+                <div class="goal-status" id="goalEffStatus">Alvo do Setor: 90% no prazo</div>
+            </div>
+            <div class="goal-card">
+                <div class="goal-header">
+                    <span>📦 Entregas Concluídas</span>
+                    <span id="goalVolValue">0 / 10</span>
+                </div>
+                <div class="progress-bar-bg">
+                    <div id="goalVolBar" class="progress-bar-fill"></div>
+                </div>
+                <div class="goal-status" id="goalVolStatus">Meta escalonada pelo período</div>
+            </div>
+            <div class="goal-card">
+                <div class="goal-header">
+                    <span>⚠️ Limite de Atrasos Ativos</span>
+                    <span id="goalDelayValue">0 / 3</span>
+                </div>
+                <div class="progress-bar-bg">
+                    <div id="goalDelayBar" class="progress-bar-fill" style="background: var(--danger-color);"></div>
+                </div>
+                <div class="goal-status" id="goalDelayStatus">Meta: Ter o menor número possível</div>
+            </div>
+        </div>
+
         <div id="sectorRating" class="rating-box rating-boa">REGULARIDADE DO SETOR: ATIVA</div>
 
         <div class="metrics-grid">
@@ -364,7 +405,7 @@
                 <input type="password" id="loginPassword" class="form-control" placeholder="••••••">
             </div>
             <div style="display:flex; gap:10px; margin-top:20px;">
-                <button class="btn-submit" style="background:#7f8c8d;" onclick="fecharModalLogin()">Cancelar</button>
+                <button class="btn-submit" style="background:#7f8c8d;" onclick="fecharModalLogin()">Cancel</button>
                 <button class="btn-submit" onclick="login()">Confirmar Entrada</button>
             </div>
         </div>
@@ -396,7 +437,6 @@
         firebase.initializeApp(firebaseConfig);
         const database = firebase.database();
 
-        // Mapeamento atualizado incluindo o direcionamento automático das novas regras de Gestão para o Administrador
         const roteamentoUsuarios = {
             "Fazer modelo novo": ["usuario_1"],
             "Alterar modelo existente": ["usuario_1"],
@@ -408,8 +448,6 @@
             "Desenvolver nova arte personalizada": ["usuario_4"],
             "alterar personalizado existente": ["usuario_2", "usuario_5"],
             "Criar bordado a partir da imagem disponibilizada": ["usuario_4"],
-            
-            // Roteamento exclusivo do Gestor/Líder
             "Treinamento e Alinhamento da equipe": ["admin"],
             "Desenvolvimento de ferramentas e softwares setoriais": ["admin"],
             "Auxílio técnico aos setores de produção": ["admin"],
@@ -743,7 +781,7 @@
             const hojeStr = new Date().toISOString().split('T')[0];
 
             while (ponteiro <= fimJanela) {
-                const diaSemana = pointer = ponteiro.getDay();
+                const diaSemana = ponteiro.getDay();
                 const dataLoopStr = ponteiro.toISOString().split('T')[0];
 
                 if (diaSemana >= 1 && diaSemana <= 6 && (!apenasHoje || dataLoopStr === hojeStr)) {
@@ -769,8 +807,8 @@
         }
 
         function calcularTempoTrabalhoEInterrupcoes(userKey, deDataStr, apenasHoje = false) {
-            let minutosTrabalho = 0;
-            let minutosInterrupcao = 0;
+            let minutesWork = 0;
+            let minutesInterrupt = 0;
             const agoraMs = new Date().getTime();
 
             const analisarLogs = (t) => {
@@ -785,9 +823,9 @@
                         const minutosConvertidos = Math.max(0, Math.round(msUteis / 1000 / 60));
 
                         if (logAtual.type === 'start') {
-                            minutosTrabalho += minutosConvertidos;
+                            minutesWork += minutosConvertidos;
                         } else if (logAtual.type === 'pause') {
-                            minutosInterrupcao += minutosConvertidos;
+                            minutesInterrupt += minutosConvertidos;
                         }
                     }
                 }
@@ -796,7 +834,7 @@
             historicTasks.forEach(t => { if(t.dateFinished >= deDataStr) analisarLogs(t); });
             tasks.forEach(analisarLogs);
 
-            return { trabalho: minutosTrabalho, interrupcao: minutosInterrupcao };
+            return { trabalho: minutesWork, interrupcao: minutesInterrupt };
         }
 
         function getFilteredMetrics() {
@@ -812,8 +850,43 @@
             return {
                 noPrazo: historicTasks.filter(t => t.dateFinished >= dataCorte && t.onTime).length,
                 foraPrazo: historicTasks.filter(t => t.dateFinished >= dataCorte && !t.onTime).length,
-                pendentes: tasks.length, dataCorte, apenasHoje
+                pendentes: tasks.length, dataCorte, apenasHoje, periodo
             };
+        }
+
+        // NOVO MÉTODO: PROCESSA E EXIBE AS METAS EM TEMPO REAL DE ACORDO COM O FILTRO
+        function calcularEMostrarMetasDinamicas(metrics) {
+            const totalConcluido = metrics.noPrazo + metrics.foraPrazo;
+            
+            // 1. Meta de Eficiência (No Prazo / Total Concluído)
+            let pctEficiencia = totalConcluido > 0 ? Math.round((metrics.noPrazo / totalConcluido) * 100) : 0;
+            document.getElementById('goalEffValue').innerText = `${pctEficiencia}%`;
+            document.getElementById('goalEffBar').style.width = `${Math.min(pctEficiencia, 100)}%`;
+            document.getElementById('goalEffBar').style.background = pctEficiencia >= 90 ? '#2ecc71' : (pctEficiencia >= 75 ? '#f1c40f' : '#e74c3c');
+
+            // 2. Meta de Volume Escalonado pelo Filtro de Tempo escolhido
+            let metaVolumeAlvo = 10; // Padrão semanal
+            if (metrics.periodo === 'hoje') metaVolumeAlvo = 2;
+            if (metrics.periodo === 'quinzenal') metaVolumeAlvo = 20;
+            if (metrics.periodo === 'mensal') metaVolumeAlvo = 40;
+            if (metrics.periodo === 'anual') metaVolumeAlvo = 450;
+
+            let pctVolume = Math.round((totalConcluido / metaVolumeAlvo) * 100);
+            document.getElementById('goalVolValue').innerText = `${totalConcluido} / ${metaVolumeAlvo}`;
+            document.getElementById('goalVolBar').style.width = `${Math.min(pctVolume, 100)}%`;
+            document.getElementById('goalVolStatus').innerText = `Progresso da Meta: ${Math.min(pctVolume, 100)}% concluído`;
+
+            // 3. Meta de Redução de Gargalos (Atrasos Ativos Atuais)
+            const hojeStr = new Date().toISOString().split('T')[0];
+            const tarefasAtrasadasSetor = tasks.filter(t => t.deadline < hojeStr).length;
+            const limiteAtrasosMax = 3; 
+
+            // Barra invertida: quanto menos atrasos, mais cheia/verde ela fica (Meta de conformidade)
+            let conformidadeAtrasos = Math.max(0, 100 - (tarefasAtrasadasSetor * 33.3)); 
+            document.getElementById('goalDelayValue').innerText = `${tarefasAtrasadasSetor} Ativas`;
+            document.getElementById('goalDelayBar').style.width = `${conformidadeAtrasos}%`;
+            document.getElementById('goalDelayBar').style.background = tarefasAtrasadasSetor <= limiteAtrasosMax ? '#2ecc71' : '#e74c3c';
+            document.getElementById('goalDelayStatus').innerText = tarefasAtrasadasSetor > 0 ? `⚠️ ${tarefasAtrasadasSetor} gargalos travando o setor` : '✅ Excelente: Zero atrasos hoje!';
         }
 
         function updateReportDashboard() {
@@ -824,6 +897,9 @@
             document.getElementById('mForaPrazo').innerText = metrics.foraPrazo;
             document.getElementById('mPendentes').innerText = metrics.pendentes;
             document.getElementById('mTotal').innerText = metrics.noPrazo + metrics.foraPrazo + metrics.pendentes;
+
+            // Executa as metas dinâmicas
+            calcularEMostrarMetasDinamicas(metrics);
 
             const ctxEff = document.getElementById('efficiencyChart');
             if (ctxEff) {
