@@ -50,6 +50,10 @@
         .task-card.prio-3 { border-left-color: var(--success-color); background: #f9fff9; }
         .prio-badge { position: absolute; top: 15px; right: 15px; font-size: 0.75rem; font-weight: bold; padding: 3px 8px; border-radius: 3px; background: #ddd; }
         .task-desc-box { background: #f8f9fa; padding: 10px; border-radius: 4px; margin: 10px 0; font-size: 0.9rem; border: 1px dashed #ddd; }
+        
+        /* Nova estilização para os motivos de pausa */
+        .pause-reason-box { background: #fff2e6; padding: 8px 12px; border-radius: 4px; margin: 8px 0; font-size: 0.85rem; border-left: 3px solid #e67e22; color: #c0392b; }
+        
         .task-meta { display: flex; justify-content: space-between; font-size: 0.8rem; color: #777; margin-top: 10px; }
         .task-actions { display: flex; gap: 10px; margin-top: 12px; }
         .btn-action { padding: 6px 12px; border: none; border-radius: 4px; font-size: 0.85rem; font-weight: bold; cursor: pointer; }
@@ -249,7 +253,7 @@
 
         <div class="charts-section">
             <div class="chart-container">
-                <h4 style="margin-bottom:10px; font-size:0.95rem; color:#555;">Gráfico de Eficiência Operacional (Clique para abrir)</h4>
+                <h4 style="margin-bottom:10px; font-size:0.95rem; color:#555;">Gráfico de Eficiência Operacional</h4>
                 <canvas id="efficiencyChart"></canvas>
             </div>
             <div class="chart-container">
@@ -383,7 +387,6 @@
         firebase.initializeApp(firebaseConfig);
         const database = firebase.database();
 
-        // Roteamento Técnico com as Novas Especificações Vinculadas ao Desenhista e Líder
         const roteamentoUsuarios = {
             "Fazer modelo novo": ["usuario_1"],
             "Alterar modelo existente": ["usuario_1"],
@@ -629,6 +632,19 @@
                 const ultimoLog = task.timeLogs && task.timeLogs.length > 0 ? task.timeLogs[task.timeLogs.length - 1] : null;
                 let statusCronometro = ultimoLog ? (ultimoLog.type === 'start' ? `▶️ Em execução por ${ultimoLog.byName}` : `⏸️ Pausado por ${ultimoLog.byName}`) : "Aguardando Início";
 
+                // Compilar motivos de pausas anteriores para mostrar no card da tarefa
+                let motivosPausaHTML = '';
+                if (task.timeLogs) {
+                    const pausas = task.timeLogs.filter(log => log.type === 'pause' && log.reason);
+                    if (pausas.length > 0) {
+                        motivosPausaHTML = `<div style="margin-top: 10px;">`;
+                        pausas.forEach(p => {
+                            motivosPausaHTML += `<div class="pause-reason-box"><strong>Motivo da Pausa (${p.byName}):</strong> ${p.reason}</div>`;
+                        });
+                        motivosPausaHTML += `</div>`;
+                    }
+                }
+
                 const ehResponsavel = task.responsibles && task.responsibles.includes(currentUser);
                 const podeControlar = currentUser === 'admin' || ehResponsavel;
                 const classeBotao = podeControlar ? "btn-action" : "btn-action btn-disabled";
@@ -651,7 +667,7 @@
                     <h3>${task.title} <span style="font-size:0.85rem; color:#3498db; font-weight:bold; background:#e8f4fd; padding:3px 8px; border-radius:4px;">${task.category || 'KIT'}</span></h3>
                     <div class="task-info-line" style="margin-top: 8px;"><strong>Ação:</strong> ${task.action} | <strong>Status:</strong> ${statusCronometro}</div>
                     ${task.desc ? `<div class="task-desc-box"><strong>Instruções:</strong> ${task.desc}</div>` : ''}
-                    <div class="task-meta">
+                    ${motivosPausaHTML} <div class="task-meta">
                         <span>👥 Alocado para: <strong>${task.responsibles ? task.responsibles.map(r => nomesExibicao[r]).join(' / ') : 'Setor'}</strong></span>
                         <span>${prazoStatus}</span>
                     </div>
@@ -667,8 +683,18 @@
             if (!task.timeLogs) task.timeLogs = [];
 
             if (acao === 'pause') {
-                const motivo = prompt("Informe o motivo para pausar:"); if (!motivo) return;
-                task.timeLogs.push({ type: 'pause', time: now, by: currentUser, byName: nomesExibicao[currentUser] });
+                const motivo = prompt("Informe o motivo para pausar a tarefa (Obrigatório):"); 
+                if (!motivo || motivo.trim() === "") {
+                    alert("Você deve informar um motivo válido para registrar a interrupção.");
+                    return;
+                }
+                task.timeLogs.push({ 
+                    type: 'pause', 
+                    time: now, 
+                    by: currentUser, 
+                    byName: nomesExibicao[currentUser],
+                    reason: motivo.trim()
+                });
             } else {
                 task.timeLogs.push({ type: 'start', time: now, by: currentUser, byName: nomesExibicao[currentUser] });
             }
@@ -684,11 +710,10 @@
 
             database.ref('tasks/historico/' + id).set(compTask).then(() => {
                 database.ref('tasks/ativas/' + id).remove();
-                alert("Tarefa concluída!");
+                alert("Tarefa concluída com sucesso!");
             });
         }
 
-        // ================= SISTEMA DE CÁLCULO DE TEMPO OPERACIONAL E INTERRUPÇÕES =================
         function calcularMilissegundosUteisNoPeriodo(startMs, endMs, userKey, apenasHoje = false) {
             if (startMs >= endMs) return 0;
             
@@ -757,7 +782,6 @@
 
             return { trabalho: minutosTrabalho, interrupcao: minutosInterrupcao };
         }
-        // =========================================================================================
 
         function getFilteredMetrics() {
             const periodo = document.getElementById('reportPeriod').value;
@@ -826,7 +850,7 @@
                 const dIn = new Date(); dIn.setHours(hIn, mIn, 0, 0); const dOut = new Date(); dOut.setHours(hOut, mOut, 0, 0);
 
                 let janelaTotalMinutosHoje = 0;
-                if (new Date().getDay() >= 1 && new Date().getDay() <= 5 && agoraMs > dIn.getTime()) {
+                if (new Date().getDay() >= 1 && new Date().getDay() <= 6 && agoraMs > dIn.getTime()) {
                     janelaTotalMinutosHoje = Math.max(0, Math.round((Math.min(dOut.getTime(), agoraMs) - dIn.getTime()) / 1000 / 60));
                 }
 
@@ -916,29 +940,29 @@
                     jornada: { in: document.getElementById(`cfg_in${i}`).value, out: document.getElementById(`cfg_out${i}`).value }
                 };
             }
-            database.ref('configuracoes/equipe').set(configEquipe).then(() => alert("Atualizado!"));
+            database.ref('configuracoes/equipe').set(configEquipe).then(() => alert("Configuração gravada com sucesso!"));
         }
 
         function salvarSenhaAdmin() {
             const novaSenha = document.getElementById('cfg_adminPassword').value; if(!novaSenha) return;
-            database.ref('configuracoes/seguranca/adminPassword').set(novaSenha).then(() => { alert("Senha salva!"); });
+            database.ref('configuracoes/seguranca/adminPassword').set(novaSenha).then(() => { alert("Senha mestre atualizada!"); });
         }
 
         function criarBackupFirebase() {
             Promise.all([database.ref('tasks/ativas').once('value'), database.ref('tasks/historico').once('value')]).then(([sA, sH]) => {
-                database.ref('backup_sistema').set({ ativas: sA.val()||{}, historico: sH.val()||{} }).then(() => alert("Backup ok!"));
+                database.ref('backup_sistema').set({ ativas: sA.val()||{}, historico: sH.val()||{} }).then(() => alert("Backup de segurança criado!"));
             });
         }
 
         function restaurarBackupFirebase() {
-            if(!confirm("Restaurar dados?")) return;
+            if(!confirm("Deseja realmente restaurar os dados desse ponto de backup?")) return;
             database.ref('backup_sistema').once('value').then((snapshot) => {
                 const bkp = snapshot.val(); if(!bkp) return;
-                Promise.all([database.ref('tasks/ativas').set(bkp.ativas||null), database.ref('tasks/historico').set(bkp.historico||null)]).then(() => alert("Restaurado!"));
+                Promise.all([database.ref('tasks/ativas').set(bkp.ativas||null), database.ref('tasks/historico').set(bkp.historico||null)]).then(() => alert("Restauração concluída!"));
             });
         }
 
-        function deleteTask(id) { if(confirm("Excluir?")) database.ref('tasks/ativas/' + id).remove(); }
+        function deleteTask(id) { if(confirm("Deseja deletar permanentemente esta tarefa ativa?")) database.ref('tasks/ativas/' + id).remove(); }
         
         document.getElementById('taskForm').addEventListener('submit', (e) => {
             e.preventDefault(); const acao = document.getElementById('taskAction').value; const taskId = '_' + Math.random().toString(36).substr(2, 9);
@@ -947,7 +971,7 @@
                 action: acao, priority: document.getElementById('taskPriority').value, deadline: document.getElementById('taskDeadline').value,
                 desc: document.getElementById('taskDesc').value, responsibles: roteamentoUsuarios[acao] || [], timestampCreated: new Date().getTime(), timeLogs: []
             });
-            document.getElementById('taskForm').reset(); alert("Tarefa enviada!");
+            document.getElementById('taskForm').reset(); alert("Tarefa adicionada com sucesso!");
         });
     </script>
 </body>
