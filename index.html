@@ -80,7 +80,6 @@
         .modal-overlay { position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); display:none; justify-content:center; align-items:center; z-index:1000; }
         .modal-box { background:white; padding:25px; border-radius:8px; width:400px; box-shadow:0 4px 15px rgba(0,0,0,0.2); }
 
-        /* Modal Detalhado Fullscreen */
         .fullscreen-overlay { position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(255,255,255,0.98); display:none; flex-direction:column; padding:40px; z-index:2000; overflow-y:auto; }
         .fullscreen-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; border-bottom:2px solid #eee; padding-bottom:15px; }
 
@@ -124,11 +123,9 @@
                     <label>Categoria</label>
                     <select id="taskCategory" class="form-control">
                         <option value="KIT">KIT</option>
-                        <option value="GOLA">GOLA</option>
-                        <option value="PUNHO">PUNHO</option>
-                        <option value="BORDADO">BORDADO</option>
-                        <option value="SUBLIMAÇÃO">SUBLIMAÇÃO</option>
-                        <option value="OUTROS">OUTROS</option>
+                        <option value="PISO">PISO</option>
+                        <option value="CAPA DE PROTEÇÃO">CAPA DE PROTEÇÃO</option>
+                        <option value="BANCO DE MOTO">BANCO DE MOTO</option>
                     </select>
                 </div>
                 <div class="form-group">
@@ -145,6 +142,8 @@
                         <option value="alterar personalizado existente">alterar personalizado existente</option>
                         <option value="Criar bordado a partir da imagem disponibilizada">Criar bordado a partir da imagem disponibilizada</option>
                         <option value="Medição de consumo">Medição de consumo</option>
+                        <option value="Fazer croqui">Fazer croqui</option>
+                        <option value="Alteração em croqui já existente">Alteração em croqui já existente</option>
                     </select>
                 </div>
                 <div class="form-group">
@@ -270,6 +269,7 @@
                     <thead>
                         <tr>
                             <th>Funcionário</th>
+                            <th>Jornada Prevista</th>
                             <th>Tempo em Trabalho</th>
                             <th>Tempo Almoço</th>
                             <th>Descanso Legal</th>
@@ -300,7 +300,7 @@
                     <button class="btn-submit" style="background:var(--secondary-color);" onclick="salvarSenhaAdmin()">Atualizar Senha Master</button>
                 </div>
                 <div class="panel-box">
-                    <h2>Backup Preventivo e Restauração Segura</h2>
+                    <h2>Backup Preventivo e Restauração Secura</h2>
                     <div style="display:flex; gap:10px;">
                         <button class="btn-submit" style="background:#34495e;" onclick="criarBackupFirebase()">Gerar Ponto de Backup 💾</button>
                         <button class="btn-submit" style="background:#95a5a6;" onclick="restaurarBackupFirebase()">Restaurar Backup 🔄</button>
@@ -383,6 +383,7 @@
         firebase.initializeApp(firebaseConfig);
         const database = firebase.database();
 
+        // Roteamento Técnico com as Novas Especificações Vinculadas ao Desenhista e Líder
         const roteamentoUsuarios = {
             "Fazer modelo novo": ["usuario_1"],
             "Alterar modelo existente": ["usuario_1"],
@@ -394,7 +395,9 @@
             "Desenvolver nova arte personalizada": ["usuario_4"],
             "alterar personalizado existente": ["usuario_2", "usuario_5"],
             "Criar bordado a partir da imagem disponibilizada": ["usuario_4"],
-            "Medição de consumo": ["admin", "usuario_3"]
+            "Medição de consumo": ["admin", "usuario_3"],
+            "Fazer croqui": ["admin", "usuario_4"],
+            "Alteração em croqui já existente": ["admin", "usuario_4"]
         };
 
         let nomesExibicao = {
@@ -553,10 +556,8 @@
 
         function verificarHorarioDescansoPopup() {
             if (currentUser === 'visitante' || currentUser === 'admin') return;
-
             const agora = new Date();
             const totalMinutos = (agora.getHours() * 60) + agora.getMinutes();
-
             if (totalMinutos >= 590 && totalMinutos < 600 && !popupDisparadoHoje.manha) { 
                 document.getElementById('descansoAlertModal').style.display = 'flex'; 
             } 
@@ -687,7 +688,7 @@
             });
         }
 
-        // ================= FUNÇÕES DE CÁLCULO DE TEMPO CORRIGIDAS =================
+        // ================= SISTEMA DE CÁLCULO DE TEMPO OPERACIONAL E INTERRUPÇÕES =================
         function calcularMilissegundosUteisNoPeriodo(startMs, endMs, userKey, apenasHoje = false) {
             if (startMs >= endMs) return 0;
             
@@ -726,31 +727,37 @@
             return totalMs;
         }
 
-        function calcularTempoTrabalhoEfetivoTotal(userKey, deDataStr, apenasHoje = false) {
-            let totalMinutos = 0; 
+        function calcularTempoTrabalhoEInterrupcoes(userKey, deDataStr, apenasHoje = false) {
+            let minutosTrabalho = 0;
+            let minutosInterrupcao = 0;
             const agoraMs = new Date().getTime();
-            
-            const processarLogs = (t) => {
-                if (t.timeLogs) {
-                    for (let i = 0; i < t.timeLogs.length; i++) {
-                        if (t.timeLogs[i].by === userKey && t.timeLogs[i].type === 'start') {
-                            let fimTrecho = (i + 1 < t.timeLogs.length) ? t.timeLogs[i+1].time : agoraMs;
-                            
-                            if (fimTrecho > agoraMs) fimTrecho = agoraMs; 
 
-                            const msUteis = calcularMilissegundosUteisNoPeriodo(t.timeLogs[i].time, fimTrecho, userKey, apenasHoje);
-                            totalMinutos += Math.max(0, Math.round(msUteis / 1000 / 60));
+            const analisarLogs = (t) => {
+                if (!t.timeLogs) return;
+                for (let i = 0; i < t.timeLogs.length; i++) {
+                    const logAtual = t.timeLogs[i];
+                    if (logAtual.by === userKey) {
+                        let fimTrecho = (i + 1 < t.timeLogs.length) ? t.timeLogs[i+1].time : agoraMs;
+                        if (fimTrecho > agoraMs) fimTrecho = agoraMs;
+
+                        const msUteis = calcularMilissegundosUteisNoPeriodo(logAtual.time, fimTrecho, userKey, apenasHoje);
+                        const minutosConvertidos = Math.max(0, Math.round(msUteis / 1000 / 60));
+
+                        if (logAtual.type === 'start') {
+                            minutosTrabalho += minutosConvertidos;
+                        } else if (logAtual.type === 'pause') {
+                            minutosInterrupcao += minutosConvertidos;
                         }
                     }
                 }
             };
 
-            historicTasks.forEach(t => { if(t.dateFinished >= deDataStr) processarLogs(t); });
-            tasks.forEach(processarLogs);
-            
-            return totalMinutos;
+            historicTasks.forEach(t => { if(t.dateFinished >= deDataStr) analisarLogs(t); });
+            tasks.forEach(analisarLogs);
+
+            return { trabalho: minutosTrabalho, interrupcao: minutosInterrupcao };
         }
-        // =========================================================================
+        // =========================================================================================
 
         function getFilteredMetrics() {
             const periodo = document.getElementById('reportPeriod').value;
@@ -803,7 +810,9 @@
             const chavesEquipe = ['admin', 'usuario_1', 'usuario_2', 'usuario_3', 'usuario_4', 'usuario_5'];
 
             chavesEquipe.forEach(userKey => {
-                let totalTrabalhoMin = calcularTempoTrabalhoEfetivoTotal(userKey, metrics.dataCorte, metrics.apenasHoje);
+                const tempos = calcularTempoTrabalhoEInterrupcoes(userKey, metrics.dataCorte, metrics.apenasHoje);
+                let totalTrabalhoMin = tempos.trabalho;
+                let totalInterrupcoesMin = tempos.interrupcao;
                 let totalAlmoçoMin = 0; let descansoLegalMin = 0;
 
                 if(metrics.apenasHoje) {
@@ -821,7 +830,7 @@
                     janelaTotalMinutosHoje = Math.max(0, Math.round((Math.min(dOut.getTime(), agoraMs) - dIn.getTime()) / 1000 / 60));
                 }
 
-                let totalOciosoMin = metrics.apenasHoje ? Math.max(0, janelaTotalMinutosHoje - totalTrabalhoMin - totalAlmoçoMin - descansoLegalMin) : 0;
+                let totalOciosoMin = metrics.apenasHoje ? Math.max(0, janelaTotalMinutosHoje - totalTrabalhoMin - totalAlmoçoMin - descansoLegalMin - totalInterrupcoesMin) : 0;
                 labelsTime.push(nomesExibicao[userKey]); dataWork.push(totalTrabalhoMin);
 
                 const formatTime = (min) => min > 0 ? `${Math.floor(min/60)}h ${min%60}m` : "0m";
@@ -829,10 +838,11 @@
                 tbody.innerHTML += `
                     <tr style="border-bottom: 1px solid #ddd; text-align:center;">
                         <td style="padding:12px; text-align:left;"><strong>${nomesExibicao[userKey]}</strong></td>
+                        <td style="color:#7f8c8d; font-weight:500;">${itemJornada.in} às ${itemJornada.out}</td>
                         <td style="color:#2ecc71; font-weight:bold;">${formatTime(totalTrabalhoMin)}</td>
                         <td>${formatTime(totalAlmoçoMin)}</td>
                         <td>${formatTime(descansoLegalMin)}</td>
-                        <td style="color:#aaa;">Contabilizado</td>
+                        <td style="color:#e67e22; font-weight:bold;">${formatTime(totalInterrupcoesMin)}</td>
                         <td style="color:#e74c3c; font-weight:bold;">${metrics.apenasHoje ? formatTime(totalOciosoMin) : 'Visão Diária'}</td>
                     </tr>
                 `;
