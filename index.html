@@ -6,7 +6,6 @@
     <title>Painel de Gestão de Tempo e Produtividade</title>
     
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-app.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-auth.js"></script>
     <script src="https://www.gstatic.com/firebasejs/8.10.1/firebase-database.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.17.5/xlsx.full.min.js"></script>
@@ -75,6 +74,7 @@
         .metric-card h3 { font-size: 2rem; color: var(--secondary-color); margin-bottom: 5px; }
         .metric-card p { font-size: 0.85rem; color: #777; font-weight: bold; }
 
+        /* Estilos do Novo Módulo de Metas */
         .goals-section { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-bottom: 20px; }
         .goal-card { background: white; padding: 15px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
         .goal-header { display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 0.9rem; font-weight: bold; color: var(--secondary-color); }
@@ -436,12 +436,6 @@
         
         firebase.initializeApp(firebaseConfig);
         const database = firebase.database();
-        const auth = firebase.auth();
-
-        // Autenticação anônima em segundo plano automática para visitantes lerem a fila pública sem restrição
-        auth.signInAnonymously().catch((error) => {
-            console.error("Erro na autenticação de segurança automática do visitante:", error.message);
-        });
 
         const roteamentoUsuarios = {
             "Fazer modelo novo": ["usuario_1"],
@@ -475,6 +469,13 @@
             "usuario_4": { in: "07:12", out: "17:00" }, "usuario_5": { in: "14:00", out: "18:00" }
         };
 
+        // Objeto para conter os horários padrão de almoço configurados via Admin
+        let almocosPadrao = {
+            "admin": { in: "12:00", out: "13:00" }, "usuario_1": { in: "12:00", out: "13:00" },
+            "usuario_2": { in: "12:00", out: "13:00" }, "usuario_3": { in: "12:00", out: "13:00" },
+            "usuario_4": { in: "12:00", out: "13:00" }, "usuario_5": { in: "12:00", out: "13:00" }
+        };
+
         let adminPasswordDB = "admin123"; 
         let tasks = []; let historicTasks = []; let mealLogs = {}; let descansoLogs = {};
         let currentUser = 'visitante'; let myChart = null; let timeChart = null;
@@ -487,9 +488,14 @@
                     <div style="border: 1px solid #eee; padding:10px; border-radius:6px; margin-bottom:10px; background:#fafafa;">
                         <label id="lbl_user${i}" style="font-weight:bold; font-size:0.85rem;">Funcionário ${i}:</label>
                         <input type="text" id="cfg_user${i}" class="form-control" style="margin-bottom:5px;" placeholder="Nome">
-                        <div style="display:flex; gap:10px;">
-                            <input type="time" id="cfg_in${i}" class="form-control">
-                            <input type="time" id="cfg_out${i}" class="form-control">
+                        <div style="display:flex; gap:10px; margin-bottom:5px;">
+                            <input type="time" id="cfg_in${i}" class="form-control" title="Início da Jornada">
+                            <input type="time" id="cfg_out${i}" class="form-control" title="Fim da Jornada">
+                        </div>
+                        <div style="display:flex; gap:10px; align-items:center;">
+                            <span style="font-size:0.75rem; font-weight:bold; color:#e67e22;">Almoço:</span>
+                            <input type="time" id="cfg_meal_in${i}" class="form-control" title="Início do Almoço">
+                            <input type="time" id="cfg_meal_out${i}" class="form-control" title="Fim do Almoço">
                         </div>
                     </div>
                 `;
@@ -502,11 +508,14 @@
                 Object.keys(jornadas).forEach(k => {
                     if(data[k]) nomesExibicao[k] = data[k].nome || nomesExibicao[k];
                     if(data[k] && data[k].jornada) jornadas[k] = data[k].jornada;
+                    if(data[k] && data[k].almoco) almocosPadrao[k] = data[k].almoco;
                 });
                 for(let i=1; i<=5; i++) {
                     if (document.getElementById(`cfg_user${i}`)) document.getElementById(`cfg_user${i}`).value = nomesExibicao[`usuario_${i}`];
                     if (document.getElementById(`cfg_in${i}`)) document.getElementById(`cfg_in${i}`).value = jornadas[`usuario_${i}`].in;
                     if (document.getElementById(`cfg_out${i}`)) document.getElementById(`cfg_out${i}`).value = jornadas[`usuario_${i}`].out;
+                    if (document.getElementById(`cfg_meal_in${i}`)) document.getElementById(`cfg_meal_in${i}`).value = almocosPadrao[`usuario_${i}`].in || "12:00";
+                    if (document.getElementById(`cfg_meal_out${i}`)) document.getElementById(`cfg_meal_out${i}`).value = almocosPadrao[`usuario_${i}`].out || "13:00";
                     if (document.getElementById(`lbl_user${i}`)) document.getElementById(`lbl_user${i}`).innerText = `Funcionário ${i} (${nomesExibicao[`usuario_${i}`]}):`;
                 }
                 atualizarNomesNoSeletorLogin(); renderTasks();
@@ -710,21 +719,16 @@
                 const atributoDesabilitado = podeControlar ? "" : "disabled";
 
                 const isRunning = ultimoLog && ultimoLog.type === 'start';
-                
-                // Oculta completamente a barra de ações se for visitante, protegendo as tarefas
-                let botoesAcaoHTML = '';
-                if (currentUser !== 'visitante') {
-                    botoesAcaoHTML = `
-                        <div class="task-actions">
-                            ${currentUser === 'admin' ? `<button class="btn-action btn-delete" onclick="deleteTask('${task.id}')">Excluir</button>` : ''}
-                            ${!isRunning ? 
-                                `<button class="${classeBotao} btn-start" ${atributoDesabilitado} onclick="alterarCronometro('${task.id}', 'start')">Iniciar Task ▶️</button>` : 
-                                `<button class="${classeBotao} btn-pause" ${atributoDesabilitado} onclick="alterarCronometro('${task.id}', 'pause')">Pausar Task ⏸️</button>`
-                            }
-                            <button class="${classeBotao} btn-done" ${atributoDesabilitado} onclick="finishTask('${task.id}')">Concluir ✓</button>
-                        </div>
-                    `;
-                }
+                let botoesAcaoHTML = `
+                    <div class="task-actions">
+                        ${currentUser === 'admin' ? `<button class="btn-action btn-delete" onclick="deleteTask('${task.id}')">Excluir</button>` : ''}
+                        ${!isRunning ? 
+                            `<button class="${classeBotao} btn-start" ${atributoDesabilitado} onclick="alterarCronometro('${task.id}', 'start')">Iniciar Task ▶️</button>` : 
+                            `<button class="${classeBotao} btn-pause" ${atributoDesabilitado} onclick="alterarCronometro('${task.id}', 'pause')">Pausar Task ⏸️</button>`
+                        }
+                        <button class="${classeBotao} btn-done" ${atributoDesabilitado} onclick="finishTask('${task.id}')">Concluir ✓</button>
+                    </div>
+                `;
 
                 card.innerHTML = `
                     <span class="prio-badge">Prioridade ${task.priority}</span>
@@ -936,8 +940,25 @@
                 let totalInterrupcoesMin = tempos.interrupcao;
                 let totalAlmoçoMin = 0; let descansoLegalMin = 0;
 
+                // CÁLCULO BASEADO NO HORÁRIO FIXADO ENVIADO PELO USUÁRIO ADMIN
+                const configAlmoco = almocosPadrao[userKey] || { in: "12:00", out: "13:00" };
+                if (configAlmoco.in && configAlmoco.out) {
+                    const [hAlmIn, mAlmIn] = configAlmoco.in.split(':').map(Number);
+                    const [hAlmOut, mAlmOut] = configAlmoco.out.split(':').map(Number);
+                    const minAlmocoTotal = (hAlmOut * 60 + mAlmOut) - (hAlmIn * 60 + mAlmIn);
+                    
+                    if (metrics.apenasHoje) {
+                        // Se for visualização diária, só computa se já passou da hora de início do almoço
+                        const dAlmIn = new Date(); dAlmIn.setHours(hAlmIn, mAlmIn, 0, 0);
+                        if (agoraMs >= dAlmIn.getTime()) {
+                            totalAlmoçoMin = Math.max(0, minAlmocoTotal);
+                        }
+                    } else {
+                        totalAlmoçoMin = Math.max(0, minAlmocoTotal);
+                    }
+                }
+
                 if(metrics.apenasHoje) {
-                    if (mealLogs[hojeStr]?.[userKey]) { totalAlmoçoMin = Math.max(0, Math.round(((mealLogs[hojeStr][userKey].end || agoraMs) - mealLogs[hojeStr][userKey].start) / 1000 / 60)); }
                     if (descansoLogs[hojeStr]?.[userKey]) { descansoLegalMin = Math.max(0, Math.round(((descansoLogs[hojeStr][userKey].end || agoraMs) - descansoLogs[hojeStr][userKey].start) / 1000 / 60)); }
                 }
 
@@ -1014,223 +1035,19 @@
 
         function fecharFullscreenDetails() { document.getElementById('fullscreenDetailsModal').style.display = 'none'; }
 
-        function calcularTempoLiquidoTarefa(task) {
-            if (!task.timeLogs || task.timeLogs.length === 0) return 0;
-            let totalMs = 0;
-            for (let i = 0; i < task.timeLogs.length; i++) {
-                const log = task.timeLogs[i];
-                if (log.type === 'start') {
-                    let fim = (i + 1 < task.timeLogs.length) ? task.timeLogs[i+1].time : (task.dateFinished ? new Date(task.dateFinished).getTime() : new Date().getTime());
-                    if (fim > log.time) {
-                        totalMs += (fim - log.time);
-                    }
-                }
-            }
-            return Math.max(0, Math.round(totalMs / 1000 / 60));
-        }
-
-        function formatarMinutosExtenso(min) {
-            if (!min || min <= 0) return "0m";
-            const horas = Math.floor(min / 60);
-            const minutos = min % 60;
-            return horas > 0 ? `${horas}h ${minutos}m` : `${minutos}m`;
-        }
-
         function exportExcel() {
-            const metrics = getFilteredMetrics();
-            const chavesEquipe = ['admin', 'usuario_1', 'usuario_2', 'usuario_3', 'usuario_4', 'usuario_5'];
-            const hojeStr = new Date().toISOString().split('T')[0];
-            const agoraMs = new Date().getTime();
-
-            let dadosColaboradores = [
-                ["Relatório de Jornada e Utilização - Período Filtro: " + metrics.periodo.toUpperCase()],
-                [],
-                ["Colaborador", "Jornada Cadastrada", "Tempo em Trabalho", "Tempo Almoço", "Descanso Legal", "Interrupções (Pausas)", "Ociosidade Estimada"]
-            ];
-
-            chavesEquipe.forEach(userKey => {
-                const tempos = calcularTempoTrabalhoEInterrupcoes(userKey, metrics.dataCorte, metrics.apenasHoje);
-                let totalAlmoçoMin = 0; 
-                let descansoLegalMin = 0;
-
-                if(metrics.apenasHoje) {
-                    if (mealLogs[hojeStr]?.[userKey]) { totalAlmoçoMin = Math.max(0, Math.round(((mealLogs[hojeStr][userKey].end || agoraMs) - mealLogs[hojeStr][userKey].start) / 1000 / 60)); }
-                    if (descansoLogs[hojeStr]?.[userKey]) { descansoLegalMin = Math.max(0, Math.round(((descansoLogs[hojeStr][userKey].end || agoraMs) - descansoLogs[hojeStr][userKey].start) / 1000 / 60)); }
-                }
-
-                const itemJornada = jornadas[userKey] || { in: "07:12", out: "17:00" };
-                const dIn = new Date(); const [hIn, mIn] = itemJornada.in.split(':').map(Number); dIn.setHours(hIn, mIn, 0, 0);
-                const dOut = new Date(); const [hOut, mOut] = itemJornada.out.split(':').map(Number); dOut.setHours(hOut, mOut, 0, 0);
-                
-                let janelaTotalMinutosHoje = 0;
-                if (new Date().getDay() >= 1 && new Date().getDay() <= 6 && agoraMs > dIn.getTime()) {
-                    janelaTotalMinutosHoje = Math.max(0, Math.round((Math.min(dOut.getTime(), agoraMs) - dIn.getTime()) / 1000 / 60));
-                }
-                let totalOciosoMin = metrics.apenasHoje ? Math.max(0, janelaTotalMinutosHoje - tempos.trabalho - totalAlmoçoMin - descansoLegalMin - tempos.interrupcao) : 0;
-
-                dadosColaboradores.push([
-                    nomesExibicao[userKey],
-                    `${itemJornada.in} às ${itemJornada.out}`,
-                    formatarMinutosExtenso(tempos.trabalho),
-                    formatarMinutosExtenso(totalAlmoçoMin),
-                    formatarMinutosExtenso(descansoLegalMin),
-                    formatarMinutosExtenso(tempos.interrupcao),
-                    metrics.apenasHoje ? formatarMinutosExtenso(totalOciosoMin) : "Apenas Visão Diária"
-                ]);
-            });
-
-            let dadosTarefas = [
-                ["Histórico Técnico Analítico de Atividades Processadas"],
-                [],
-                ["Responsável Conclusão", "Referência / Modelo", "Categoria", "Especificação", "Prazo Limite", "Data Entrega", "Tempo Líquido Gasto", "Status"]
-            ];
-
-            const filtradasHistorico = historicTasks.filter(t => t.dateFinished >= metrics.dataCorte);
-            
-            filtradasHistorico.forEach(t => {
-                const tempoGastoMin = calcularTempoLiquidoTarefa(t);
-                dadosTarefas.push([
-                    t.userWhoFinishedName || 'Setor',
-                    t.title,
-                    t.category || 'KIT',
-                    t.action,
-                    t.deadline.split('-').reverse().join('/'),
-                    t.dateFinished.split('-').reverse().join('/'),
-                    formatarMinutosExtenso(tempoGastoMin),
-                    t.onTime ? "No Prazo" : "Atrasado"
-                ]);
-            });
-
-            const wb = XLSX.utils.book_new();
-            const wsColab = XLSX.utils.aoa_to_sheet(dadosColaboradores);
-            const wsTasks = XLSX.utils.aoa_to_sheet(dadosTarefas);
-            
-            XLSX.utils.book_append_sheet(wb, wsColab, "Resumo da Equipe");
-            XLSX.utils.book_append_sheet(wb, wsTasks, "Métricas por Tarefa");
-            
-            XLSX.writeFile(wb, `Relatorio_Tempo_Produtividade_${metrics.periodo}.xlsx`);
+            let linhas = [["Funcionário", "Tarefa", "Data Conclusão", "Status"]];
+            historicTasks.forEach(t => { linhas.push([t.userWhoFinishedName||'Setor', t.title, t.dateFinished, t.onTime?"No Prazo":"Atrasado"]); });
+            const ws = XLSX.utils.aoa_to_sheet(linhas); const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, ws, "Produtividade");
+            XLSX.writeFile(wb, "Relatorio_Produtividade.xlsx");
         }
 
         function exportPDF() {
-            const { jsPDF } = window.jspdf;
-            const doc = new jsPDF('l', 'mm', 'a4'); 
-            const metrics = getFilteredMetrics();
-            
-            doc.setFillColor(44, 62, 80); 
-            doc.rect(0, 0, 297, 24, 'F');
-            
-            doc.setTextColor(255, 255, 255);
-            doc.setFontSize(14);
-            doc.setFont("Helvetica", "bold");
-            doc.text("ENGENHARIA E MODELAGEM - SISTEMA DE MONITORAMENTO DE TEMPO", 14, 10);
-            
-            doc.setFontSize(9);
-            doc.setFont("Helvetica", "normal");
-            doc.text(`Relatório Analítico de Operação | Filtro Selecionado: [${metrics.periodo.toUpperCase()}]`, 14, 17);
-            doc.text(`Gerado em: ${new Date().toLocaleString('pt-BR')}`, 230, 17);
-
-            doc.setTextColor(51, 51, 51);
-            doc.setFontSize(11);
-            doc.setFont("Helvetica", "bold");
-            doc.text("1. Resumo de Produtividade e Utilização de Horários por Funcionário", 14, 34);
-
-            const chavesEquipe = ['admin', 'usuario_1', 'usuario_2', 'usuario_3', 'usuario_4', 'usuario_5'];
-            const hojeStr = new Date().toISOString().split('T')[0];
-            const agoraMs = new Date().getTime();
-            
-            const cabecalhoColab = [['Funcionário', 'Jornada Cadastrada', 'Trabalho Efetivo', 'Almoço', 'Descanso Legal', 'Interrupções', 'Ociosidade']];
-            const corpoColab = [];
-
-            chavesEquipe.forEach(userKey => {
-                const tempos = calcularTempoTrabalhoEInterrupcoes(userKey, metrics.dataCorte, metrics.apenasHoje);
-                let totalAlmoçoMin = 0; let descansoLegalMin = 0;
-
-                if(metrics.apenasHoje) {
-                    if (mealLogs[hojeStr]?.[userKey]) { totalAlmoçoMin = Math.max(0, Math.round(((mealLogs[hojeStr][userKey].end || agoraMs) - mealLogs[hojeStr][userKey].start) / 1000 / 60)); }
-                    if (descansoLogs[hojeStr]?.[userKey]) { descansoLegalMin = Math.max(0, Math.round(((descansoLogs[hojeStr][userKey].end || agoraMs) - descansoLogs[hojeStr][userKey].start) / 1000 / 60)); }
-                }
-                const itemJornada = jornadas[userKey] || { in: "07:12", out: "17:00" };
-                const dIn = new Date(); const [hIn, mIn] = itemJornada.in.split(':').map(Number); dIn.setHours(hIn, mIn, 0, 0);
-                const dOut = new Date(); const [hOut, mOut] = itemJornada.out.split(':').map(Number); dOut.setHours(hOut, mOut, 0, 0);
-                
-                let janelaTotalMinutosHoje = 0;
-                if (new Date().getDay() >= 1 && new Date().getDay() <= 6 && agoraMs > dIn.getTime()) {
-                    janelaTotalMinutosHoje = Math.max(0, Math.round((Math.min(dOut.getTime(), agoraMs) - dIn.getTime()) / 1000 / 60));
-                }
-                let totalOciosoMin = metrics.apenasHoje ? Math.max(0, janelaTotalMinutosHoje - tempos.trabalho - totalAlmoçoMin - descansoLegalMin - tempos.interrupcao) : 0;
-
-                corpoColab.push([
-                    nomesExibicao[userKey],
-                    `${itemJornada.in} às ${itemJornada.out}`,
-                    formatarMinutosExtenso(tempos.trabalho),
-                    formatarMinutosExtenso(totalAlmoçoMin),
-                    formatarMinutosExtenso(descansoLegalMin),
-                    formatarMinutosExtenso(tempos.interrupcao),
-                    metrics.apenasHoje ? formatarMinutosExtenso(totalOciosoMin) : "Visão Diária"
-                ]);
-            });
-
-            doc.autoTable({
-                startY: 38,
-                head: cabecalhoColab,
-                body: corpoColab,
-                theme: 'striped',
-                headStyles: { fillColor: [41, 128, 185], halign: 'center' },
-                styles: { fontSize: 9, halign: 'center' },
-                columnStyles: { 0: { halign: 'left', fontStyle: 'bold' } }
-            });
-
-            doc.setFont("Helvetica", "bold");
-            doc.text("2. Histórico Consolidado de Modelos e Tarefas Concluídas no Período", 14, doc.lastAutoTable.finalY + 12);
-
-            const cabecalhoTasks = [['Responsável', 'Referência / Modelo', 'Categoria', 'Ação Realizada', 'Prazo Inicial', 'Finalização', 'Tempo Líquido Gasto', 'Métrica']];
-            const filtradasHistorico = historicTasks.filter(t => t.dateFinished >= metrics.dataCorte);
-            const corpoTasks = [];
-
-            filtradasHistorico.forEach(t => {
-                const tempoGastoMin = calcularTempoLiquidoTarefa(t);
-                corpoTasks.push([
-                    t.userWhoFinishedName || 'Setor',
-                    t.title,
-                    t.category || 'KIT',
-                    t.action,
-                    t.deadline.split('-').reverse().join('/'),
-                    t.dateFinished.split('-').reverse().join('/'),
-                    formatarMinutosExtenso(tempoGastoMin),
-                    t.onTime ? "NO PRAZO" : "ATRASADO"
-                ]);
-            });
-
-            if (corpoTasks.length === 0) {
-                doc.setFont("Helvetica", "italic");
-                doc.setFontSize(10);
-                doc.text("Nenhuma tarefa concluída localizada no intervalo de tempo selecionado.", 14, doc.lastAutoTable.finalY + 18);
-            } else {
-                doc.autoTable({
-                    startY: doc.lastAutoTable.finalY + 16,
-                    head: cabecalhoTasks,
-                    body: corpoTasks,
-                    theme: 'grid',
-                    headStyles: { fillColor: [44, 62, 80] },
-                    styles: { fontSize: 8, halign: 'center' },
-                    columnStyles: { 
-                        1: { halign: 'left', fontStyle: 'bold' },
-                        3: { halign: 'left' }
-                    },
-                    didParseCell: function(data) {
-                        if (data.section === 'body' && data.column.index === 7) {
-                            if (data.cell.raw === 'ATRASADO') {
-                                data.cell.styles.textColor = [231, 76, 60]; 
-                                data.cell.styles.fontStyle = 'bold';
-                            } else {
-                                data.cell.styles.textColor = [46, 204, 113];
-                            }
-                        }
-                    }
-                });
-            }
-
-            doc.save(`Relatorio_Operacional_Setor_${metrics.periodo}.pdf`);
+            const { jsPDF } = window.jspdf; const doc = new jsPDF();
+            doc.text("RELATÓRIO OPERACIONAL", 14, 20);
+            let corpo = historicTasks.map(t => [t.userWhoFinishedName||'Setor', t.title, t.dateFinished, t.onTime?"No Prazo":"Atrasado"]);
+            doc.autoTable({ startY: 30, head: [['Responsável', 'Modelo', 'Conclusão', 'Status']], body: corpo });
+            doc.save("Relatorio_Setorial.pdf");
         }
 
         function salvarConfiguracaoEquipe() {
@@ -1238,15 +1055,23 @@
             for(let i=1; i<=5; i++) {
                 configEquipe[`usuario_${i}`] = {
                     nome: document.getElementById(`cfg_user${i}`).value,
-                    jornada: { in: document.getElementById(`cfg_in${i}`).value, out: document.getElementById(`cfg_out${i}`).value }
+                    jornada: { in: document.getElementById(`cfg_in${i}`).value, out: document.getElementById(`cfg_out${i}`).value },
+                    almoco: { in: document.getElementById(`cfg_meal_in${i}`).value, out: document.getElementById(`cfg_meal_out${i}`).value }
                 };
             }
+            // Adiciona também a configuração do admin para não perder referências
+            configEquipe['admin'] = {
+                nome: nomesExibicao['admin'],
+                jornada: jornadas['admin'],
+                almoco: almocosPadrao['admin'] || { in: "12:00", out: "13:00" }
+            };
+
             database.ref('configuracoes/equipe').set(configEquipe).then(() => alert("Configuração gravada com sucesso!"));
         }
 
         function salvarSenhaAdmin() {
             const novaSenha = document.getElementById('cfg_adminPassword').value; if(!novaSenha) return;
-            database.ref('configuracoes/seguranca/adminPassword').set(novaSenha).then(() => { alert("Senha mestre atualizada!"); });
+            database.ref('configuracoes/seguranca/adminPassword').set(novaSenha).then(() => { alert("Senha mestre updated!"); });
         }
 
         function criarBackupFirebase() {
