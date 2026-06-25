@@ -74,7 +74,6 @@
         .metric-card h3 { font-size: 2rem; color: var(--secondary-color); margin-bottom: 5px; }
         .metric-card p { font-size: 0.85rem; color: #777; font-weight: bold; }
 
-        /* Estilos do Novo Módulo de Metas */
         .goals-section { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-bottom: 20px; }
         .goal-card { background: white; padding: 15px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
         .goal-header { display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 0.9rem; font-weight: bold; color: var(--secondary-color); }
@@ -216,7 +215,7 @@
                         <select id="queueUserFilter" class="form-control" style="width: 250px;" onchange="renderTasks()">
                             <option value="todos">👁️ Ver todas as tarefas do setor</option>
                             <option value="minhas">👤 Ver apenas minhas tarefas</option>
-                            <option value="admin">Filtrar: Líder do Setor (Gestão)</option>
+                            <option value="admin" id="filterAdminName">Filtrar: Wesley</option>
                             <option value="usuario_1">Filtrar: Modelista</option>
                             <option value="usuario_2">Filtrar: Auxiliar 1 (Cadastro)</option>
                             <option value="usuario_3">Filtrar: Digitalizador</option>
@@ -341,7 +340,21 @@
         <div class="dashboard-layout" style="grid-template-columns: 1fr 1fr;">
             <div class="panel-box">
                 <h2>Customizar Integrantes da Equipe e Jornadas</h2>
-                <div style="max-height: 500px; overflow-y: auto; padding-right: 10px;" id="userFieldsContainer"></div>
+                <div style="max-height: 500px; overflow-y: auto; padding-right: 10px;" id="userFieldsContainer">
+                    <div style="border: 1px solid #d4e6f1; padding:10px; border-radius:6px; margin-bottom:15px; background:#f4f9fd;">
+                        <label style="font-weight:bold; font-size:0.85rem; color:#2980b9;">Gestor Master:</label>
+                        <input type="text" id="cfg_admin_nome" class="form-control" style="margin-bottom:5px;" placeholder="Nome do Gestor">
+                        <div style="display:flex; gap:10px; margin-bottom:5px;">
+                            <input type="time" id="cfg_admin_in" class="form-control" title="Início da Jornada">
+                            <input type="time" id="cfg_admin_out" class="form-control" title="Fim da Jornada">
+                        </div>
+                        <div style="display:flex; gap:10px; align-items:center;">
+                            <span style="font-size:0.75rem; font-weight:bold; color:#e67e22;">Almoço:</span>
+                            <input type="time" id="cfg_admin_meal_in" class="form-control" title="Início do Almoço">
+                            <input type="time" id="cfg_admin_meal_out" class="form-control" title="Fim do Almoço">
+                        </div>
+                    </div>
+                </div>
                 <button class="btn-submit" style="margin-top:15px; background:var(--success-color);" onclick="salvarConfiguracaoEquipe()">Gravar Configurações</button>
             </div>
             <div>
@@ -392,7 +405,7 @@
             <div class="form-group">
                 <label>Selecione seu Usuário/Setor</label>
                 <select id="loginUser" class="form-control" onchange="toggleLoginPasswordView()">
-                    <option value="admin">Líder do Setor</option>
+                    <option value="admin">Wesley</option>
                     <option value="usuario_1">Modelista</option>
                     <option value="usuario_2">Auxiliar 1 (Cadastro)</option>
                     <option value="usuario_3">Digitalizador</option>
@@ -400,7 +413,7 @@
                     <option value="usuario_5">Auxiliar 2 (Personalizado)</option>
                 </select>
             </div>
-            <div class="form-group" id="loginPasswordGroup">
+            <div class="form-group" id="loginPasswordGroup" style="display: none;">
                 <label>Senha de Acesso</label>
                 <input type="password" id="loginPassword" class="form-control" placeholder="••••••">
             </div>
@@ -423,7 +436,6 @@
     </div>
 
     <script>
-        // Configurações do Banco Firebase
         const firebaseConfig = {
             apiKey: "COLE_AQUI_SUA_API_KEY", 
             authDomain: "engenhariagrancouro.firebaseapp.com",
@@ -458,7 +470,7 @@
         };
 
         let nomesExibicao = {
-            "admin": "Líder do Setor", "usuario_1": "Modelista", "usuario_2": "Auxiliar 1 (Cadastro)",
+            "admin": "Wesley", "usuario_1": "Modelista", "usuario_2": "Auxiliar 1 (Cadastro)",
             "usuario_3": "Digitalizador", "usuario_4": "Desenhista", "usuario_5": "Auxiliar 2 (Personalizado)",
             "visitante": "Monitoramento Geral"
         };
@@ -469,7 +481,6 @@
             "usuario_4": { in: "07:12", out: "17:00" }, "usuario_5": { in: "14:00", out: "18:00" }
         };
 
-        // Objeto para conter os horários padrão de almoço configurados via Admin
         let almocosPadrao = {
             "admin": { in: "12:00", out: "13:00" }, "usuario_1": { in: "12:00", out: "13:00" },
             "usuario_2": { in: "12:00", out: "13:00" }, "usuario_3": { in: "12:00", out: "13:00" },
@@ -510,6 +521,13 @@
                     if(data[k] && data[k].jornada) jornadas[k] = data[k].jornada;
                     if(data[k] && data[k].almoco) almocosPadrao[k] = data[k].almoco;
                 });
+                // Carrega dados do Wesley (admin) na interface da Gestão
+                if (document.getElementById('cfg_admin_nome')) document.getElementById('cfg_admin_nome').value = nomesExibicao['admin'];
+                if (document.getElementById('cfg_admin_in')) document.getElementById('cfg_admin_in').value = jornadas['admin'].in;
+                if (document.getElementById('cfg_admin_out')) document.getElementById('cfg_admin_out').value = jornadas['admin'].out;
+                if (document.getElementById('cfg_admin_meal_in')) document.getElementById('cfg_admin_meal_in').value = almocosPadrao['admin'].in || "12:00";
+                if (document.getElementById('cfg_admin_meal_out')) document.getElementById('cfg_admin_meal_out').value = almocosPadrao['admin'].out || "13:00";
+
                 for(let i=1; i<=5; i++) {
                     if (document.getElementById(`cfg_user${i}`)) document.getElementById(`cfg_user${i}`).value = nomesExibicao[`usuario_${i}`];
                     if (document.getElementById(`cfg_in${i}`)) document.getElementById(`cfg_in${i}`).value = jornadas[`usuario_${i}`].in;
@@ -548,8 +566,13 @@
             const select = document.getElementById('loginUser');
             select.options[0].text = nomesExibicao['admin'];
             for(let i=1; i<=5; i++) { select.options[i].text = nomesExibicao[`usuario_${i}`]; }
+            
+            // Atualiza também o seletor da fila
+            const filterAdmin = document.getElementById('filterAdminName');
+            if(filterAdmin) filterAdmin.innerText = `Filtrar: ${nomesExibicao['admin']}`;
         }
 
+        // Modificado para ocultar se não for admin
         function toggleLoginPasswordView() {
             const user = document.getElementById('loginUser').value;
             document.getElementById('loginPasswordGroup').style.display = (user === 'admin') ? 'block' : 'none';
@@ -561,7 +584,10 @@
             setInterval(() => { verificarHorarioDescansoPopup(); updateReportDashboard(); }, 5000);
         });
 
-        function abrirModalLogin() { document.getElementById('loginModal').style.display = 'flex'; }
+        function abrirModalLogin() { 
+            document.getElementById('loginModal').style.display = 'flex'; 
+            toggleLoginPasswordView(); // Força a verificação ao abrir a tela
+        }
         function fecharModalLogin() { document.getElementById('loginModal').style.display = 'none'; document.getElementById('loginPassword').value = ''; }
 
         function login() {
@@ -796,7 +822,7 @@
             const hojeStr = new Date().toISOString().split('T')[0];
 
             while (ponteiro <= fimJanela) {
-                const diaSemana = pointer = ponteiro.getDay();
+                const diaSemana = ponteiro.getDay();
                 const dataLoopStr = ponteiro.toISOString().split('T')[0];
 
                 if (diaSemana >= 1 && diaSemana <= 6 && (!apenasHoje || dataLoopStr === hojeStr)) {
@@ -940,7 +966,6 @@
                 let totalInterrupcoesMin = tempos.interrupcao;
                 let totalAlmoçoMin = 0; let descansoLegalMin = 0;
 
-                // CÁLCULO BASEADO NO HORÁRIO FIXADO ENVIADO PELO USUÁRIO ADMIN
                 const configAlmoco = almocosPadrao[userKey] || { in: "12:00", out: "13:00" };
                 if (configAlmoco.in && configAlmoco.out) {
                     const [hAlmIn, mAlmIn] = configAlmoco.in.split(':').map(Number);
@@ -948,7 +973,6 @@
                     const minAlmocoTotal = (hAlmOut * 60 + mAlmOut) - (hAlmIn * 60 + mAlmIn);
                     
                     if (metrics.apenasHoje) {
-                        // Se for visualização diária, só computa se já passou da hora de início do almoço
                         const dAlmIn = new Date(); dAlmIn.setHours(hAlmIn, mAlmIn, 0, 0);
                         if (agoraMs >= dAlmIn.getTime()) {
                             totalAlmoçoMin = Math.max(0, minAlmocoTotal);
@@ -1059,11 +1083,12 @@
                     almoco: { in: document.getElementById(`cfg_meal_in${i}`).value, out: document.getElementById(`cfg_meal_out${i}`).value }
                 };
             }
-            // Adiciona também a configuração do admin para não perder referências
+            
+            // Grava o nome personalizado do Gestor (Wesley) inserido na interface
             configEquipe['admin'] = {
-                nome: nomesExibicao['admin'],
-                jornada: jornadas['admin'],
-                almoco: almocosPadrao['admin'] || { in: "12:00", out: "13:00" }
+                nome: document.getElementById('cfg_admin_nome').value || nomesExibicao['admin'],
+                jornada: { in: document.getElementById('cfg_admin_in').value, out: document.getElementById('cfg_admin_out').value },
+                almoco: { in: document.getElementById('cfg_admin_meal_in').value, out: document.getElementById('cfg_admin_meal_out').value }
             };
 
             database.ref('configuracoes/equipe').set(configEquipe).then(() => alert("Configuração gravada com sucesso!"));
