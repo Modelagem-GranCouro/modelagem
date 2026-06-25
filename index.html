@@ -521,7 +521,6 @@
                     if(data[k] && data[k].jornada) jornadas[k] = data[k].jornada;
                     if(data[k] && data[k].almoco) almocosPadrao[k] = data[k].almoco;
                 });
-                // Carrega dados do Wesley (admin) na interface da Gestão
                 if (document.getElementById('cfg_admin_nome')) document.getElementById('cfg_admin_nome').value = nomesExibicao['admin'];
                 if (document.getElementById('cfg_admin_in')) document.getElementById('cfg_admin_in').value = jornadas['admin'].in;
                 if (document.getElementById('cfg_admin_out')) document.getElementById('cfg_admin_out').value = jornadas['admin'].out;
@@ -567,12 +566,10 @@
             select.options[0].text = nomesExibicao['admin'];
             for(let i=1; i<=5; i++) { select.options[i].text = nomesExibicao[`usuario_${i}`]; }
             
-            // Atualiza também o seletor da fila
             const filterAdmin = document.getElementById('filterAdminName');
             if(filterAdmin) filterAdmin.innerText = `Filtrar: ${nomesExibicao['admin']}`;
         }
 
-        // Modificado para ocultar se não for admin
         function toggleLoginPasswordView() {
             const user = document.getElementById('loginUser').value;
             document.getElementById('loginPasswordGroup').style.display = (user === 'admin') ? 'block' : 'none';
@@ -586,7 +583,7 @@
 
         function abrirModalLogin() { 
             document.getElementById('loginModal').style.display = 'flex'; 
-            toggleLoginPasswordView(); // Força a verificação ao abrir a tela
+            toggleLoginPasswordView();
         }
         function fecharModalLogin() { document.getElementById('loginModal').style.display = 'none'; document.getElementById('loginPassword').value = ''; }
 
@@ -848,32 +845,51 @@
         }
 
         function calcularTempoTrabalhoEInterrupcoes(userKey, deDataStr, apenasHoje = false) {
-            let minutesWork = 0;
-            let minutesInterrupt = 0;
             const agoraMs = new Date().getTime();
-
-            const analisarLogs = (t) => {
+            
+            // 1. Coleta e mapeia de forma ordenada todos os eventos cronológicos do usuário filtrado
+            let eventos = [];
+            
+            const processarLogs = (t) => {
                 if (!t.timeLogs) return;
-                for (let i = 0; i < t.timeLogs.length; i++) {
-                    const logAtual = t.timeLogs[i];
-                    if (logAtual.by === userKey) {
-                        let fimTrecho = (i + 1 < t.timeLogs.length) ? t.timeLogs[i+1].time : agoraMs;
-                        if (fimTrecho > agoraMs) fimTrecho = agoraMs;
-
-                        const msUteis = calcularMilissegundosUteisNoPeriodo(logAtual.time, fimTrecho, userKey, apenasHoje);
-                        const minutosConvertidos = Math.max(0, Math.round(msUteis / 1000 / 60));
-
-                        if (logAtual.type === 'start') {
-                            minutesWork += minutosConvertidos;
-                        } else if (logAtual.type === 'pause') {
-                            minutesInterrupt += minutosConvertidos;
-                        }
+                t.timeLogs.forEach(log => {
+                    if (log.by === userKey && log.time >= new Date(deDataStr).getTime()) {
+                        eventos.push({ time: log.time, type: log.type });
                     }
-                }
+                });
             };
 
-            historicTasks.forEach(t => { if(t.dateFinished >= deDataStr) analisarLogs(t); });
-            tasks.forEach(analisarLogs);
+            historicTasks.forEach(t => { if(t.dateFinished >= deDataStr) processarLogs(t); });
+            tasks.forEach(processarLogs);
+
+            // Ordena os logs cronologicamente
+            eventos.sort((a, b) => a.time - b.time);
+
+            let minutesWork = 0;
+            let minutesInterrupt = 0;
+
+            if (eventos.length === 0) {
+                return { trabalho: 0, interrupcao: 0 };
+            }
+
+            // 2. Cria linhas do tempo consolidadas minuto a minuto (evita somar em dobro a mesma hora)
+            for (let i = 0; i < eventos.length; i++) {
+                const eventoAtual = eventos[i];
+                let fimJanelaEventos = (i + 1 < eventos.length) ? eventos[i + 1].time : agoraMs;
+                if (fimJanelaEventos > agoraMs) fimJanelaEventos = agoraMs;
+
+                if (eventoAtual.time >= fimJanelaEventos) continue;
+
+                // Calcula os minutos válidos e úteis dentro da jornada comercial do setor
+                const msUteis = calcularMilissegundosUteisNoPeriodo(eventoAtual.time, fimJanelaEventos, userKey, apenasHoje);
+                const minutosConvertidos = Math.max(0, Math.round(msUteis / 1000 / 60));
+
+                if (eventoAtual.type === 'start') {
+                    minutesWork += minutosConvertidos;
+                } else if (eventoAtual.type === 'pause') {
+                    minutesInterrupt += minutosConvertidos;
+                }
+            }
 
             return { trabalho: minutesWork, interrupcao: minutesInterrupt };
         }
@@ -1060,6 +1076,7 @@
         function fecharFullscreenDetails() { document.getElementById('fullscreenDetailsModal').style.display = 'none'; }
 
         function exportExcel() {
+            // Mantém a exportação de dados estruturada (o Excel nativo via xlsx.js não renderiza imagens facilmente sem plugins pesados, mas otimizamos os dados)
             let linhas = [["Funcionário", "Tarefa", "Data Conclusão", "Status"]];
             historicTasks.forEach(t => { linhas.push([t.userWhoFinishedName||'Setor', t.title, t.dateFinished, t.onTime?"No Prazo":"Atrasado"]); });
             const ws = XLSX.utils.aoa_to_sheet(linhas); const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, ws, "Produtividade");
@@ -1067,11 +1084,55 @@
         }
 
         function exportPDF() {
-            const { jsPDF } = window.jspdf; const doc = new jsPDF();
-            doc.text("RELATÓRIO OPERACIONAL", 14, 20);
+            const { jsPDF } = window.jspdf; 
+            const doc = new jsPDF();
+            
+            // Título Principal
+            doc.setFontSize(18);
+            doc.text("RELATÓRIO OPERACIONAL E ESTATÍSTICO", 14, 20);
+            
+            // Captura os gráficos da tela se eles existirem
+            const ctxEff = document.getElementById('efficiencyChart');
+            const ctxTime = document.getElementById('timeChart');
+            
+            let currentY = 30;
+
+            if (myChart && ctxEff) {
+                // Converte o gráfico de doughnut para imagem base64
+                const effImg = myChart.toBase64Image();
+                doc.setFontSize(12);
+                doc.text("Gráfico de Eficiência Operacional:", 14, currentY);
+                doc.addImage(effImg, 'PNG', 14, currentY + 5, 80, 60);
+                currentY += 70;
+            }
+
+            if (timeChart && ctxTime) {
+                // Converte o gráfico de barras para imagem base64
+                const timeImg = timeChart.toBase64Image();
+                doc.setFontSize(12);
+                doc.text("Gráfico Comparativo de Tempo Acumulado:", 14, currentY);
+                doc.addImage(timeImg, 'PNG', 14, currentY + 5, 120, 60);
+                currentY += 75;
+            }
+
+            // Se os gráficos ocuparem muito espaço, adicionamos uma nova página para a tabela
+            if (currentY > 120) {
+                doc.addPage();
+                currentY = 20;
+            }
+
+            doc.setFontSize(14);
+            doc.text("Histórico de Tarefas Concluídas", 14, currentY);
+            
             let corpo = historicTasks.map(t => [t.userWhoFinishedName||'Setor', t.title, t.dateFinished, t.onTime?"No Prazo":"Atrasado"]);
-            doc.autoTable({ startY: 30, head: [['Responsável', 'Modelo', 'Conclusão', 'Status']], body: corpo });
-            doc.save("Relatorio_Setorial.pdf");
+            
+            doc.autoTable({ 
+                startY: currentY + 5, 
+                head: [['Responsável', 'Modelo', 'Conclusão', 'Status']], 
+                body: corpo 
+            });
+            
+            doc.save("Relatorio_Setorial_Com_Graficos.pdf");
         }
 
         function salvarConfiguracaoEquipe() {
@@ -1084,7 +1145,6 @@
                 };
             }
             
-            // Grava o nome personalizado do Gestor (Wesley) inserido na interface
             configEquipe['admin'] = {
                 nome: document.getElementById('cfg_admin_nome').value || nomesExibicao['admin'],
                 jornada: { in: document.getElementById('cfg_admin_in').value, out: document.getElementById('cfg_admin_out').value },
