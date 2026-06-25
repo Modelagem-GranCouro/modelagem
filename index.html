@@ -424,16 +424,8 @@
         </div>
     </div>
 
-    <div class="modal-overlay" id="descansoAlertModal">
-        <div class="modal-box" style="text-align:center; border-top:6px solid #9b59b6;">
-            <h2 style="color:#9b59b6; margin-bottom:10px;">☕ Hora do Descanso Setorial!</h2>
-            <p style="font-size:0.95rem; margin-bottom:20px; color:#555;">O cronômetro de 10 minutos está liberado. Deseja iniciar seu descanso agora?</p>
-            <div style="display:flex; gap:10px;">
-                <button class="btn-submit" style="background:#7f8c8d;" onclick="document.getElementById('descansoAlertModal').style.display='none'">Ignorar</button>
-                <button class="btn-submit" style="background:#9b59b6;" onclick="iniciarDescansoPeloPopup()">Iniciar Descanso ✓</button>
-            </div>
+    <div class="modal-overlay" id="descansoAlertModal" style="display: none !important;">
         </div>
-    </div>
 
     <script>
         const firebaseConfig = {
@@ -491,6 +483,12 @@
         let tasks = []; let historicTasks = []; let mealLogs = {}; let descansoLogs = {};
         let currentUser = 'visitante'; let myChart = null; let timeChart = null;
         let popupDisparadoHoje = { manha: false, tarde: false };
+
+        // Variável de controle interno de automação para evitar repetições no Firebase
+        let estadoAutomacao = {
+            almocoAtivo: false,
+            descansoAtivo: false
+        };
 
         const containerCampos = document.getElementById('userFieldsContainer');
         if(containerCampos) {
@@ -578,7 +576,8 @@
         window.addEventListener('DOMContentLoaded', () => {
             currentUser = sessionStorage.getItem('modelagem_current_user') || 'visitante';
             configurarInterfacePorUsuario();
-            setInterval(() => { verificarHorarioDescansoPopup(); updateReportDashboard(); }, 5000);
+            // Intervalo otimizado para 1 segundo para verificar os horários em tempo real com precisão
+            setInterval(() => { verificarEExecutarHorariosAutomaticos(); updateReportDashboard(); }, 1000);
         });
 
         function abrirModalLogin() { 
@@ -649,22 +648,75 @@
             document.getElementById('criticalAlertPanel').style.display = temUrgencia ? 'block' : 'none';
         }
 
-        function verificarHorarioDescansoPopup() {
+        // Função responsável pela automação total sem a necessidade de cliques
+        function verificarEExecutarHorariosAutomaticos() {
             if (currentUser === 'visitante' || currentUser === 'admin') return;
+
             const agora = new Date();
-            const totalMinutos = (agora.getHours() * 60) + agora.getMinutes();
-            if (totalMinutos >= 590 && totalMinutos < 600 && !popupDisparadoHoje.manha) { 
-                document.getElementById('descansoAlertModal').style.display = 'flex'; 
-            } 
-            else if (totalMinutos >= 930 && totalMinutos < 940 && !popupDisparadoHoje.tarde) { 
-                document.getElementById('descansoAlertModal').style.display = 'flex'; 
+            const horaAtual = agora.getHours();
+            const minutoAtual = agora.getMinutes();
+            const totalMinutos = (horaAtual * 60) + minutoAtual;
+            
+            // Formatador de string para HH:MM
+            const horaStr = String(horaAtual).padStart(2, '0');
+            const minStr = String(minutoAtual).padStart(2, '0');
+            const horaMinutoAtualStr = `${horaStr}:${minStr}`;
+            const hojeStr = agora.toISOString().split('T')[0];
+
+            // 1. AUTOMAÇÃO DE ALMOÇO COM BASE NA BASE DE DADOS
+            const configAlmoco = almocosPadrao[currentUser];
+            if (configAlmoco && configAlmoco.in && configAlmoco.out) {
+                // Se a hora atual bateu com a hora de início de almoço configurada
+                if (horaMinutoAtualStr >= configAlmoco.in && horaMinutoAtualStr < configAlmoco.out) {
+                    if (!estadoAutomacao.almocoAtivo) {
+                        const logHoje = mealLogs[hojeStr]?.[currentUser];
+                        if (!logHoje || !logHoje.start) {
+                            registrarAlmoço('start');
+                        }
+                        estadoAutomacao.almocoAtivo = true;
+                    }
+                } 
+                // Se passou ou bateu com o horário de término cadastrado
+                else if (horaMinutoAtualStr >= configAlmoco.out) {
+                    if (estadoAutomacao.almocoAtivo) {
+                        const logHoje = mealLogs[hojeStr]?.[currentUser];
+                        if (logHoje && logHoje.start && !logHoje.end) {
+                            registrarAlmoço('end');
+                        }
+                        estadoAutomacao.almocoAtivo = false;
+                    }
+                }
+            }
+
+            // 2. AUTOMAÇÃO DOS DESCANSO SETORIAIS (MANHÃ: 09:50-10:00 | TARDE: 15:30-15:40)
+            const naJanelaDescansoManha = (totalMinutos >= 590 && totalMinutos < 600); // 09:50 às 10:00
+            const naJanelaDescansoTarde = (totalMinutos >= 930 && totalMinutos < 940); // 15:30 às 15:40
+
+            if (naJanelaDescansoManha || naJanelaDescansoTarde) {
+                if (!estadoAutomacao.descansoAtivo) {
+                    const logHoje = descansoLogs[hojeStr]?.[currentUser];
+                    if (!logHoje || !logHoje.start) {
+                        registrarDescanso('start');
+                    }
+                    estadoAutomacao.descansoAtivo = true;
+                }
+            } else {
+                if (estadoAutomacao.descansoAtivo) {
+                    const logHoje = descansoLogs[hojeStr]?.[currentUser];
+                    if (logHoje && logHoje.start && !logHoje.end) {
+                        registrarDescanso('end');
+                    }
+                    estadoAutomacao.descansoAtivo = false;
+                }
             }
         }
 
+        function verificarHorarioDescansoPopup() {
+            // Desativado por se tornar obsoleto com a automação direta
+        }
+
         function iniciarDescansoPeloPopup() {
-            document.getElementById('descansoAlertModal').style.display = 'none';
-            if (new Date().getHours() < 12) popupDisparadoHoje.manha = true; else popupDisparadoHoje.tarde = true;
-            registrarDescanso('start');
+            // Desativado por se tornar obsoleto com a automação direta
         }
 
         function registrarDescanso(status) {
@@ -819,7 +871,7 @@
             const hojeStr = new Date().toISOString().split('T')[0];
 
             while (ponteiro <= fimJanela) {
-                const diaSemana = ponteiro.getDay();
+                const diaSemana = pointer = ponteiro.getDay();
                 const dataLoopStr = ponteiro.toISOString().split('T')[0];
 
                 if (diaSemana >= 1 && diaSemana <= 6 && (!apenasHoje || dataLoopStr === hojeStr)) {
@@ -909,6 +961,45 @@
                 foraPrazo: historicTasks.filter(t => t.dateFinished >= dataCorte && !t.onTime).length,
                 pendentes: tasks.length, dataCorte, apenasHoje, periodo
             };
+        }
+
+        // Corrigido typo interno no loop do diaSemana nativo
+        function calcularMilissegundosUteisNoPeriodo(startMs, endMs, userKey, apenasHoje = false) {
+            if (startMs >= endMs) return 0;
+            
+            let totalMs = 0;
+            const itemJornada = jornadas[userKey] || { in: "07:12", out: "17:00" };
+            const [hIn, mIn] = itemJornada.in.split(':').map(Number);
+            const [hOut, mOut] = itemJornada.out.split(':').map(Number);
+
+            let ponteiro = new Date(startMs);
+            const fimJanela = new Date(endMs);
+            const hojeStr = new Date().toISOString().split('T')[0];
+
+            while (ponteiro <= fimJanela) {
+                const diaSemana = ponteiro.getDay();
+                const dataLoopStr = ponteiro.toISOString().split('T')[0];
+
+                if (diaSemana >= 1 && diaSemana <= 6 && (!apenasHoje || dataLoopStr === hojeStr)) {
+                    const inicioComercial = new Date(ponteiro); inicioComercial.setHours(hIn, mIn, 0, 0);
+                    const fimComercial = new Date(ponteiro); fimComercial.setHours(hOut, mOut, 0, 0);
+
+                    const maxStart = Math.max(startMs, inicioComercial.getTime());
+                    const minEnd = Math.min(endMs, fimComercial.getTime());
+
+                    if (maxStart < minEnd) {
+                        totalMs += (minEnd - maxStart);
+                    }
+                }
+                
+                ponteiro.setDate(ponteiro.getDate() + 1); 
+                ponteiro.setHours(0,0,0,0);
+                
+                if (ponteiro.getTime() > fimJanela.getTime() && ponteiro.toISOString().split('T')[0] !== fimJanela.toISOString().split('T')[0]) {
+                    break;
+                }
+            }
+            return totalMs;
         }
 
         function calcularEMostrarMetasDinamicas(metrics) {
@@ -1076,7 +1167,6 @@
         function fecharFullscreenDetails() { document.getElementById('fullscreenDetailsModal').style.display = 'none'; }
 
         function exportExcel() {
-            // Mantém a exportação de dados estruturada (o Excel nativo via xlsx.js não renderiza imagens facilmente sem plugins pesados, mas otimizamos os dados)
             let linhas = [["Funcionário", "Tarefa", "Data Conclusão", "Status"]];
             historicTasks.forEach(t => { linhas.push([t.userWhoFinishedName||'Setor', t.title, t.dateFinished, t.onTime?"No Prazo":"Atrasado"]); });
             const ws = XLSX.utils.aoa_to_sheet(linhas); const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, ws, "Produtividade");
@@ -1087,18 +1177,15 @@
             const { jsPDF } = window.jspdf; 
             const doc = new jsPDF();
             
-            // Título Principal
             doc.setFontSize(18);
             doc.text("RELATÓRIO OPERACIONAL E ESTATÍSTICO", 14, 20);
             
-            // Captura os gráficos da tela se eles existirem
             const ctxEff = document.getElementById('efficiencyChart');
             const ctxTime = document.getElementById('timeChart');
             
             let currentY = 30;
 
             if (myChart && ctxEff) {
-                // Converte o gráfico de doughnut para imagem base64
                 const effImg = myChart.toBase64Image();
                 doc.setFontSize(12);
                 doc.text("Gráfico de Eficiência Operacional:", 14, currentY);
@@ -1107,7 +1194,6 @@
             }
 
             if (timeChart && ctxTime) {
-                // Converte o gráfico de barras para imagem base64
                 const timeImg = timeChart.toBase64Image();
                 doc.setFontSize(12);
                 doc.text("Gráfico Comparativo de Tempo Acumulado:", 14, currentY);
@@ -1115,7 +1201,6 @@
                 currentY += 75;
             }
 
-            // Se os gráficos ocuparem muito espaço, adicionamos uma nova página para a tabela
             if (currentY > 120) {
                 doc.addPage();
                 currentY = 20;
