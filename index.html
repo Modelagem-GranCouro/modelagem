@@ -424,8 +424,7 @@
         </div>
     </div>
 
-    <div class="modal-overlay" id="descansoAlertModal" style="display: none !important;">
-        </div>
+    <div class="modal-overlay" id="descansoAlertModal" style="display: none !important;"></div>
 
     <script>
         const firebaseConfig = {
@@ -482,9 +481,7 @@
         let adminPasswordDB = "admin123"; 
         let tasks = []; let historicTasks = []; let mealLogs = {}; let descansoLogs = {};
         let currentUser = 'visitante'; let myChart = null; let timeChart = null;
-        let popupDisparadoHoje = { manha: false, tarde: false };
 
-        // Variável de controle interno de automação para evitar repetições no Firebase
         let estadoAutomacao = {
             almocoAtivo: false,
             descansoAtivo: false
@@ -576,7 +573,6 @@
         window.addEventListener('DOMContentLoaded', () => {
             currentUser = sessionStorage.getItem('modelagem_current_user') || 'visitante';
             configurarInterfacePorUsuario();
-            // Intervalo otimizado para 1 segundo para verificar os horários em tempo real com precisão
             setInterval(() => { verificarEExecutarHorariosAutomaticos(); updateReportDashboard(); }, 1000);
         });
 
@@ -648,7 +644,6 @@
             document.getElementById('criticalAlertPanel').style.display = temUrgencia ? 'block' : 'none';
         }
 
-        // Função responsável pela automação total sem a necessidade de cliques
         function verificarEExecutarHorariosAutomaticos() {
             if (currentUser === 'visitante' || currentUser === 'admin') return;
 
@@ -657,16 +652,13 @@
             const minutoAtual = agora.getMinutes();
             const totalMinutos = (horaAtual * 60) + minutoAtual;
             
-            // Formatador de string para HH:MM
             const horaStr = String(horaAtual).padStart(2, '0');
             const minStr = String(minutoAtual).padStart(2, '0');
             const horaMinutoAtualStr = `${horaStr}:${minStr}`;
             const hojeStr = agora.toISOString().split('T')[0];
 
-            // 1. AUTOMAÇÃO DE ALMOÇO COM BASE NA BASE DE DADOS
             const configAlmoco = almocosPadrao[currentUser];
             if (configAlmoco && configAlmoco.in && configAlmoco.out) {
-                // Se a hora atual bateu com a hora de início de almoço configurada
                 if (horaMinutoAtualStr >= configAlmoco.in && horaMinutoAtualStr < configAlmoco.out) {
                     if (!estadoAutomacao.almocoAtivo) {
                         const logHoje = mealLogs[hojeStr]?.[currentUser];
@@ -675,9 +667,7 @@
                         }
                         estadoAutomacao.almocoAtivo = true;
                     }
-                } 
-                // Se passou ou bateu com o horário de término cadastrado
-                else if (horaMinutoAtualStr >= configAlmoco.out) {
+                } else if (horaMinutoAtualStr >= configAlmoco.out) {
                     if (estadoAutomacao.almocoAtivo) {
                         const logHoje = mealLogs[hojeStr]?.[currentUser];
                         if (logHoje && logHoje.start && !logHoje.end) {
@@ -688,9 +678,8 @@
                 }
             }
 
-            // 2. AUTOMAÇÃO DOS DESCANSO SETORIAIS (MANHÃ: 09:50-10:00 | TARDE: 15:30-15:40)
-            const naJanelaDescansoManha = (totalMinutos >= 590 && totalMinutos < 600); // 09:50 às 10:00
-            const naJanelaDescansoTarde = (totalMinutos >= 930 && totalMinutos < 940); // 15:30 às 15:40
+            const naJanelaDescansoManha = (totalMinutos >= 590 && totalMinutos < 600); 
+            const naJanelaDescansoTarde = (totalMinutos >= 930 && totalMinutos < 940); 
 
             if (naJanelaDescansoManha || naJanelaDescansoTarde) {
                 if (!estadoAutomacao.descansoAtivo) {
@@ -709,14 +698,6 @@
                     estadoAutomacao.descansoAtivo = false;
                 }
             }
-        }
-
-        function verificarHorarioDescansoPopup() {
-            // Desativado por se tornar obsoleto com a automação direta
-        }
-
-        function iniciarDescansoPeloPopup() {
-            // Desativado por se tornar obsoleto com a automação direta
         }
 
         function registrarDescanso(status) {
@@ -756,33 +737,27 @@
             taskList.innerHTML = '';
             const filtro = document.getElementById('queueUserFilter').value;
             
-            // 1. Clona as tarefas originais para aplicar a regra de adiamento sem modificar permanentemente o banco de dados
             let baseTasks = JSON.parse(JSON.stringify(tasks));
 
-            // 2. Separa itens de Prioridade 1 e ordena-os cronologicamente por prazo
             let prio1Tasks = baseTasks.filter(t => t.priority === "1" || t.priority === 1);
             prio1Tasks.sort((a, b) => new Date(a.deadline) - new Date(b.deadline));
 
-            // Identifica a data limite mais distante dentre as prioridades 1
             let ultimaDataPrio1 = null;
             if (prio1Tasks.length > 0) {
                 ultimaDataPrio1 = prio1Tasks[prio1Tasks.length - 1].deadline;
             }
 
-            // Função auxiliar para calcular o próximo dia útil (segunda a sexta) a partir de uma data
             function obterProximoDiaUtil(dataStr) {
-                let d = new Date(dataStr + 'T12:00:00'); // Evita problemas de fuso horário local
+                let d = new Date(dataStr + 'T12:00:00'); 
                 d.setDate(d.getDate() + 1);
-                while (d.getDay() === 0 || d.getDay() === 6) { // 0 = Domingo, 6 = Sábado
+                while (d.getDay() === 0 || d.getDay() === 6) { 
                     d.setDate(d.getDate() + 1);
                 }
                 return d.toISOString().split('T')[0];
             }
 
-            // 3. Aplica a regra de adiamento para prioridades 2 e 3
             let processedTasks = baseTasks.map(task => {
                 if ((task.priority === "2" || task.priority === 2 || task.priority === "3" || task.priority === 3) && ultimaDataPrio1) {
-                    // Se a entrega coincide ou está antes de qualquer prioridade 1, ela é adiada dinamicamente
                     if (task.deadline <= ultimaDataPrio1) {
                         task.deadline = obterProximoDiaUtil(ultimaDataPrio1);
                     }
@@ -790,14 +765,12 @@
                 return task;
             });
 
-            // 4. Aplica o filtro selecionado pelo usuário na tela
             let filteredTasks = processedTasks.filter(t => {
                 if (filtro === 'minhas') return t.responsibles && t.responsibles.includes(currentUser);
                 if (filtro !== 'todos' && filtro !== 'minhas') return t.responsibles && t.responsibles.includes(filtro);
                 return true;
             });
 
-            // 5. Ordena a visualização da fila final: Prioridade 1 primeiro e depois as outras por data
             filteredTasks.sort((a, b) => a.priority - b.priority || new Date(a.deadline) - new Date(b.deadline));
             
             if (filteredTasks.length === 0) { taskList.innerHTML = '<p style="color: #999; text-align: center; padding: 35px;">Nenhuma atividade ativa localizada.</p>'; return; }
@@ -877,6 +850,23 @@
                     reason: motivo.trim()
                 });
             } else {
+                if (currentUser !== 'admin' && currentUser !== 'visitante') {
+                    const minhasTarefasAtivas = tasks.filter(t => t.responsibles && t.responsibles.includes(currentUser));
+                    const maiorPrioridadeFila = Math.min(...minhasTarefasAtivas.map(t => Number(t.priority)));
+
+                    if (Number(task.priority) > maiorPrioridadeFila) {
+                        const justificativa = prompt(`⚠️ ATENÇÃO: Esta tarefa é de Prioridade ${task.priority}, mas você possui tarefas de Prioridade ${maiorPrioridadeFila} pendentes na sua fila!\n\nPor favor, justifique obrigatoriamente por que deseja iniciar esta atividade agora:`);
+                        
+                        if (!justificativa || justificativa.trim() === "") {
+                            alert("Início cancelado! É obrigatório fornecer uma justificativa para iniciar uma tarefa fora da prioridade.");
+                            return;
+                        }
+                        
+                        const dataHoraFormato = new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
+                        task.desc = (task.desc ? task.desc + "\n" : "") + `[Justificativa de Início fora de Prioridade às ${dataHoraFormato} por ${nomesExibicao[currentUser]}]: ${justificativa.trim()}`;
+                    }
+                }
+
                 task.timeLogs.push({ type: 'start', time: now, by: currentUser, byName: nomesExibicao[currentUser] });
             }
             database.ref('tasks/ativas/' + id).set(task);
@@ -909,7 +899,7 @@
 
             while (ponteiro <= fimJanela) {
                 const diaSemana = ponteiro.getDay();
-                const dataLoopStr = ponteiro.toISOString().split('T')[0];
+                const dataLoopStr = pointer.toISOString().split('T')[0];
 
                 if (diaSemana >= 1 && diaSemana <= 6 && (!apenasHoje || dataLoopStr === hojeStr)) {
                     const inicioComercial = new Date(ponteiro); inicioComercial.setHours(hIn, mIn, 0, 0);
@@ -935,8 +925,6 @@
 
         function calcularTempoTrabalhoEInterrupcoes(userKey, deDataStr, apenasHoje = false) {
             const agoraMs = new Date().getTime();
-            
-            // 1. Coleta e mapeia de forma ordenada todos os eventos cronológicos do usuário filtrado
             let eventos = [];
             
             const processarLogs = (t) => {
@@ -951,7 +939,6 @@
             historicTasks.forEach(t => { if(t.dateFinished >= deDataStr) processarLogs(t); });
             tasks.forEach(processarLogs);
 
-            // Ordena os logs cronologicamente
             eventos.sort((a, b) => a.time - b.time);
 
             let minutesWork = 0;
@@ -961,7 +948,6 @@
                 return { trabalho: 0, interrupcao: 0 };
             }
 
-            // 2. Cria linhas do tempo consolidadas minuto a minuto (evita somar em dobro a mesma hora)
             for (let i = 0; i < eventos.length; i++) {
                 const eventoAtual = eventos[i];
                 let fimJanelaEventos = (i + 1 < eventos.length) ? eventos[i + 1].time : agoraMs;
@@ -969,7 +955,6 @@
 
                 if (eventoAtual.time >= fimJanelaEventos) continue;
 
-                // Calcula os minutos válidos e úteis dentro da jornada comercial do setor
                 const msUteis = calcularMilissegundosUteisNoPeriodo(eventoAtual.time, fimJanelaEventos, userKey, apenasHoje);
                 const minutosConvertidos = Math.max(0, Math.round(msUteis / 1000 / 60));
 
