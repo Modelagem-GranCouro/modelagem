@@ -912,7 +912,7 @@
                 if (eventoAtual.type === 'start') {
                     minutesWork += minutosConvertidos;
                 } else if (eventoAtual.type === 'pause') {
-                    minutesInterrupt += minutesConvertidos;
+                    minutesInterrupt += minutosConvertidos;
                 }
             }
 
@@ -949,7 +949,7 @@
             const hojeStr = new Date().toISOString().split('T')[0];
 
             while (ponteiro <= fimJanela) {
-                const diaSemana = pointer = pointer = ponteiro.getDay();
+                const diaSemana = ponteiro.getDay();
                 const dataLoopStr = ponteiro.toISOString().split('T')[0];
 
                 if (diaSemana >= 1 && diaSemana <= 6 && (!apenasHoje || dataLoopStr === hojeStr)) {
@@ -1037,6 +1037,8 @@
             tbody.innerHTML = '';
             
             let labelsTime = []; let dataWork = []; const hojeStr = new Date().toISOString().split('T')[0]; const agoraMs = new Date().getTime();
+            
+            // CORRIGIDO: Agora inclui toda a equipe de 6 integrantes
             const chavesEquipe = ['admin', 'usuario_1', 'usuario_2', 'usuario_3', 'usuario_4', 'usuario_5'];
 
             chavesEquipe.forEach(userKey => {
@@ -1062,7 +1064,9 @@
                 }
 
                 if(metrics.apenasHoje) {
-                    if (descansoLogs[hojeStr]?.[userKey]) { descansoLegalMin = Math.max(0, Math.round(((descansoLogs[hojeStr][userKey].end || agoraMs) - descansoLogs[hojeStr][userKey].start) / 1000 / 60)); }
+                    if (descansoLogs[hojeStr]?.[userKey]) { 
+                        descansoLegalMin = Math.max(0, Math.round(((descansoLogs[hojeStr][userKey].end || agoraMs) - descansoLogs[hojeStr][userKey].start) / 1000 / 60)); 
+                    }
                 }
 
                 const itemJornada = jornadas[userKey] || { in: "07:12", out: "17:00" };
