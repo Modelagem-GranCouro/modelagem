@@ -756,13 +756,50 @@
             taskList.innerHTML = '';
             const filtro = document.getElementById('queueUserFilter').value;
             
-            let filteredTasks = tasks.filter(t => {
+            // 1. Clona as tarefas originais para aplicar a regra de adiamento sem modificar permanentemente o banco de dados
+            let baseTasks = JSON.parse(JSON.stringify(tasks));
+
+            // 2. Separa itens de Prioridade 1 e ordena-os cronologicamente por prazo
+            let prio1Tasks = baseTasks.filter(t => t.priority === "1" || t.priority === 1);
+            prio1Tasks.sort((a, b) => new Date(a.deadline) - new Date(b.deadline));
+
+            // Identifica a data limite mais distante dentre as prioridades 1
+            let ultimaDataPrio1 = null;
+            if (prio1Tasks.length > 0) {
+                ultimaDataPrio1 = prio1Tasks[prio1Tasks.length - 1].deadline;
+            }
+
+            // Função auxiliar para calcular o próximo dia útil (segunda a sexta) a partir de uma data
+            function obterProximoDiaUtil(dataStr) {
+                let d = new Date(dataStr + 'T12:00:00'); // Evita problemas de fuso horário local
+                d.setDate(d.getDate() + 1);
+                while (d.getDay() === 0 || d.getDay() === 6) { // 0 = Domingo, 6 = Sábado
+                    d.setDate(d.getDate() + 1);
+                }
+                return d.toISOString().split('T')[0];
+            }
+
+            // 3. Aplica a regra de adiamento para prioridades 2 e 3
+            let processedTasks = baseTasks.map(task => {
+                if ((task.priority === "2" || task.priority === 2 || task.priority === "3" || task.priority === 3) && ultimaDataPrio1) {
+                    // Se a entrega coincide ou está antes de qualquer prioridade 1, ela é adiada dinamicamente
+                    if (task.deadline <= ultimaDataPrio1) {
+                        task.deadline = obterProximoDiaUtil(ultimaDataPrio1);
+                    }
+                }
+                return task;
+            });
+
+            // 4. Aplica o filtro selecionado pelo usuário na tela
+            let filteredTasks = processedTasks.filter(t => {
                 if (filtro === 'minhas') return t.responsibles && t.responsibles.includes(currentUser);
                 if (filtro !== 'todos' && filtro !== 'minhas') return t.responsibles && t.responsibles.includes(filtro);
                 return true;
             });
 
+            // 5. Ordena a visualização da fila final: Prioridade 1 primeiro e depois as outras por data
             filteredTasks.sort((a, b) => a.priority - b.priority || new Date(a.deadline) - new Date(b.deadline));
+            
             if (filteredTasks.length === 0) { taskList.innerHTML = '<p style="color: #999; text-align: center; padding: 35px;">Nenhuma atividade ativa localizada.</p>'; return; }
 
             const hoje = new Date().toISOString().split('T')[0];
@@ -871,7 +908,7 @@
             const hojeStr = new Date().toISOString().split('T')[0];
 
             while (ponteiro <= fimJanela) {
-                const diaSemana = pointer = ponteiro.getDay();
+                const diaSemana = ponteiro.getDay();
                 const dataLoopStr = ponteiro.toISOString().split('T')[0];
 
                 if (diaSemana >= 1 && diaSemana <= 6 && (!apenasHoje || dataLoopStr === hojeStr)) {
@@ -961,45 +998,6 @@
                 foraPrazo: historicTasks.filter(t => t.dateFinished >= dataCorte && !t.onTime).length,
                 pendentes: tasks.length, dataCorte, apenasHoje, periodo
             };
-        }
-
-        // Corrigido typo interno no loop do diaSemana nativo
-        function calcularMilissegundosUteisNoPeriodo(startMs, endMs, userKey, apenasHoje = false) {
-            if (startMs >= endMs) return 0;
-            
-            let totalMs = 0;
-            const itemJornada = jornadas[userKey] || { in: "07:12", out: "17:00" };
-            const [hIn, mIn] = itemJornada.in.split(':').map(Number);
-            const [hOut, mOut] = itemJornada.out.split(':').map(Number);
-
-            let ponteiro = new Date(startMs);
-            const fimJanela = new Date(endMs);
-            const hojeStr = new Date().toISOString().split('T')[0];
-
-            while (ponteiro <= fimJanela) {
-                const diaSemana = ponteiro.getDay();
-                const dataLoopStr = ponteiro.toISOString().split('T')[0];
-
-                if (diaSemana >= 1 && diaSemana <= 6 && (!apenasHoje || dataLoopStr === hojeStr)) {
-                    const inicioComercial = new Date(ponteiro); inicioComercial.setHours(hIn, mIn, 0, 0);
-                    const fimComercial = new Date(ponteiro); fimComercial.setHours(hOut, mOut, 0, 0);
-
-                    const maxStart = Math.max(startMs, inicioComercial.getTime());
-                    const minEnd = Math.min(endMs, fimComercial.getTime());
-
-                    if (maxStart < minEnd) {
-                        totalMs += (minEnd - maxStart);
-                    }
-                }
-                
-                ponteiro.setDate(ponteiro.getDate() + 1); 
-                ponteiro.setHours(0,0,0,0);
-                
-                if (ponteiro.getTime() > fimJanela.getTime() && ponteiro.toISOString().split('T')[0] !== fimJanela.toISOString().split('T')[0]) {
-                    break;
-                }
-            }
-            return totalMs;
         }
 
         function calcularEMostrarMetasDinamicas(metrics) {
