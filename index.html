@@ -87,11 +87,11 @@
         table { width: 100%; border-collapse: collapse; }
         th { background: var(--secondary-color); color: white; padding: 12px; text-align: center; font-size: 0.9rem; }
 
-        .modal-overlay { position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.5); display:none; justify-content:center; align-items:center; z-index:1000; }
-        .modal-box { background:white; padding:25px; border-radius:8px; width:400px; box-shadow:0 4px 15px rgba(0,0,0,0.2); }
+        .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: none; justify-content: center; align-items: center; z-index: 1000; }
+        .modal-box { background: white; padding: 25px; border-radius: 8px; width: 400px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
 
-        .fullscreen-overlay { position: fixed; top:0; left:0; width:100%; height:100%; background:rgba(255,255,255,0.98); display:none; flex-direction:column; padding:40px; z-index:2000; overflow-y:auto; }
-        .fullscreen-header { display:flex; justify-content:space-between; align-items:center; margin-bottom:20px; border-bottom:2px solid #eee; padding-bottom:15px; }
+        .fullscreen-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.98); display: none; flex-direction: column; padding: 40px; z-index: 2000; overflow-y: auto; }
+        .fullscreen-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 2px solid #eee; padding-bottom: 15px; }
 
         .deadline-alert { color: var(--danger-color); font-weight: bold; }
         .rating-box { padding: 12px; border-radius: 6px; text-align: center; font-weight: bold; margin-bottom: 15px; }
@@ -117,8 +117,8 @@
 
     <div class="nav-tabs" id="adminTabs">
         <button id="btnTabPainel" class="tab-btn active" onclick="switchTab('painel')">Painel de Monitoramento Geral</button>
-        <button id="btnTabRelatorios" class="tab-btn" onclick="switchTab('relatorios')">Relatórios & Gráficos Estatísticos</button>
-        <button id="btnTabGerenciamento" class="tab-btn" onclick="switchTab('gerenciamento')" style="display: none;">Gerenciar Equipe & Backup</button>
+        <button id="btnTabRelatorios" class="tab-btn" onclick="switchTab('relatorios')">Relatórios &amp; Gráficos Estatísticos</button>
+        <button id="btnTabGerenciamento" class="tab-btn" onclick="switchTab('gerenciamento')" style="display: none;">Gerenciar Equipe &amp; Backup</button>
     </div>
 
     <div id="tabPainel" class="dashboard-layout full-width">
@@ -126,11 +126,11 @@
             <h2>Lançar Nova Tarefa no Setor</h2>
             <form id="taskForm">
                 <div class="form-group">
-                    <label>Referência / Nome do Modelo / Descrição</label>
+                    <label for="taskTitle">Referência / Nome do Modelo / Descrição</label>
                     <input type="text" id="taskTitle" class="form-control" placeholder="Ex: Referência ou Atividade de Gestão" required>
                 </div>
                 <div class="form-group">
-                    <label>Categoria</label>
+                    <label for="taskCategory">Categoria</label>
                     <select id="taskCategory" class="form-control">
                         <option value="KIT">KIT</option>
                         <option value="PISO">PISO</option>
@@ -140,7 +140,7 @@
                     </select>
                 </div>
                 <div class="form-group">
-                    <label>Especificação da Tarefa</label>
+                    <label for="taskAction">Especificação da Tarefa</label>
                     <select id="taskAction" class="form-control">
                         <optgroup label="Operações da Equipe">
                             <option value="Fazer modelo novo">Fazer modelo novo</option>
@@ -166,7 +166,7 @@
                     </select>
                 </div>
                 <div class="form-group">
-                    <label>Sequência de Prioridade</label>
+                    <label for="taskPriority">Sequência de Prioridade</label>
                     <select id="taskPriority" class="form-control">
                         <option value="1">Prioridade 1 (Máxima)</option>
                         <option value="2">Prioridade 2 (Média)</option>
@@ -174,11 +174,11 @@
                     </select>
                 </div>
                 <div class="form-group">
-                    <label>Prazo Limite para Entrega</label>
+                    <label for="taskDeadline">Prazo Limite para Entrega</label>
                     <input type="date" id="taskDeadline" class="form-control" required>
                 </div>
                 <div class="form-group">
-                    <label>Instruções Adicionais</label>
+                    <label for="taskDesc">Instruções Adicionais</label>
                     <textarea id="taskDesc" class="form-control" rows="3" placeholder="Informações adicionais relevantes"></textarea>
                 </div>
                 <button type="submit" class="btn-submit">Direcionar e Enviar</button>
@@ -196,14 +196,14 @@
                     <div><p id="mealStatusLabel" style="font-weight: bold;">Status do Almoço: Pronto</p></div>
                     <div>
                         <button id="btnStartMeal" class="btn-aux btn-meal" onclick="registrarAlmoço('start')">Ir para o Almoço 🍽️</button>
-                        <button id="btnEndMeal" class="btn-aux btn-meal" style="background:#27ae60; display:none;" onclick="registrarAlmoço('end')">Voltar do Almoço ↩</button>
+                        <button id="btnEndMeal" class="btn-aux btn-meal" style="background: #27ae60; display: none;" onclick="registrarAlmoço('end')">Voltar do Almoço ↩</button>
                     </div>
                 </div>
                 <div class="aux-card" style="border-left: 4px solid #9b59b6;">
                     <div><p id="descansoStatusLabel" style="font-weight: bold;">Status do Descanso: Disponível</p></div>
                     <div>
                         <button id="btnStartDescanso" class="btn-aux btn-descanso" onclick="registrarDescanso('start')">Iniciar Descanso ☕</button>
-                        <button id="btnEndDescanso" class="btn-aux btn-descanso" style="background:#27ae60; display:none;" onclick="registrarDescanso('end')">Finalizar Descanso ↩</button>
+                        <button id="btnEndDescanso" class="btn-aux btn-descanso" style="background: #27ae60; display: none;" onclick="registrarDescanso('end')">Finalizar Descanso ↩</button>
                     </div>
                 </div>
             </div>
@@ -233,7 +233,7 @@
         <div class="panel-box" style="display: flex; justify-content: space-between; align-items: center;">
             <div>
                 <h2>Indicadores de Produtividade do Setor</h2>
-                <p style="font-size:0.85rem; color:#666;">Selecione a visualização de tempo do relatório.</p>
+                <p style="font-size: 0.85rem; color: #666;">Selecione a visualização de tempo do relatório.</p>
             </div>
             <div>
                 <select id="reportPeriod" class="form-control" style="width: 200px;" onchange="updateReportDashboard()">
@@ -302,11 +302,11 @@
 
         <div class="charts-section">
             <div class="chart-container">
-                <h4 style="margin-bottom:10px; font-size:0.95rem; color:#555;">Gráfico de Eficiência Operacional</h4>
+                <h4 style="margin-bottom: 10px; font-size: 0.95rem; color: #555;">Gráfico de Eficiência Operacional</h4>
                 <canvas id="efficiencyChart"></canvas>
             </div>
             <div class="chart-container">
-                <h4 style="margin-bottom:10px; font-size:0.95rem; color:#555;">Gráfico Comparativo de Gestão de Tempo Acumulado</h4>
+                <h4 style="margin-bottom: 10px; font-size: 0.95rem; color: #555;">Gráfico Comparativo de Gestão de Tempo Acumulado</h4>
                 <canvas id="timeChart"></canvas>
             </div>
         </div>
@@ -314,8 +314,8 @@
         <div class="panel-box" id="restrictedTimeReportSection">
             <h2>Relatório de Tempo por Colaborador</h2>
             <div class="action-bar" id="reportButtonsContainer">
-                <button class="btn-export" style="background:#e74c3c;" onclick="exportPDF()">Exportar PDF 📄</button>
-                <button class="btn-export" style="background:#2ecc71;" onclick="exportExcel()">Exportar Excel 📊</button>
+                <button class="btn-export" style="background: #e74c3c;" onclick="exportPDF()">Exportar PDF 📄</button>
+                <button class="btn-export" style="background: #2ecc71;" onclick="exportExcel()">Exportar Excel 📊</button>
             </div>
             <div class="table-responsive">
                 <table>
@@ -341,36 +341,36 @@
             <div class="panel-box">
                 <h2>Customizar Integrantes da Equipe e Jornadas</h2>
                 <div style="max-height: 500px; overflow-y: auto; padding-right: 10px;" id="userFieldsContainer">
-                    <div style="border: 1px solid #d4e6f1; padding:10px; border-radius:6px; margin-bottom:15px; background:#f4f9fd;">
-                        <label style="font-weight:bold; font-size:0.85rem; color:#2980b9;">Gestor Master:</label>
-                        <input type="text" id="cfg_admin_nome" class="form-control" style="margin-bottom:5px;" placeholder="Nome do Gestor">
-                        <div style="display:flex; gap:10px; margin-bottom:5px;">
+                    <div style="border: 1px solid #d4e6f1; padding: 10px; border-radius: 6px; margin-bottom: 15px; background: #f4f9fd;">
+                        <span style="font-weight: bold; font-size: 0.85rem; color: #2980b9; display: block; margin-bottom: 5px;">Gestor Master:</span>
+                        <input type="text" id="cfg_admin_nome" class="form-control" style="margin-bottom: 5px;" placeholder="Nome do Gestor">
+                        <div style="display: flex; gap: 10px; margin-bottom: 5px;">
                             <input type="time" id="cfg_admin_in" class="form-control" title="Início da Jornada">
                             <input type="time" id="cfg_admin_out" class="form-control" title="Fim da Jornada">
                         </div>
-                        <div style="display:flex; gap:10px; align-items:center;">
-                            <span style="font-size:0.75rem; font-weight:bold; color:#e67e22;">Almoço:</span>
+                        <div style="display: flex; gap: 10px; align-items: center;">
+                            <span style="font-size: 0.75rem; font-weight: bold; color: #e67e22;">Almoço:</span>
                             <input type="time" id="cfg_admin_meal_in" class="form-control" title="Início do Almoço">
                             <input type="time" id="cfg_admin_meal_out" class="form-control" title="Fim do Almoço">
                         </div>
                     </div>
                 </div>
-                <button class="btn-submit" style="margin-top:15px; background:var(--success-color);" onclick="salvarConfiguracaoEquipe()">Gravar Configurações</button>
+                <button class="btn-submit" style="margin-top: 15px; background: var(--success-color);" onclick="salvarConfiguracaoEquipe()">Gravar Configurações</button>
             </div>
             <div>
                 <div class="panel-box">
                     <h2>Segurança do Painel</h2>
                     <div class="form-group">
-                        <label>Alterar Senha do Administrador</label>
+                        <label for="cfg_adminPassword">Alterar Senha do Administrador</label>
                         <input type="password" id="cfg_adminPassword" class="form-control" placeholder="Digite a nova senha">
                     </div>
-                    <button class="btn-submit" style="background:var(--secondary-color);" onclick="salvarSenhaAdmin()">Atualizar Senha Master</button>
+                    <button class="btn-submit" style="background: var(--secondary-color);" onclick="salvarSenhaAdmin()">Atualizar Senha Master</button>
                 </div>
                 <div class="panel-box">
                     <h2>Backup Preventivo e Restauração Secura</h2>
-                    <div style="display:flex; gap:10px;">
-                        <button class="btn-submit" style="background:#34495e;" onclick="criarBackupFirebase()">Gerar Ponto de Backup 💾</button>
-                        <button class="btn-submit" style="background:#95a5a6;" onclick="restaurarBackupFirebase()">Restaurar Backup 🔄</button>
+                    <div style="display: flex; gap: 10px;">
+                        <button class="btn-submit" style="background: #34495e;" onclick="criarBackupFirebase()">Gerar Ponto de Backup 💾</button>
+                        <button class="btn-submit" style="background: #95a5a6;" onclick="restaurarBackupFirebase()">Restaurar Backup 🔄</button>
                     </div>
                 </div>
             </div>
@@ -401,9 +401,9 @@
 
     <div class="modal-overlay" id="loginModal">
         <div class="modal-box">
-            <h2 style="margin-bottom:15px; font-size:1.2rem;">Autenticação Corporativa</h2>
+            <h2 style="margin-bottom: 15px; font-size: 1.2rem;">Autenticação Corporativa</h2>
             <div class="form-group">
-                <label>Selecione seu Usuário/Setor</label>
+                <label for="loginUser">Selecione seu Usuário/Setor</label>
                 <select id="loginUser" class="form-control">
                     <option value="admin">Wesley</option>
                     <option value="usuario_1">Modelista</option>
@@ -414,17 +414,14 @@
                 </select>
             </div>
             <div class="form-group" id="loginPasswordGroup">
-                <label>Senha de Acesso</label>
+                <label for="loginPassword">Senha de Acesso</label>
                 <input type="password" id="loginPassword" class="form-control" placeholder="••••••">
             </div>
-            <div style="display:flex; gap:10px; margin-top:20px;">
-                <button class="btn-submit" style="background:#7f8c8d;" onclick="fecharModalLogin()">Cancel</button>
+            <div style="display: flex; gap: 10px; margin-top: 20px;">
+                <button class="btn-submit" style="background: #7f8c8d;" onclick="fecharModalLogin()">Cancel</button>
                 <button class="btn-submit" onclick="login()">Confirmar Entrada</button>
             </div>
         </div>
-    </div>
-
-    <div class="modal-overlay" id="descansoAlertModal" style="display: none !important;">
     </div>
 
     <script>
@@ -479,7 +476,6 @@
             "usuario_4": { in: "12:00", out: "13:00" }, "usuario_5": { in: "12:00", out: "13:00" }
         };
 
-        // Objeto global para guardar senhas e permissões customizadas da equipe
         let senhasEquipe = {
             "usuario_1": "123", "usuario_2": "123", "usuario_3": "123", "usuario_4": "123", "usuario_5": "123"
         };
@@ -490,7 +486,6 @@
         let adminPasswordDB = "admin123"; 
         let tasks = []; let historicTasks = []; let mealLogs = {}; let descansoLogs = {};
         let currentUser = 'visitante'; let myChart = null; let timeChart = null;
-        let popupDisparadoHoje = { manha: false, tarde: false };
 
         let estadoAutomacao = {
             almocoAtivo: false,
@@ -502,7 +497,7 @@
             for(let i=1; i<=5; i++) {
                 containerCampos.innerHTML += `
                     <div style="border: 1px solid #eee; padding:10px; border-radius:6px; margin-bottom:10px; background:#fafafa;">
-                        <label id="lbl_user${i}" style="font-weight:bold; font-size:0.85rem;">Funcionário ${i}:</label>
+                        <span id="lbl_user${i}" style="font-weight:bold; font-size:0.85rem; display:block; margin-bottom:5px;">Funcionário ${i}:</span>
                         <input type="text" id="cfg_user${i}" class="form-control" style="margin-bottom:5px;" placeholder="Nome">
                         <div style="display:flex; gap:10px; margin-bottom:5px;">
                             <input type="time" id="cfg_in${i}" class="form-control" title="Início da Jornada">
@@ -608,7 +603,6 @@
                     alert("Senha mestre incorreta!"); return;
                 }
             } else {
-                // Valida a senha definida individualmente para o usuário
                 const senhaCorreta = senhasEquipe[userSelected] || "123";
                 if (senhaDigitada !== senhaCorreta) {
                     alert("Senha de usuário incorreta!"); return;
@@ -633,7 +627,6 @@
             document.getElementById('adminTabs').style.display = 'flex';
             userPanels.style.display = 'none';
 
-            // Verifica se o usuário atual possui cargo ou permissão de líder substituto
             const temPermissaoLancar = permissoesLancar[currentUser] || false;
 
             if (currentUser === 'admin') {
@@ -650,7 +643,6 @@
             } else {
                 document.getElementById('userDisplay').innerText = nomesExibicao[currentUser] + (temPermissaoLancar ? " (Substituto 👑)" : "");
                 
-                // Se for o substituto autorizado, o box de criação de tarefas aparece para ele!
                 if (temPermissaoLancar) {
                     adminBox.style.display = 'block';
                     container.classList.remove('full-width');
@@ -660,7 +652,7 @@
                 }
 
                 document.getElementById('adminTabs').style.display = temPermissaoLancar ? 'flex' : 'none';
-                btnGerenciamento.style.display = 'none'; // Configurações críticas de equipe continuam exclusivas do admin mestre
+                btnGerenciamento.style.display = 'none'; 
                 btnLoginTrigger.style.display = 'none'; btnLogout.style.display = 'block';
                 reportButtons.style.display = 'flex'; restrictedSection.style.display = 'block'; userPanels.style.display = 'flex';
                 atualizarPainelAlmoçoInterface(); atualizarPainelDescansoInterface(); verificarAlertasCriticos();
@@ -920,7 +912,7 @@
                 if (eventoAtual.type === 'start') {
                     minutesWork += minutosConvertidos;
                 } else if (eventoAtual.type === 'pause') {
-                    minutesInterrupt += minutosConvertidos;
+                    minutesInterrupt += minutesConvertidos;
                 }
             }
 
@@ -957,7 +949,7 @@
             const hojeStr = new Date().toISOString().split('T')[0];
 
             while (ponteiro <= fimJanela) {
-                const diaSemana = ponteiro.getDay();
+                const diaSemana = pointer = pointer = ponteiro.getDay();
                 const dataLoopStr = ponteiro.toISOString().split('T')[0];
 
                 if (diaSemana >= 1 && diaSemana <= 6 && (!apenasHoje || dataLoopStr === hojeStr)) {
@@ -1089,14 +1081,14 @@
                 const formatTime = (min) => min > 0 ? `${Math.floor(min/60)}h ${min%60}m` : "0m";
 
                 tbody.innerHTML += `
-                    <tr style="border-bottom: 1px solid #ddd; text-align:center;">
-                        <td style="padding:12px; text-align:left;"><strong>${nomesExibicao[userKey]}</strong></td>
-                        <td style="color:#7f8c8d; font-weight:500;">${itemJornada.in} às ${itemJornada.out}</td>
-                        <td style="color:#2ecc71; font-weight:bold;">${formatTime(totalTrabalhoMin)}</td>
+                    <tr style="border-bottom: 1px solid #ddd; text-align: center;">
+                        <td style="padding: 12px; text-align: left;"><strong>${nomesExibicao[userKey]}</strong></td>
+                        <td style="color: #7f8c8d; font-weight: 500;">${itemJornada.in} às ${itemJornada.out}</td>
+                        <td style="color: #2ecc71; font-weight: bold;">${formatTime(totalTrabalhoMin)}</td>
                         <td>${formatTime(totalAlmoçoMin)}</td>
                         <td>${formatTime(descansoLegalMin)}</td>
-                        <td style="color:#e67e22; font-weight:bold;">${formatTime(totalInterrupcoesMin)}</td>
-                        <td style="color:#e74c3c; font-weight:bold;">${metrics.apenasHoje ? formatTime(totalOciosoMin) : 'Visão Diária'}</td>
+                        <td style="color: #e67e22; font-weight: bold;">${formatTime(totalInterrupcoesMin)}</td>
+                        <td style="color: #e74c3c; font-weight: bold;">${metrics.apenasHoje ? formatTime(totalOciosoMin) : 'Visão Diária'}</td>
                     </tr>
                 `;
             });
@@ -1127,14 +1119,14 @@
             else if(tipoStatus === 'pendentes') { titulo.innerText = "Demandas Pendentes"; tarefasAlvo = tasks; } 
             else { titulo.innerText = "Geral Consolidados"; tarefasAlvo = [...filtradasHistorico, ...tasks]; }
 
-            if(tarefasAlvo.length === 0) { tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; padding:30px; color:#999;">Nenhum registro.</td></tr>`; return; }
+            if(tarefasAlvo.length === 0) { tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; padding: 30px; color: #999;">Nenhum registro.</td></tr>`; return; }
 
             tarefasAlvo.forEach(t => {
-                const statusHTML = t.dateFinished ? `<span style="color:var(--success-color); font-weight:bold;">✓ Concluída</span>` : `<span style="color:var(--warning-color); font-weight:bold;">▶️ Ativa</span>`;
+                const statusHTML = t.dateFinished ? `<span style="color: var(--success-color); font-weight: bold;">✓ Concluída</span>` : `<span style="color: var(--warning-color); font-weight: bold;">▶️ Ativa</span>`;
                 tbody.innerHTML += `
-                    <tr style="border-bottom:1px solid #eee; text-align:center;">
-                        <td style="text-align:left; padding:12px;"><strong>${t.title}</strong></td>
-                        <td><span style="background:#eee; padding:3px 8px; border-radius:4px;">${t.category}</span></td>
+                    <tr style="border-bottom: 1px solid #eee; text-align: center;">
+                        <td style="text-align: left; padding: 12px;"><strong>${t.title}</strong></td>
+                        <td><span style="background: #eee; padding: 3px 8px; border-radius: 4px;">${t.category}</span></td>
                         <td>${t.action}</td>
                         <td>${t.responsibles ? t.responsibles.map(r => nomesExibicao[r]).join(', ') : 'Setor'}</td>
                         <td>${t.deadline.split('-').reverse().join('/')}</td>
@@ -1208,7 +1200,6 @@
                     nome: document.getElementById(`cfg_user${i}`).value,
                     jornada: { in: document.getElementById(`cfg_in${i}`).value, out: document.getElementById(`cfg_out${i}`).value },
                     almoco: { in: document.getElementById(`cfg_meal_in${i}`).value, out: document.getElementById(`cfg_meal_out${i}`).value },
-                    // Grava os novos campos de senha e permissão de substituto no banco
                     senha: document.getElementById(`cfg_pass${i}`).value || "123",
                     podeLancar: document.getElementById(`cfg_perm${i}`).checked
                 };
