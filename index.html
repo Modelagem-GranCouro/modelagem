@@ -404,7 +404,7 @@
             <h2 style="margin-bottom:15px; font-size:1.2rem;">Autenticação Corporativa</h2>
             <div class="form-group">
                 <label>Selecione seu Usuário/Setor</label>
-                <select id="loginUser" class="form-control" onchange="toggleLoginPasswordView()">
+                <select id="loginUser" class="form-control">
                     <option value="admin">Wesley</option>
                     <option value="usuario_1">Modelista</option>
                     <option value="usuario_2">Auxiliar 1 (Cadastro)</option>
@@ -413,7 +413,7 @@
                     <option value="usuario_5">Auxiliar 2 (Personalizado)</option>
                 </select>
             </div>
-            <div class="form-group" id="loginPasswordGroup" style="display: none;">
+            <div class="form-group" id="loginPasswordGroup">
                 <label>Senha de Acesso</label>
                 <input type="password" id="loginPassword" class="form-control" placeholder="••••••">
             </div>
@@ -424,7 +424,8 @@
         </div>
     </div>
 
-    <div class="modal-overlay" id="descansoAlertModal" style="display: none !important;"></div>
+    <div class="modal-overlay" id="descansoAlertModal" style="display: none !important;">
+    </div>
 
     <script>
         const firebaseConfig = {
@@ -478,9 +479,18 @@
             "usuario_4": { in: "12:00", out: "13:00" }, "usuario_5": { in: "12:00", out: "13:00" }
         };
 
+        // Objeto global para guardar senhas e permissões customizadas da equipe
+        let senhasEquipe = {
+            "usuario_1": "123", "usuario_2": "123", "usuario_3": "123", "usuario_4": "123", "usuario_5": "123"
+        };
+        let permissoesLancar = {
+            "usuario_1": false, "usuario_2": false, "usuario_3": false, "usuario_4": false, "usuario_5": false
+        };
+
         let adminPasswordDB = "admin123"; 
         let tasks = []; let historicTasks = []; let mealLogs = {}; let descansoLogs = {};
         let currentUser = 'visitante'; let myChart = null; let timeChart = null;
+        let popupDisparadoHoje = { manha: false, tarde: false };
 
         let estadoAutomacao = {
             almocoAtivo: false,
@@ -498,10 +508,16 @@
                             <input type="time" id="cfg_in${i}" class="form-control" title="Início da Jornada">
                             <input type="time" id="cfg_out${i}" class="form-control" title="Fim da Jornada">
                         </div>
-                        <div style="display:flex; gap:10px; align-items:center;">
+                        <div style="display:flex; gap:10px; align-items:center; margin-bottom:5px;">
                             <span style="font-size:0.75rem; font-weight:bold; color:#e67e22;">Almoço:</span>
                             <input type="time" id="cfg_meal_in${i}" class="form-control" title="Início do Almoço">
                             <input type="time" id="cfg_meal_out${i}" class="form-control" title="Fim do Almoço">
+                        </div>
+                        <div style="display:flex; gap:10px; align-items:center; margin-top:5px; border-top: 1px dashed #ddd; padding-top:5px;">
+                            <input type="password" id="cfg_pass${i}" class="form-control" style="width:130px; padding:5px; font-size:0.8rem;" placeholder="Senha de Acesso">
+                            <label style="font-size:0.75rem; font-weight:bold; color:var(--primary-color); cursor:pointer;">
+                                <input type="checkbox" id="cfg_perm${i}"> Substituto (Lança Tarefas) 👑
+                            </label>
                         </div>
                     </div>
                 `;
@@ -515,6 +531,10 @@
                     if(data[k]) nomesExibicao[k] = data[k].nome || nomesExibicao[k];
                     if(data[k] && data[k].jornada) jornadas[k] = data[k].jornada;
                     if(data[k] && data[k].almoco) almocosPadrao[k] = data[k].almoco;
+                    if(data[k] && k !== 'admin') {
+                        senhasEquipe[k] = data[k].senha || "123";
+                        permissoesLancar[k] = data[k].podeLancar || false;
+                    }
                 });
                 if (document.getElementById('cfg_admin_nome')) document.getElementById('cfg_admin_nome').value = nomesExibicao['admin'];
                 if (document.getElementById('cfg_admin_in')) document.getElementById('cfg_admin_in').value = jornadas['admin'].in;
@@ -523,12 +543,15 @@
                 if (document.getElementById('cfg_admin_meal_out')) document.getElementById('cfg_admin_meal_out').value = almocosPadrao['admin'].out || "13:00";
 
                 for(let i=1; i<=5; i++) {
-                    if (document.getElementById(`cfg_user${i}`)) document.getElementById(`cfg_user${i}`).value = nomesExibicao[`usuario_${i}`];
-                    if (document.getElementById(`cfg_in${i}`)) document.getElementById(`cfg_in${i}`).value = jornadas[`usuario_${i}`].in;
-                    if (document.getElementById(`cfg_out${i}`)) document.getElementById(`cfg_out${i}`).value = jornadas[`usuario_${i}`].out;
-                    if (document.getElementById(`cfg_meal_in${i}`)) document.getElementById(`cfg_meal_in${i}`).value = almocosPadrao[`usuario_${i}`].in || "12:00";
-                    if (document.getElementById(`cfg_meal_out${i}`)) document.getElementById(`cfg_meal_out${i}`).value = almocosPadrao[`usuario_${i}`].out || "13:00";
-                    if (document.getElementById(`lbl_user${i}`)) document.getElementById(`lbl_user${i}`).innerText = `Funcionário ${i} (${nomesExibicao[`usuario_${i}`]}):`;
+                    const uKey = `usuario_${i}`;
+                    if (document.getElementById(`cfg_user${i}`)) document.getElementById(`cfg_user${i}`).value = nomesExibicao[uKey];
+                    if (document.getElementById(`cfg_in${i}`)) document.getElementById(`cfg_in${i}`).value = jornadas[uKey].in;
+                    if (document.getElementById(`cfg_out${i}`)) document.getElementById(`cfg_out${i}`).value = jornadas[uKey].out;
+                    if (document.getElementById(`cfg_meal_in${i}`)) document.getElementById(`cfg_meal_in${i}`).value = almocosPadrao[uKey].in || "12:00";
+                    if (document.getElementById(`cfg_meal_out${i}`)) document.getElementById(`cfg_meal_out${i}`).value = almocosPadrao[uKey].out || "13:00";
+                    if (document.getElementById(`cfg_pass${i}`)) document.getElementById(`cfg_pass${i}`).value = senhasEquipe[uKey];
+                    if (document.getElementById(`cfg_perm${i}`)) document.getElementById(`cfg_perm${i}`).checked = permissoesLancar[uKey];
+                    if (document.getElementById(`lbl_user${i}`)) document.getElementById(`lbl_user${i}`).innerText = `Funcionário ${i} (${nomesExibicao[uKey]}):`;
                 }
                 atualizarNomesNoSeletorLogin(); renderTasks();
             }
@@ -565,11 +588,6 @@
             if(filterAdmin) filterAdmin.innerText = `Filtrar: ${nomesExibicao['admin']}`;
         }
 
-        function toggleLoginPasswordView() {
-            const user = document.getElementById('loginUser').value;
-            document.getElementById('loginPasswordGroup').style.display = (user === 'admin') ? 'block' : 'none';
-        }
-
         window.addEventListener('DOMContentLoaded', () => {
             currentUser = sessionStorage.getItem('modelagem_current_user') || 'visitante';
             configurarInterfacePorUsuario();
@@ -578,15 +596,25 @@
 
         function abrirModalLogin() { 
             document.getElementById('loginModal').style.display = 'flex'; 
-            toggleLoginPasswordView();
         }
         function fecharModalLogin() { document.getElementById('loginModal').style.display = 'none'; document.getElementById('loginPassword').value = ''; }
 
         function login() {
             const userSelected = document.getElementById('loginUser').value;
-            if (userSelected === 'admin' && document.getElementById('loginPassword').value !== adminPasswordDB) {
-                alert("Senha incorreta!"); return;
+            const senhaDigitada = document.getElementById('loginPassword').value;
+
+            if (userSelected === 'admin') {
+                if (senhaDigitada !== adminPasswordDB) {
+                    alert("Senha mestre incorreta!"); return;
+                }
+            } else {
+                // Valida a senha definida individualmente para o usuário
+                const senhaCorreta = senhasEquipe[userSelected] || "123";
+                if (senhaDigitada !== senhaCorreta) {
+                    alert("Senha de usuário incorreta!"); return;
+                }
             }
+            
             currentUser = userSelected;
             sessionStorage.setItem('modelagem_current_user', currentUser);
             fecharModalLogin(); configurarInterfacePorUsuario();
@@ -605,6 +633,9 @@
             document.getElementById('adminTabs').style.display = 'flex';
             userPanels.style.display = 'none';
 
+            // Verifica se o usuário atual possui cargo ou permissão de líder substituto
+            const temPermissaoLancar = permissoesLancar[currentUser] || false;
+
             if (currentUser === 'admin') {
                 document.getElementById('userDisplay').innerText = nomesExibicao[currentUser];
                 adminBox.style.display = 'block'; container.classList.remove('full-width');
@@ -617,9 +648,19 @@
                 btnGerenciamento.style.display = 'none'; btnLoginTrigger.style.display = 'block'; btnLogout.style.display = 'none';
                 reportButtons.style.display = 'none'; restrictedSection.style.display = 'none'; switchTab('painel');
             } else {
-                document.getElementById('userDisplay').innerText = nomesExibicao[currentUser];
-                adminBox.style.display = 'none'; container.classList.add('full-width');
-                document.getElementById('adminTabs').style.display = 'none';
+                document.getElementById('userDisplay').innerText = nomesExibicao[currentUser] + (temPermissaoLancar ? " (Substituto 👑)" : "");
+                
+                // Se for o substituto autorizado, o box de criação de tarefas aparece para ele!
+                if (temPermissaoLancar) {
+                    adminBox.style.display = 'block';
+                    container.classList.remove('full-width');
+                } else {
+                    adminBox.style.display = 'none';
+                    container.classList.add('full-width');
+                }
+
+                document.getElementById('adminTabs').style.display = temPermissaoLancar ? 'flex' : 'none';
+                btnGerenciamento.style.display = 'none'; // Configurações críticas de equipe continuam exclusivas do admin mestre
                 btnLoginTrigger.style.display = 'none'; btnLogout.style.display = 'block';
                 reportButtons.style.display = 'flex'; restrictedSection.style.display = 'block'; userPanels.style.display = 'flex';
                 atualizarPainelAlmoçoInterface(); atualizarPainelDescansoInterface(); verificarAlertasCriticos();
@@ -667,7 +708,8 @@
                         }
                         estadoAutomacao.almocoAtivo = true;
                     }
-                } else if (horaMinutoAtualStr >= configAlmoco.out) {
+                } 
+                else if (horaMinutoAtualStr >= configAlmoco.out) {
                     if (estadoAutomacao.almocoAtivo) {
                         const logHoje = mealLogs[hojeStr]?.[currentUser];
                         if (logHoje && logHoje.start && !logHoje.end) {
@@ -737,42 +779,13 @@
             taskList.innerHTML = '';
             const filtro = document.getElementById('queueUserFilter').value;
             
-            let baseTasks = JSON.parse(JSON.stringify(tasks));
-
-            let prio1Tasks = baseTasks.filter(t => t.priority === "1" || t.priority === 1);
-            prio1Tasks.sort((a, b) => new Date(a.deadline) - new Date(b.deadline));
-
-            let ultimaDataPrio1 = null;
-            if (prio1Tasks.length > 0) {
-                ultimaDataPrio1 = prio1Tasks[prio1Tasks.length - 1].deadline;
-            }
-
-            function obterProximoDiaUtil(dataStr) {
-                let d = new Date(dataStr + 'T12:00:00'); 
-                d.setDate(d.getDate() + 1);
-                while (d.getDay() === 0 || d.getDay() === 6) { 
-                    d.setDate(d.getDate() + 1);
-                }
-                return d.toISOString().split('T')[0];
-            }
-
-            let processedTasks = baseTasks.map(task => {
-                if ((task.priority === "2" || task.priority === 2 || task.priority === "3" || task.priority === 3) && ultimaDataPrio1) {
-                    if (task.deadline <= ultimaDataPrio1) {
-                        task.deadline = obterProximoDiaUtil(ultimaDataPrio1);
-                    }
-                }
-                return task;
-            });
-
-            let filteredTasks = processedTasks.filter(t => {
+            let filteredTasks = tasks.filter(t => {
                 if (filtro === 'minhas') return t.responsibles && t.responsibles.includes(currentUser);
                 if (filtro !== 'todos' && filtro !== 'minhas') return t.responsibles && t.responsibles.includes(filtro);
                 return true;
             });
 
             filteredTasks.sort((a, b) => a.priority - b.priority || new Date(a.deadline) - new Date(b.deadline));
-            
             if (filteredTasks.length === 0) { taskList.innerHTML = '<p style="color: #999; text-align: center; padding: 35px;">Nenhuma atividade ativa localizada.</p>'; return; }
 
             const hoje = new Date().toISOString().split('T')[0];
@@ -799,14 +812,15 @@
                 }
 
                 const ehResponsavel = task.responsibles && task.responsibles.includes(currentUser);
-                const podeControlar = currentUser === 'admin' || ehResponsavel;
+                const temPermissaoLancar = permissoesLancar[currentUser] || false;
+                const podeControlar = currentUser === 'admin' || ehResponsavel || temPermissaoLancar;
                 const classeBotao = podeControlar ? "btn-action" : "btn-action btn-disabled";
                 const atributoDesabilitado = podeControlar ? "" : "disabled";
 
                 const isRunning = ultimoLog && ultimoLog.type === 'start';
                 let botoesAcaoHTML = `
                     <div class="task-actions">
-                        ${currentUser === 'admin' ? `<button class="btn-action btn-delete" onclick="deleteTask('${task.id}')">Excluir</button>` : ''}
+                        ${currentUser === 'admin' || temPermissaoLancar ? `<button class="btn-action btn-delete" onclick="deleteTask('${task.id}')">Excluir</button>` : ''}
                         ${!isRunning ? 
                             `<button class="${classeBotao} btn-start" ${atributoDesabilitado} onclick="alterarCronometro('${task.id}', 'start')">Iniciar Task ▶️</button>` : 
                             `<button class="${classeBotao} btn-pause" ${atributoDesabilitado} onclick="alterarCronometro('${task.id}', 'pause')">Pausar Task ⏸️</button>`
@@ -850,23 +864,6 @@
                     reason: motivo.trim()
                 });
             } else {
-                if (currentUser !== 'admin' && currentUser !== 'visitante') {
-                    const minhasTarefasAtivas = tasks.filter(t => t.responsibles && t.responsibles.includes(currentUser));
-                    const maiorPrioridadeFila = Math.min(...minhasTarefasAtivas.map(t => Number(t.priority)));
-
-                    if (Number(task.priority) > maiorPrioridadeFila) {
-                        const justificativa = prompt(`⚠️ ATENÇÃO: Esta tarefa é de Prioridade ${task.priority}, mas você possui tarefas de Prioridade ${maiorPrioridadeFila} pendentes na sua fila!\n\nPor favor, justifique obrigatoriamente por que deseja iniciar esta atividade agora:`);
-                        
-                        if (!justificativa || justificativa.trim() === "") {
-                            alert("Início cancelado! É obrigatório fornecer uma justificativa para iniciar uma tarefa fora da prioridade.");
-                            return;
-                        }
-                        
-                        const dataHoraFormato = new Date().toLocaleTimeString('pt-BR', { hour: '2-digit', minute: '2-digit' });
-                        task.desc = (task.desc ? task.desc + "\n" : "") + `[Justificativa de Início fora de Prioridade às ${dataHoraFormato} por ${nomesExibicao[currentUser]}]: ${justificativa.trim()}`;
-                    }
-                }
-
                 task.timeLogs.push({ type: 'start', time: now, by: currentUser, byName: nomesExibicao[currentUser] });
             }
             database.ref('tasks/ativas/' + id).set(task);
@@ -883,44 +880,6 @@
                 database.ref('tasks/ativas/' + id).remove();
                 alert("Tarefa concluída com sucesso!");
             });
-        }
-
-        function calcularMilissegundosUteisNoPeriodo(startMs, endMs, userKey, apenasHoje = false) {
-            if (startMs >= endMs) return 0;
-            
-            let totalMs = 0;
-            const itemJornada = jornadas[userKey] || { in: "07:12", out: "17:00" };
-            const [hIn, mIn] = itemJornada.in.split(':').map(Number);
-            const [hOut, mOut] = itemJornada.out.split(':').map(Number);
-
-            let ponteiro = new Date(startMs);
-            const fimJanela = new Date(endMs);
-            const hojeStr = new Date().toISOString().split('T')[0];
-
-            while (ponteiro <= fimJanela) {
-                const diaSemana = ponteiro.getDay();
-                const dataLoopStr = pointer.toISOString().split('T')[0];
-
-                if (diaSemana >= 1 && diaSemana <= 6 && (!apenasHoje || dataLoopStr === hojeStr)) {
-                    const inicioComercial = new Date(ponteiro); inicioComercial.setHours(hIn, mIn, 0, 0);
-                    const fimComercial = new Date(ponteiro); fimComercial.setHours(hOut, mOut, 0, 0);
-
-                    const maxStart = Math.max(startMs, inicioComercial.getTime());
-                    const minEnd = Math.min(endMs, fimComercial.getTime());
-
-                    if (maxStart < minEnd) {
-                        totalMs += (minEnd - maxStart);
-                    }
-                }
-                
-                ponteiro.setDate(ponteiro.getDate() + 1); 
-                ponteiro.setHours(0,0,0,0);
-                
-                if (ponteiro.getTime() > fimJanela.getTime() && ponteiro.toISOString().split('T')[0] !== fimJanela.toISOString().split('T')[0]) {
-                    break;
-                }
-            }
-            return totalMs;
         }
 
         function calcularTempoTrabalhoEInterrupcoes(userKey, deDataStr, apenasHoje = false) {
@@ -983,6 +942,44 @@
                 foraPrazo: historicTasks.filter(t => t.dateFinished >= dataCorte && !t.onTime).length,
                 pendentes: tasks.length, dataCorte, apenasHoje, periodo
             };
+        }
+
+        function calcularMilissegundosUteisNoPeriodo(startMs, endMs, userKey, apenasHoje = false) {
+            if (startMs >= endMs) return 0;
+            
+            let totalMs = 0;
+            const itemJornada = jornadas[userKey] || { in: "07:12", out: "17:00" };
+            const [hIn, mIn] = itemJornada.in.split(':').map(Number);
+            const [hOut, mOut] = itemJornada.out.split(':').map(Number);
+
+            let ponteiro = new Date(startMs);
+            const fimJanela = new Date(endMs);
+            const hojeStr = new Date().toISOString().split('T')[0];
+
+            while (ponteiro <= fimJanela) {
+                const diaSemana = ponteiro.getDay();
+                const dataLoopStr = ponteiro.toISOString().split('T')[0];
+
+                if (diaSemana >= 1 && diaSemana <= 6 && (!apenasHoje || dataLoopStr === hojeStr)) {
+                    const inicioComercial = new Date(ponteiro); inicioComercial.setHours(hIn, mIn, 0, 0);
+                    const fimComercial = new Date(ponteiro); fimComercial.setHours(hOut, mOut, 0, 0);
+
+                    const maxStart = Math.max(startMs, inicioComercial.getTime());
+                    const minEnd = Math.min(endMs, fimComercial.getTime());
+
+                    if (maxStart < minEnd) {
+                        totalMs += (minEnd - maxStart);
+                    }
+                }
+                
+                ponteiro.setDate(ponteiro.getDate() + 1); 
+                ponteiro.setHours(0,0,0,0);
+                
+                if (ponteiro.getTime() > fimJanela.getTime() && ponteiro.toISOString().split('T')[0] !== fimJanela.toISOString().split('T')[0]) {
+                    break;
+                }
+            }
+            return totalMs;
         }
 
         function calcularEMostrarMetasDinamicas(metrics) {
@@ -1206,10 +1203,14 @@
         function salvarConfiguracaoEquipe() {
             const configEquipe = {};
             for(let i=1; i<=5; i++) {
-                configEquipe[`usuario_${i}`] = {
+                const uKey = `usuario_${i}`;
+                configEquipe[uKey] = {
                     nome: document.getElementById(`cfg_user${i}`).value,
                     jornada: { in: document.getElementById(`cfg_in${i}`).value, out: document.getElementById(`cfg_out${i}`).value },
-                    almoco: { in: document.getElementById(`cfg_meal_in${i}`).value, out: document.getElementById(`cfg_meal_out${i}`).value }
+                    almoco: { in: document.getElementById(`cfg_meal_in${i}`).value, out: document.getElementById(`cfg_meal_out${i}`).value },
+                    // Grava os novos campos de senha e permissão de substituto no banco
+                    senha: document.getElementById(`cfg_pass${i}`).value || "123",
+                    podeLancar: document.getElementById(`cfg_perm${i}`).checked
                 };
             }
             
