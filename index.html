@@ -100,7 +100,6 @@
         .action-bar { display: flex; gap: 10px; margin-bottom: 15px; }
         .btn-export { padding: 10px 20px; border: none; border-radius: 4px; color: white; font-weight: bold; cursor: pointer; }
 
-        /* --- TELA DE BOAS-VINDAS ARTÍSTICA (SPLASH SCREEN) --- */
         .welcome-overlay {
             position: fixed;
             top: 0;
@@ -130,58 +129,14 @@
             transform: translateY(20px);
             animation: fadeInUp 0.8s forwards ease-out;
         }
-        .welcome-content h1 {
-            font-size: 2.5rem;
-            margin-bottom: 10px;
-            font-weight: 300;
-            letter-spacing: 2px;
-        }
-        .welcome-content h2 {
-            font-size: 1.5rem;
-            color: #f1c40f;
-            margin-bottom: 25px;
-            font-weight: 600;
-        }
-        .bible-verse {
-            font-size: 1.25rem;
-            font-style: italic;
-            line-height: 1.6;
-            margin-bottom: 15px;
-            color: #e0e6ed;
-        }
-        .bible-ref {
-            font-size: 0.95rem;
-            font-weight: bold;
-            color: #3498db;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-            margin-bottom: 30px;
-        }
-        .btn-start-day {
-            padding: 14px 35px;
-            background: #2ecc71;
-            color: white;
-            border: none;
-            border-radius: 30px;
-            font-size: 1.1rem;
-            font-weight: bold;
-            cursor: pointer;
-            box-shadow: 0 4px 15px rgba(46, 204, 113, 0.4);
-            transition: all 0.3s ease;
-        }
-        .btn-start-day:hover {
-            background: #27ae60;
-            transform: scale(1.05);
-            box-shadow: 0 6px 20px rgba(46, 204, 113, 0.6);
-        }
-        .welcome-tip {
-            font-size: 0.85rem;
-            color: rgba(255,255,255,0.6);
-            margin-top: 20px;
-        }
-        @keyframes fadeInUp {
-            to { transform: translateY(0); opacity: 1; }
-        }
+        .welcome-content h1 { font-size: 2.5rem; margin-bottom: 10px; font-weight: 300; letter-spacing: 2px; }
+        .welcome-content h2 { font-size: 1.5rem; color: #f1c40f; margin-bottom: 25px; font-weight: 600; }
+        .bible-verse { font-size: 1.25rem; font-style: italic; line-height: 1.6; margin-bottom: 15px; color: #e0e6ed; }
+        .bible-ref { font-size: 0.95rem; font-weight: bold; color: #3498db; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 30px; }
+        .btn-start-day { padding: 14px 35px; background: #2ecc71; color: white; border: none; border-radius: 30px; font-size: 1.1rem; font-weight: bold; cursor: pointer; box-shadow: 0 4px 15px rgba(46, 204, 113, 0.4); transition: all 0.3s ease; }
+        .btn-start-day:hover { background: #27ae60; transform: scale(1.05); box-shadow: 0 6px 20px rgba(46, 204, 113, 0.6); }
+        .welcome-tip { font-size: 0.85rem; color: rgba(255,255,255,0.6); margin-top: 20px; }
+        @keyframes fadeInUp { to { transform: translateY(0); opacity: 1; } }
     </style>
 </head>
 <body>
@@ -594,7 +549,6 @@
         let listaIdsTarefasConhecidas = null;
         let alertaPrioridadeAtivo = false;
 
-        // --- CONTROLE DE FLUXO DA TELA DE BOAS-VINDAS ARTÍSTICA DIÁRIA ---
         let timerSplashPreLogin = null;
         let splashClicadoOuPassado = false;
 
@@ -614,7 +568,7 @@
 
         function exibirSplashPostLogin() {
             const splash = document.getElementById('welcomeSplash');
-            splash.style.display = 'flex'; // Garante reexibição mesmo se ocultado no carregamento
+            splash.style.display = 'flex';
             
             document.getElementById('splashSystemTitle').innerText = "Acesso Autorizado";
             document.getElementById('splashGreeting').innerText = `Bom trabalho, ${nomesExibicao[currentUser]}!`;
@@ -668,9 +622,9 @@
             chavesEquipe.forEach(uKey => {
                 const nome = nomesExibicao[uKey];
                 const minhasTasks = tasks.filter(t => t.responsibles && t.responsibles.includes(uKey));
-                const taskAtiva = minhasTasks.find(t => {
+                const taskAtiva = tasks.find(t => {
                     const ultimoLog = t.timeLogs && t.timeLogs.length > 0 ? t.timeLogs[t.timeLogs.length - 1] : null;
-                    return ultimoLog && ultimoLog.type === 'start';
+                    return ultimoLog && ultimoLog.type === 'start' && ultimoLog.by === uKey;
                 });
 
                 let statusTexto = '<span style="color: #7f8c8d; font-weight: bold;">💤 Desconectado / Ocioso</span>';
@@ -715,7 +669,7 @@
                 gain1.gain.setValueAtTime(0.2, audioCtx.currentTime);
                 osc1.connect(gain1); gain1.connect(audioCtx.destination);
                 osc1.start(); osc1.stop(audioCtx.currentTime + 0.15);
-            } catch (e) { console.log("Áudio bloqueado pelo navegador."); }
+            } catch (e) { console.log("Áudio bloqueado."); }
         }
 
         function mostrarPopupNotificacao(titulo, mensagem, corBorda) {
@@ -744,7 +698,6 @@
             setTimeout(() => { if(document.getElementById(idPopup)) document.getElementById(idPopup).remove(); }, 12000);
         }
 
-        // --- SISTEMA DE SINALIZAÇÃO EXCLUSIVO PARA O INTEGRANTE DESIGNADO ---
         function verificarNovasTarefasEPrioridades(novasTarefas) {
             if (currentUser === 'visitante' || currentUser === 'admin') return;
             const minhasTasks = novasTarefas.filter(t => t.responsibles && t.responsibles.includes(currentUser));
@@ -758,7 +711,7 @@
                             `A tarefa <strong>"${task.title}"</strong> (${task.category}) foi alocada para você.`,
                             task.priority === "1" ? "#e74c3c" : "#2ecc71"
                         );
-                        emitirSinalSonoro(); // Bipe toca CIRURGICAMENTE na máquina do funcionário alocado
+                        emitirSinalSonoro(); 
                     }
                 });
             }
@@ -766,7 +719,7 @@
 
             const tarefaEmExecucao = minhasTasks.find(t => {
                 const ultimoLog = t.timeLogs && t.timeLogs.length > 0 ? t.timeLogs[t.timeLogs.length - 1] : null;
-                return ultimoLog && ultimoLog.type === 'start';
+                return ultimoLog && ultimoLog.type === 'start' && ultimoLog.by === currentUser;
             });
 
             if (tarefaEmExecucao) {
@@ -871,7 +824,6 @@
             if(filterAdmin) filterAdmin.innerText = `Filtrar: ${nomesExibicao['admin']}`;
         }
 
-        // --- SISTEMA INTELLIGENT SÉCURITÉ DE SEGUNDO ACESSO DIÁRIO ---
         window.addEventListener('DOMContentLoaded', () => {
             currentUser = sessionStorage.getItem('modelagem_current_user') || 'visitante';
             
@@ -1082,6 +1034,7 @@
                 let prazoStatus = task.deadline < hoje ? `<span class="deadline-alert">⚠️ ATRASADA (${dataBr})</span>` : (task.deadline === hoje ? `<span class="deadline-alert">🚨 ENTREGA HOJE</span>` : `Prazo: ${dataBr}`);
 
                 const ultimoLog = task.timeLogs && task.timeLogs.length > 0 ? task.timeLogs[task.timeLogs.length - 1] : null;
+                const isRunning = ultimoLog && ultimoLog.type === 'start';
                 let statusCronometro = ultimoLog ? (ultimoLog.type === 'start' ? `▶️ Em execução por ${ultimoLog.byName}` : `⏸️ Pausado por ${ultimoLog.byName}`) : "Aguardando Início";
 
                 let motivosPausaHTML = '';
@@ -1096,10 +1049,21 @@
 
                 const ehResponsavel = task.responsibles && task.responsibles.includes(currentUser);
                 const temPermissaoLancar = permissoesLancar[currentUser] || false;
-                const podeControlar = currentUser === 'admin' || ehResponsavel || temPermissaoLancar;
+                
+                // NOVO DESIGN DE CONTROLE DINÂMICO DE OPERADORES:
+                let podeControlar = false;
+                if (currentUser === 'admin' || temPermissaoLancar) {
+                    podeControlar = true; 
+                } else if (currentUser !== 'visitante') {
+                    if (!isRunning) {
+                        podeControlar = true; // Qualquer operador pode dar play se a tarefa estiver parada/pausada
+                    } else {
+                        podeControlar = ehResponsavel || (ultimoLog && ultimoLog.by === currentUser); // Apenas quem está executando ela pode pausar ou finalizar
+                    }
+                }
+
                 const classeBotao = podeControlar ? "btn-action" : "btn-action btn-disabled";
                 const atributoDesabilitado = podeControlar ? "" : "disabled";
-                const isRunning = ultimoLog && ultimoLog.type === 'start';
 
                 card.innerHTML = `
                     <span class="prio-badge">Prioridade ${task.priority}</span>
@@ -1115,7 +1079,7 @@
                         ${currentUser === 'admin' || temPermissaoLancar ? `<button class="btn-action btn-delete" onclick="deleteTask('${task.id}')">Excluir</button>` : ''}
                         ${!isRunning ? 
                             `<button class="${classeBotao} btn-start" ${atributoDesabilitado} onclick="alterarCronometro('${task.id}', 'start')">Iniciar Task ▶️</button>` : 
-                            `<button class="${classeBotao} btn-pause" ${atributoDesabilitado} onclick="alterarCronometro('${task.id}', 'pause')">Pausar Task ⏸️</button>`
+                            `<button class="${classeBotao} btn-pause" ${atributoDesabilitated} onclick="alterarCronometro('${task.id}', 'pause')">Pausar Task ⏸️</button>`
                         }
                         <button class="${classeBotao} btn-done" ${atributoDesabilitado} onclick="finishTask('${task.id}')">Concluir ✓</button>
                     </div>
@@ -1124,6 +1088,7 @@
             });
         }
 
+        // NOVO MECANISMO DE COORDENAÇÃO DE CRONÔMETRO VOLTADO AO USUÁRIO ATIVO:
         function alterarCronometro(id, acao) {
             const task = tasks.find(t => t.id === id); if (!task) return;
             const now = new Date().getTime(); if (!task.timeLogs) task.timeLogs = [];
@@ -1134,6 +1099,10 @@
                 task.timeLogs.push({ type: 'pause', time: now, by: currentUser, byName: nomesExibicao[currentUser], reason: motivo.trim() });
             } else {
                 task.timeLogs.push({ type: 'start', time: now, by: currentUser, byName: nomesExibicao[currentUser] });
+                // Insere dinamicamente o novo executor na lista de responsáveis caso ele não conste originalmente
+                if (task.responsibles && !task.responsibles.includes(currentUser)) {
+                    task.responsibles.push(currentUser);
+                }
             }
             database.ref('tasks/ativas/' + id).set(task);
         }
