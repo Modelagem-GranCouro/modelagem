@@ -60,7 +60,7 @@
         .btn-pause { background: var(--warning-color); color: #333; }
         .btn-done { background: var(--primary-color); color: white; }
         .btn-delete { background: #95a5a6; color: white; }
-        .btn-disabled { background: #e0e0e0 !important; color: #aaa !important; cursor: not-allowed !allowed !important; }
+        .btn-disabled { background: #e0e0e0 !important; color: #aaa !important; cursor: not-allowed !important; }
 
         .aux-panels { display: flex; gap: 15px; margin-bottom: 20px; }
         .aux-card { flex: 1; background: #fff; padding: 15px; border-radius: 6px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
@@ -100,7 +100,7 @@
         .action-bar { display: flex; gap: 10px; margin-bottom: 15px; }
         .btn-export { padding: 10px 20px; border: none; border-radius: 4px; color: white; font-weight: bold; cursor: pointer; }
 
-        /* --- TELA DE BOAS-VINDAS ARTÍSTICA INTERATIVA (SPLASH SCREEN) --- */
+        /* --- TELA DE BOAS-VINDAS ARTÍSTICA (SPLASH SCREEN) --- */
         .welcome-overlay {
             position: fixed;
             top: 0;
@@ -313,10 +313,8 @@
             <div class="panel-box">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 15px;">
                     <h2>Fila Geral de Monitoramento em Tempo Real</h2>
-                    
                     <div style="display: flex; gap: 10px; align-items: center;">
                         <input type="text" id="taskSearchBar" class="form-control" style="width: 220px;" placeholder="🔍 Pesquisar modelo/instruções..." oninput="renderTasks()">
-                        
                         <select id="queueUserFilter" class="form-control" style="width: 250px;" onchange="renderTasks()">
                             <option value="todos">👁️ Ver todas as tarefas do setor</option>
                             <option value="minhas">👤 Ver apenas minhas tarefas</option>
@@ -596,7 +594,7 @@
         let listaIdsTarefasConhecidas = null;
         let alertaPrioridadeAtivo = false;
 
-        // --- CONTROLE DE FLUXO DA TELA DE BOAS-VINDAS ARTÍSTICA ---
+        // --- CONTROLE DE FLUXO DA TELA DE BOAS-VINDAS ARTÍSTICA DIÁRIA ---
         let timerSplashPreLogin = null;
         let splashClicadoOuPassado = false;
 
@@ -616,10 +614,11 @@
 
         function exibirSplashPostLogin() {
             const splash = document.getElementById('welcomeSplash');
+            splash.style.display = 'flex'; // Garante reexibição mesmo se ocultado no carregamento
             
             document.getElementById('splashSystemTitle').innerText = "Acesso Autorizado";
             document.getElementById('splashGreeting').innerText = `Bom trabalho, ${nomesExibicao[currentUser]}!`;
-            document.getElementById('splashVerse').innerText = '"O Senhor te abençoe e te guarde; o Senhor faça resplandecer o seu rosto sobre ti e te conceda graça."';
+            document.getElementById('splashVerse').innerText = '"O Senhor te abençoe e te guarde; o Senhor faça resplandecer o seu rosto sobre ti e te concessa graça."';
             document.getElementById('splashRef').innerText = "Números 6:24-25";
             
             splash.onclick = null; 
@@ -716,7 +715,7 @@
                 gain1.gain.setValueAtTime(0.2, audioCtx.currentTime);
                 osc1.connect(gain1); gain1.connect(audioCtx.destination);
                 osc1.start(); osc1.stop(audioCtx.currentTime + 0.15);
-            } catch (e) { console.log("Áudio bloqueado."); }
+            } catch (e) { console.log("Áudio bloqueado pelo navegador."); }
         }
 
         function mostrarPopupNotificacao(titulo, mensagem, corBorda) {
@@ -741,10 +740,11 @@
                 style.innerHTML = `@keyframes slideIn { from { transform: translateX(120%); } to { transform: translateX(0); } }`;
                 document.head.appendChild(style);
             }
-            document.body.appendChild(div); emitirSinalSonoro();
+            document.body.appendChild(div);
             setTimeout(() => { if(document.getElementById(idPopup)) document.getElementById(idPopup).remove(); }, 12000);
         }
 
+        // --- SISTEMA DE SINALIZAÇÃO EXCLUSIVO PARA O INTEGRANTE DESIGNADO ---
         function verificarNovasTarefasEPrioridades(novasTarefas) {
             if (currentUser === 'visitante' || currentUser === 'admin') return;
             const minhasTasks = novasTarefas.filter(t => t.responsibles && t.responsibles.includes(currentUser));
@@ -758,6 +758,7 @@
                             `A tarefa <strong>"${task.title}"</strong> (${task.category}) foi alocada para você.`,
                             task.priority === "1" ? "#e74c3c" : "#2ecc71"
                         );
+                        emitirSinalSonoro(); // Bipe toca CIRURGICAMENTE na máquina do funcionário alocado
                     }
                 });
             }
@@ -774,6 +775,7 @@
                 if (temTarefaMaisUrgentePendente && !alertaPrioridadeAtivo) {
                     alertaPrioridadeAtivo = true;
                     mostrarPopupNotificacao(`⚠️ VIOLAÇÃO DE PRIORIDADE!`, `Você está executando uma tarefa de Prioridade ${prioridadeAtual}, mas há demandas mais urgentes pendentes.`, "#e74c3c");
+                    emitirSinalSonoro();
                     setTimeout(() => { alertaPrioridadeAtivo = false; }, 30000);
                 }
             }
@@ -869,9 +871,13 @@
             if(filterAdmin) filterAdmin.innerText = `Filtrar: ${nomesExibicao['admin']}`;
         }
 
+        // --- SISTEMA INTELLIGENT SÉCURITÉ DE SEGUNDO ACESSO DIÁRIO ---
         window.addEventListener('DOMContentLoaded', () => {
             currentUser = sessionStorage.getItem('modelagem_current_user') || 'visitante';
             
+            const hojeStr = new Date().toISOString().split('T')[0];
+            const ultimoAcessoSplash = localStorage.getItem('modelagem_ultima_splash');
+
             document.getElementById('splashSystemTitle').innerText = "Engenharia e Modelagem";
             document.getElementById('splashGreeting').innerText = "Gestão Inteligente de Tempo";
             document.getElementById('splashVerse').innerText = '"Consagre ao Senhor tudo o que você faz, e os seus planos serão bem-sucedidos."';
@@ -883,7 +889,18 @@
             configurarInterfacePorUsuario();
             setInterval(() => { verificarEExecutarHorariosAutomaticos(); updateReportDashboard(); }, 1000);
 
-            timerSplashPreLogin = setTimeout(() => { pularSplashPreLogin(); }, 5000);
+            if (ultimoAcessoSplash === hojeStr) {
+                const splash = document.getElementById('welcomeSplash');
+                splash.style.display = 'none'; 
+                splashClicadoOuPassado = true;
+                
+                if (currentUser === 'visitante') {
+                    abrirModalLogin();
+                }
+            } else {
+                localStorage.setItem('modelagem_ultima_splash', hojeStr);
+                timerSplashPreLogin = setTimeout(() => { pularSplashPreLogin(); }, 5000);
+            }
         });
 
         function abrirModalLogin() { document.getElementById('loginModal').style.display = 'flex'; }
