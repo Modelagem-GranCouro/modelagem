@@ -148,7 +148,7 @@
             <p id="splashVerse" class="bible-verse">"Consagre ao Senhor tudo o que você faz, e os seus planos serão bem-sucedidos."</p>
             <p id="splashRef" class="bible-ref">Provérbios 16:3</p>
             <button id="btnStartDay" class="btn-start-day" style="display: none;" onclick="fecharSplashPostLogin()">Começar o Dia 🚀</button>
-            <p id="splashTip" class="welcome-tip">Aguardando ou clique em qualquer lugar para entrar...</p>
+            <p id="splashTip" class="welcome-tip">Clique em qualquer lugar para entrar...</p>
         </div>
     </div>
 
@@ -274,11 +274,11 @@
                             <option value="todos">👁️ Ver todas as tarefas do setor</option>
                             <option value="minhas">👤 Ver apenas minhas tarefas</option>
                             <option value="admin" id="filterAdminName">Filtrar: Wesley</option>
-                            <option value="usuario_1">Filtrar: Modelista</option>
-                            <option value="usuario_2">Filtrar: Auxiliar 1 (Cadastro)</option>
-                            <option value="usuario_3">Filtrar: Digitalizador</option>
-                            <option value="usuario_4">Filtrar: Desenhista</option>
-                            <option value="usuario_5">Filtrar: Auxiliar 2 (Personalizado)</option>
+                            <option value="usuario_1" id="filterUser1">Filtrar: Modelista</option>
+                            <option value="usuario_2" id="filterUser2">Filtrar: Auxiliar 1 (Cadastro)</option>
+                            <option value="usuario_3" id="filterUser3">Filtrar: Digitalizador</option>
+                            <option value="usuario_4" id="filterUser4">Filtrar: Desenhista</option>
+                            <option value="usuario_5" id="filterUser5">Filtrar: Auxiliar 2 (Personalizado)</option>
                         </select>
                     </div>
                 </div>
@@ -493,19 +493,24 @@
             appId: "COLE_AQUI_SEU_APP_ID" 
         };
         
-        firebase.initializeApp(firebaseConfig);
-        const database = firebase.database();
+        let database = null;
+        try {
+            firebase.initializeApp(firebaseConfig);
+            database = firebase.database();
+        } catch(e) {
+            console.warn("Firebase não inicializado. Chaves fictícias detectadas.");
+        }
 
         const roteamentoUsuarios = {
             "Fazer modelo novo": ["usuario_1"],
             "Alterar modelo existente": ["usuario_1"],
-            "Cadastrar modelo novo": ["usuario_2", "usuario_5"],
-            "Alterar cadastro de um modelo existente": ["usuario_2", "usuario_5"],
+            "Cadastrar modelo novo": ["usuario_2"],
+            "Alterar cadastro de um modelo existente": ["usuario_2"],
             "Digitalizar modelo novo": ["usuario_3"],
             "Alterar modelo ja digitalizado": ["usuario_3"],
-            "Fazer personalizado": ["usuario_2", "usuario_5"],
+            "Fazer personalizado": ["usuario_5"],
             "Desenvolver nova arte personalizada": ["usuario_4"],
-            "alterar personalizado existente": ["usuario_2", "usuario_5"],
+            "alterar personalizado existente": ["usuario_5"],
             "Criar bordado a partir da imagem disponibilizada": ["usuario_4"],
             "Treinamento e Alinhamento da equipe": ["admin"],
             "Desenvolvimento de ferramentas e softwares setoriais": ["admin"],
@@ -517,8 +522,12 @@
         };
 
         let nomesExibicao = {
-            "admin": "Wesley", "usuario_1": "Modelista", "usuario_2": "Auxiliar 1 (Cadastro)",
-            "usuario_3": "Digitalizador", "usuario_4": "Desenhista", "usuario_5": "Auxiliar 2 (Personalizado)",
+            "admin": "Wesley", 
+            "usuario_1": "Modelista", 
+            "usuario_2": "Auxiliar 1 (Cadastro)",
+            "usuario_3": "Digitalizador", 
+            "usuario_4": "Desenhista", 
+            "usuario_5": "Auxiliar 2 (Personalizado)",
             "visitante": "Monitoramento Geral"
         };
 
@@ -761,67 +770,74 @@
             }
         }
 
-        database.ref('configuracoes/equipe').on('value', (snapshot) => {
-            const data = snapshot.val();
-            if (data) {
-                Object.keys(jornadas).forEach(k => {
-                    if(data[k]) nomesExibicao[k] = data[k].nome || nomesExibicao[k];
-                    if(data[k] && data[k].jornada) jornadas[k] = data[k].jornada;
-                    if(data[k] && data[k].almoco) almocosPadrao[k] = data[k].almoco;
-                    if(data[k] && k !== 'admin') {
-                        senhasEquipe[k] = data[k].senha || "123";
-                        permissoesLancar[k] = data[k].podeLancar || false;
+        if (database) {
+            database.ref('configuracoes/equipe').on('value', (snapshot) => {
+                const data = snapshot.val();
+                if (data) {
+                    Object.keys(jornadas).forEach(k => {
+                        if(data[k]) nomesExibicao[k] = data[k].nome || nomesExibicao[k];
+                        if(data[k] && data[k].jornada) jornadas[k] = data[k].jornada;
+                        if(data[k] && data[k].almoco) almocosPadrao[k] = data[k].almoco;
+                        if(data[k] && k !== 'admin') {
+                            senhasEquipe[k] = data[k].senha || "123";
+                            permissoesLancar[k] = data[k].podeLancar || false;
+                        }
+                    });
+                    if (document.getElementById('cfg_admin_nome')) document.getElementById('cfg_admin_nome').value = nomesExibicao['admin'];
+                    if (document.getElementById('cfg_admin_in')) document.getElementById('cfg_admin_in').value = jornadas['admin'].in;
+                    if (document.getElementById('cfg_admin_out')) document.getElementById('cfg_admin_out').value = jornadas['admin'].out;
+                    if (document.getElementById('cfg_admin_meal_in')) document.getElementById('cfg_admin_meal_in').value = almocosPadrao['admin'].in;
+                    if (document.getElementById('cfg_admin_meal_out')) document.getElementById('cfg_admin_meal_out').value = almocosPadrao['admin'].out;
+
+                    for(let i=1; i<=5; i++) {
+                        const uKey = `usuario_${i}`;
+                        if (document.getElementById(`cfg_user${i}`)) document.getElementById(`cfg_user${i}`).value = nomesExibicao[uKey];
+                        if (document.getElementById(`cfg_in${i}`)) document.getElementById(`cfg_in${i}`).value = jornadas[uKey].in;
+                        if (document.getElementById(`cfg_out${i}`)) document.getElementById(`cfg_out${i}`).value = jornadas[uKey].out;
+                        if (document.getElementById(`cfg_meal_in${i}`)) document.getElementById(`cfg_meal_in${i}`).value = almocosPadrao[uKey].in;
+                        if (document.getElementById(`cfg_meal_out${i}`)) document.getElementById(`cfg_meal_out${i}`).value = almocosPadrao[uKey].out;
+                        if (document.getElementById(`cfg_pass${i}`)) document.getElementById(`cfg_pass${i}`).value = senhasEquipe[uKey];
+                        if (document.getElementById(`cfg_perm${i}`)) document.getElementById(`cfg_perm${i}`).checked = permissoesLancar[uKey];
+                        if (document.getElementById(`lbl_user${i}`)) document.getElementById(`lbl_user${i}`).innerText = `Funcionário ${i} (${nomesExibicao[uKey]}):`;
                     }
-                });
-                if (document.getElementById('cfg_admin_nome')) document.getElementById('cfg_admin_nome').value = nomesExibicao['admin'];
-                if (document.getElementById('cfg_admin_in')) document.getElementById('cfg_admin_in').value = jornadas['admin'].in;
-                if (document.getElementById('cfg_admin_out')) document.getElementById('cfg_admin_out').value = jornadas['admin'].out;
-                if (document.getElementById('cfg_admin_meal_in')) document.getElementById('cfg_admin_meal_in').value = almocosPadrao['admin'].in;
-                if (document.getElementById('cfg_admin_meal_out')) document.getElementById('cfg_admin_meal_out').value = almocosPadrao['admin'].out;
-
-                for(let i=1; i<=5; i++) {
-                    const uKey = `usuario_${i}`;
-                    if (document.getElementById(`cfg_user${i}`)) document.getElementById(`cfg_user${i}`).value = nomesExibicao[uKey];
-                    if (document.getElementById(`cfg_in${i}`)) document.getElementById(`cfg_in${i}`).value = jornadas[uKey].in;
-                    if (document.getElementById(`cfg_out${i}`)) document.getElementById(`cfg_out${i}`).value = jornadas[uKey].out;
-                    if (document.getElementById(`cfg_meal_in${i}`)) document.getElementById(`cfg_meal_in${i}`).value = almocosPadrao[uKey].in;
-                    if (document.getElementById(`cfg_meal_out${i}`)) document.getElementById(`cfg_meal_out${i}`).value = almocosPadrao[uKey].out;
-                    if (document.getElementById(`cfg_pass${i}`)) document.getElementById(`cfg_pass${i}`).value = senhasEquipe[uKey];
-                    if (document.getElementById(`cfg_perm${i}`)) document.getElementById(`cfg_perm${i}`).checked = permissoesLancar[uKey];
-                    if (document.getElementById(`lbl_user${i}`)) document.getElementById(`lbl_user${i}`).innerText = `Funcionário ${i} (${nomesExibicao[uKey]}):`;
+                    atualizarNomesNoSeletorLogin(); renderTasks(); renderizarStatusEquipeTempoReal();
                 }
-                atualizarNomesNoSeletorLogin(); renderTasks(); renderizarStatusEquipeTempoReal();
-            }
-        });
+            });
 
-        database.ref('configuracoes/seguranca/adminPassword').on('value', (snapshot) => {
-            const val = snapshot.val(); if(val) adminPasswordDB = val;
-        });
+            database.ref('configuracoes/seguranca/adminPassword').on('value', (snapshot) => {
+                const val = snapshot.val(); if(val) adminPasswordDB = val;
+            });
 
-        database.ref('tasks/ativas').on('value', (snapshot) => {
-            tasks = snapshot.val() ? Object.values(snapshot.val()) : [];
-            renderTasks(); verificarAlertasCriticos(); updateReportDashboard();
-            verificarNovasTarefasEPrioridades(tasks); renderizarStatusEquipeTempoReal();
-        });
+            database.ref('tasks/ativas').on('value', (snapshot) => {
+                tasks = snapshot.val() ? Object.values(snapshot.val()) : [];
+                renderTasks(); verificarAlertasCriticos(); updateReportDashboard();
+                verificarNovasTarefasEPrioridades(tasks); renderizarStatusEquipeTempoReal();
+            });
 
-        database.ref('tasks/historico').on('value', (snapshot) => {
-            historicTasks = snapshot.val() ? Object.values(snapshot.val()) : []; updateReportDashboard();
-        });
+            database.ref('tasks/historico').on('value', (snapshot) => {
+                historicTasks = snapshot.val() ? Object.values(snapshot.val()) : []; updateReportDashboard();
+            });
 
-        database.ref('almoço/historico').on('value', (snapshot) => {
-            mealLogs = snapshot.val() || {}; atualizarPainelAlmoçoInterface(); updateReportDashboard(); renderizarStatusEquipeTempoReal();
-        });
+            database.ref('almoço/historico').on('value', (snapshot) => {
+                mealLogs = snapshot.val() || {}; atualizarPainelAlmoçoInterface(); updateReportDashboard(); renderizarStatusEquipeTempoReal();
+            });
 
-        database.ref('descanso/historico').on('value', (snapshot) => {
-            descansoLogs = snapshot.val() || {}; atualizarPainelDescansoInterface(); updateReportDashboard(); renderizarStatusEquipeTempoReal();
-        });
+            database.ref('descanso/historico').on('value', (snapshot) => {
+                descansoLogs = snapshot.val() || {}; atualizarPainelDescansoInterface(); updateReportDashboard(); renderizarStatusEquipeTempoReal();
+            });
+        }
 
         function atualizarNomesNoSeletorLogin() {
             const select = document.getElementById('loginUser');
             select.options[0].text = nomesExibicao['admin'];
             for(let i=1; i<=5; i++) { select.options[i].text = nomesExibicao[`usuario_${i}`]; }
-            const filterAdmin = document.getElementById('filterAdminName');
-            if(filterAdmin) filterAdmin.innerText = `Filtrar: ${nomesExibicao['admin']}`;
+            
+            if(document.getElementById('filterAdminName')) document.getElementById('filterAdminName').innerText = `Filtrar: ${nomesExibicao['admin']}`;
+            if(document.getElementById('filterUser1')) document.getElementById('filterUser1').innerText = `Filtrar: ${nomesExibicao['usuario_1']}`;
+            if(document.getElementById('filterUser2')) document.getElementById('filterUser2').innerText = `Filtrar: ${nomesExibicao['usuario_2']}`;
+            if(document.getElementById('filterUser3')) document.getElementById('filterUser3').innerText = `Filtrar: ${nomesExibicao['usuario_3']}`;
+            if(document.getElementById('filterUser4')) document.getElementById('filterUser4').innerText = `Filtrar: ${nomesExibicao['usuario_4']}`;
+            if(document.getElementById('filterUser5')) document.getElementById('filterUser5').innerText = `Filtrar: ${nomesExibicao['usuario_5']}`;
         }
 
         window.addEventListener('DOMContentLoaded', () => {
@@ -829,14 +845,6 @@
             
             const hojeStr = new Date().toISOString().split('T')[0];
             const ultimoAcessoSplash = localStorage.getItem('modelagem_ultima_splash');
-
-            document.getElementById('splashSystemTitle').innerText = "Engenharia e Modelagem";
-            document.getElementById('splashGreeting').innerText = "Gestão Inteligente de Tempo";
-            document.getElementById('splashVerse').innerText = '"Consagre ao Senhor tudo o que você faz, e os seus planos serão bem-sucedidos."';
-            document.getElementById('splashRef').innerText = "Provérbios 16:3";
-            document.getElementById('btnStartDay').style.display = 'none';
-            document.getElementById('splashTip').style.display = 'block';
-            document.getElementById('welcomeSplash').style.cursor = 'pointer';
 
             configurarInterfacePorUsuario();
             setInterval(() => { verificarEExecutarHorariosAutomaticos(); updateReportDashboard(); }, 1000);
@@ -851,7 +859,7 @@
                 }
             } else {
                 localStorage.setItem('modelagem_ultima_splash', hojeStr);
-                timerSplashPreLogin = setTimeout(() => { pularSplashPreLogin(); }, 5000);
+                timerSplashPreLogin = setTimeout(() => { pularSplashPreLogin(); }, 6000);
             }
         });
 
@@ -935,10 +943,28 @@
             const horaMinutoAtualStr = `${String(horaAtual).padStart(2, '0')}:${String(minutoAtual).padStart(2, '0')}`;
             const hojeStr = agora.toISOString().split('T')[0];
 
+            const pausarTarefasEmExecucaoAutomatico = (motivoPreDefinido) => {
+                tasks.forEach(task => {
+                    const ultimoLog = task.timeLogs && task.timeLogs.length > 0 ? task.timeLogs[task.timeLogs.length - 1] : null;
+                    if (ultimoLog && ultimoLog.type === 'start' && ultimoLog.by === currentUser) {
+                        if (!task.timeLogs) task.timeLogs = [];
+                        task.timeLogs.push({
+                            type: 'pause',
+                            time: new Date().getTime(),
+                            by: 'sistema',
+                            byName: 'Sistema (Automático)',
+                            reason: motivoPreDefinido
+                        });
+                        if (database) database.ref('tasks/ativas/' + task.id).set(task);
+                    }
+                });
+            };
+
             const configAlmoco = almocosPadrao[currentUser];
             if (configAlmoco && configAlmoco.in && configAlmoco.out) {
                 if (horaMinutoAtualStr >= configAlmoco.in && horaMinutoAtualStr < configAlmoco.out) {
                     if (!estadoAutomacao.almocoAtivo) {
+                        pausarTarefasEmExecucaoAutomatico("Pausa automática: Horário de Almoço iniciado");
                         const logHoje = mealLogs[hojeStr]?.[currentUser];
                         if (!logHoje || !logHoje.start) { registrarAlmoço('start'); }
                         estadoAutomacao.almocoAtivo = true;
@@ -957,6 +983,7 @@
 
             if (naJanelaDescansoManha || naJanelaDescansoTarde) {
                 if (!estadoAutomacao.descansoAtivo) {
+                    pausarTarefasEmExecucaoAutomatico("Pausa automática: Horário de Descanso setorial");
                     const logHoje = descansoLogs[hojeStr]?.[currentUser];
                     if (!logHoje || !logHoje.start) { registrarDescanso('start'); }
                     estadoAutomacao.descansoAtivo = true;
@@ -968,12 +995,19 @@
                     estadoAutomacao.descansoAtivo = false;
                 }
             }
+
+            const configJornada = jornadas[currentUser];
+            if (configJornada && configJornada.out) {
+                if (horaMinutoAtualStr >= configJornada.out) {
+                    pausarTarefasEmExecucaoAutomatico("Pausa automática: Fim do Expediente atingido");
+                }
+            }
         }
 
         function registrarDescanso(status) {
             const hojeStr = new Date().toISOString().split('T')[0]; const refPath = `descanso/historico/${hojeStr}/${currentUser}`;
-            if (status === 'start') { database.ref(refPath).set({ start: new Date().getTime() }); } 
-            else { database.ref(refPath).update({ end: new Date().getTime() }); }
+            if (status === 'start') { if (database) database.ref(refPath).set({ start: new Date().getTime() }); } 
+            else { if (database) database.ref(refPath).update({ end: new Date().getTime() }); }
         }
 
         function atualizarPainelDescansoInterface() {
@@ -987,8 +1021,8 @@
 
         function registrarAlmoço(status) {
             const hojeStr = new Date().toISOString().split('T')[0]; const refPath = `almoço/historico/${hojeStr}/${currentUser}`;
-            if (status === 'start') { database.ref(refPath).set({ start: new Date().getTime() }); } 
-            else { database.ref(refPath).update({ end: new Date().getTime() }); }
+            if (status === 'start') { if (database) database.ref(refPath).set({ start: new Date().getTime() }); } 
+            else { if (database) database.ref(refPath).update({ end: new Date().getTime() }); }
         }
 
         function atualizarPainelAlmoçoInterface() {
@@ -1050,15 +1084,14 @@
                 const ehResponsavel = task.responsibles && task.responsibles.includes(currentUser);
                 const temPermissaoLancar = permissoesLancar[currentUser] || false;
                 
-                // NOVO DESIGN DE CONTROLE DINÂMICO DE OPERADORES:
                 let podeControlar = false;
                 if (currentUser === 'admin' || temPermissaoLancar) {
                     podeControlar = true; 
                 } else if (currentUser !== 'visitante') {
                     if (!isRunning) {
-                        podeControlar = true; // Qualquer operador pode dar play se a tarefa estiver parada/pausada
+                        podeControlar = true; 
                     } else {
-                        podeControlar = ehResponsavel || (ultimoLog && ultimoLog.by === currentUser); // Apenas quem está executando ela pode pausar ou finalizar
+                        podeControlar = ehResponsavel || (ultimoLog && ultimoLog.by === currentUser); 
                     }
                 }
 
@@ -1079,7 +1112,7 @@
                         ${currentUser === 'admin' || temPermissaoLancar ? `<button class="btn-action btn-delete" onclick="deleteTask('${task.id}')">Excluir</button>` : ''}
                         ${!isRunning ? 
                             `<button class="${classeBotao} btn-start" ${atributoDesabilitado} onclick="alterarCronometro('${task.id}', 'start')">Iniciar Task ▶️</button>` : 
-                            `<button class="${classeBotao} btn-pause" ${atributoDesabilitated} onclick="alterarCronometro('${task.id}', 'pause')">Pausar Task ⏸️</button>`
+                            `<button class="${classeBotao} btn-pause" ${atributoDesabilitado} onclick="alterarCronometro('${task.id}', 'pause')">Pausar Task ⏸️</button>`
                         }
                         <button class="${classeBotao} btn-done" ${atributoDesabilitado} onclick="finishTask('${task.id}')">Concluir ✓</button>
                     </div>
@@ -1088,7 +1121,6 @@
             });
         }
 
-        // NOVO MECANISMO DE COORDENAÇÃO DE CRONÔMETRO VOLTADO AO USUÁRIO ATIVO:
         function alterarCronometro(id, acao) {
             const task = tasks.find(t => t.id === id); if (!task) return;
             const now = new Date().getTime(); if (!task.timeLogs) task.timeLogs = [];
@@ -1099,12 +1131,11 @@
                 task.timeLogs.push({ type: 'pause', time: now, by: currentUser, byName: nomesExibicao[currentUser], reason: motivo.trim() });
             } else {
                 task.timeLogs.push({ type: 'start', time: now, by: currentUser, byName: nomesExibicao[currentUser] });
-                // Insere dinamicamente o novo executor na lista de responsáveis caso ele não conste originalmente
                 if (task.responsibles && !task.responsibles.includes(currentUser)) {
                     task.responsibles.push(currentUser);
                 }
             }
-            database.ref('tasks/ativas/' + id).set(task);
+            if (database) database.ref('tasks/ativas/' + id).set(task);
         }
 
         function finishTask(id) {
@@ -1113,9 +1144,11 @@
             compTask.onTime = compTask.dateFinished <= compTask.deadline;
             compTask.userWhoFinished = currentUser; compTask.userWhoFinishedName = nomesExibicao[currentUser];
 
-            database.ref('tasks/historico/' + id).set(compTask).then(() => {
-                database.ref('tasks/ativas/' + id).remove(); alert("Tarefa concluída!");
-            });
+            if (database) {
+                database.ref('tasks/historico/' + id).set(compTask).then(() => {
+                    database.ref('tasks/ativas/' + id).remove(); alert("Tarefa concluída!");
+                });
+            }
         }
 
         function calcularTempoTrabalhoEInterrupcoes(userKey, deDataStr, apenasHoje = false) {
@@ -1346,37 +1379,40 @@
                 jornada: { in: document.getElementById('cfg_admin_in').value, out: document.getElementById('cfg_admin_out').value },
                 almoco: { in: document.getElementById('cfg_admin_meal_in').value, out: document.getElementById('cfg_admin_meal_out').value }
             };
-            database.ref('configuracoes/equipe').set(configEquipe).then(() => alert("Configuração gravada!"));
+            if (database) database.ref('configuracoes/equipe').set(configEquipe).then(() => alert("Configuração gravada!"));
         }
 
         function salvarSenhaAdmin() {
             const novaSenha = document.getElementById('cfg_adminPassword').value; if(!novaSenha) return;
-            database.ref('configuracoes/seguranca/adminPassword').set(novaSenha).then(() => { alert("Senha mestre alterada!"); });
+            if (database) database.ref('configuracoes/seguranca/adminPassword').set(novaSenha).then(() => { alert("Senha mestre altered!"); });
         }
 
         function criarBackupFirebase() {
+            if (!database) return;
             Promise.all([database.ref('tasks/ativas').once('value'), database.ref('tasks/historico').once('value')]).then(([sA, sH]) => {
                 database.ref('backup_sistema').set({ ativas: sA.val()||{}, historico: sH.val()||{} }).then(() => alert("Backup criado!"));
             });
         }
 
         function restaurarBackupFirebase() {
-            if(!confirm("Deseja restaurar os dados?")) return;
+            if(!database || !confirm("Deseja restaurar os dados?")) return;
             database.ref('backup_sistema').once('value').then((snapshot) => {
                 const bkp = snapshot.val(); if(!bkp) return;
                 Promise.all([database.ref('tasks/ativas').set(bkp.ativas||null), database.ref('tasks/historico').set(bkp.historico||null)]).then(() => alert("Restauração concluída!"));
             });
         }
 
-        function deleteTask(id) { if(confirm("Deseja deletar permanentemente?")) database.ref('tasks/ativas/' + id).remove(); }
+        function deleteTask(id) { if(database && confirm("Deseja deletar permanentemente?")) database.ref('tasks/ativas/' + id).remove(); }
         
         document.getElementById('taskForm').addEventListener('submit', (e) => {
             e.preventDefault(); const acao = document.getElementById('taskAction').value; const taskId = '_' + Math.random().toString(36).substr(2, 9);
-            database.ref('tasks/ativas/' + taskId).set({
-                id: taskId, title: document.getElementById('taskTitle').value, category: document.getElementById('taskCategory').value,
-                action: acao, priority: document.getElementById('taskPriority').value, deadline: document.getElementById('taskDeadline').value,
-                desc: document.getElementById('taskDesc').value, responsibles: roteamentoUsuarios[acao] || [], timestampCreated: new Date().getTime(), timeLogs: []
-            });
+            if (database) {
+                database.ref('tasks/ativas/' + taskId).set({
+                    id: taskId, title: document.getElementById('taskTitle').value, category: document.getElementById('taskCategory').value,
+                    action: acao, priority: document.getElementById('taskPriority').value, deadline: document.getElementById('taskDeadline').value,
+                    desc: document.getElementById('taskDesc').value, responsibles: roteamentoUsuarios[acao] || [], timestampCreated: new Date().getTime(), timeLogs: []
+                });
+            }
             document.getElementById('taskForm').reset(); alert("Tarefa enviada!");
         });
     </script>
