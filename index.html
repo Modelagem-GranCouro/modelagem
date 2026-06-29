@@ -60,7 +60,7 @@
         .btn-pause { background: var(--warning-color); color: #333; }
         .btn-done { background: var(--primary-color); color: white; }
         .btn-delete { background: #95a5a6; color: white; }
-        .btn-disabled { background: #e0e0e0 !important; color: #aaa !important; cursor: not-allowed !important; }
+        .btn-disabled { background: #e0e0e0 !important; color: #aaa !important; cursor: not-allowed !allowed !important; }
 
         .aux-panels { display: flex; gap: 15px; margin-bottom: 20px; }
         .aux-card { flex: 1; background: #fff; padding: 15px; border-radius: 6px; display: flex; justify-content: space-between; align-items: center; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
@@ -99,9 +99,103 @@
         
         .action-bar { display: flex; gap: 10px; margin-bottom: 15px; }
         .btn-export { padding: 10px 20px; border: none; border-radius: 4px; color: white; font-weight: bold; cursor: pointer; }
+
+        /* --- TELA DE BOAS-VINDAS ARTÍSTICA INTERATIVA (SPLASH SCREEN) --- */
+        .welcome-overlay {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #1e3c72 0%, #2a5298 100%);
+            color: white;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999;
+            text-align: center;
+            padding: 30px;
+            transition: opacity 0.5s ease, visibility 0.5s ease;
+            cursor: pointer;
+        }
+        .welcome-content {
+            max-width: 700px;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 40px;
+            border-radius: 16px;
+            backdrop-filter: blur(10px);
+            box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.3);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            transform: translateY(20px);
+            animation: fadeInUp 0.8s forwards ease-out;
+        }
+        .welcome-content h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+            font-weight: 300;
+            letter-spacing: 2px;
+        }
+        .welcome-content h2 {
+            font-size: 1.5rem;
+            color: #f1c40f;
+            margin-bottom: 25px;
+            font-weight: 600;
+        }
+        .bible-verse {
+            font-size: 1.25rem;
+            font-style: italic;
+            line-height: 1.6;
+            margin-bottom: 15px;
+            color: #e0e6ed;
+        }
+        .bible-ref {
+            font-size: 0.95rem;
+            font-weight: bold;
+            color: #3498db;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 30px;
+        }
+        .btn-start-day {
+            padding: 14px 35px;
+            background: #2ecc71;
+            color: white;
+            border: none;
+            border-radius: 30px;
+            font-size: 1.1rem;
+            font-weight: bold;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(46, 204, 113, 0.4);
+            transition: all 0.3s ease;
+        }
+        .btn-start-day:hover {
+            background: #27ae60;
+            transform: scale(1.05);
+            box-shadow: 0 6px 20px rgba(46, 204, 113, 0.6);
+        }
+        .welcome-tip {
+            font-size: 0.85rem;
+            color: rgba(255,255,255,0.6);
+            margin-top: 20px;
+        }
+        @keyframes fadeInUp {
+            to { transform: translateY(0); opacity: 1; }
+        }
     </style>
 </head>
 <body>
+
+    <div id="welcomeSplash" class="welcome-overlay" onclick="pularSplashPreLogin()">
+        <div class="welcome-content" onclick="event.stopPropagation()">
+            <h1 id="splashSystemTitle">Engenharia e Modelagem</h1>
+            <h2 id="splashGreeting">Gestão Inteligente de Tempo</h2>
+            <p id="splashVerse" class="bible-verse">"Consagre ao Senhor tudo o que você faz, e os seus planos serão bem-sucedidos."</p>
+            <p id="splashRef" class="bible-ref">Provérbios 16:3</p>
+            <button id="btnStartDay" class="btn-start-day" style="display: none;" onclick="fecharSplashPostLogin()">Começar o Dia 🚀</button>
+            <p id="splashTip" class="welcome-tip">Aguardando ou clique em qualquer lugar para entrar...</p>
+        </div>
+    </div>
 
     <header>
         <div>
@@ -123,69 +217,77 @@
 
     <div id="tabPainel" class="dashboard-layout full-width">
         <div id="adminFormBox" class="panel-box" style="display: none;">
-            <h2>Lançar Nova Tarefa no Setor</h2>
-            <form id="taskForm">
-                <div class="form-group">
-                    <label for="taskTitle">Referência / Nome do Modelo / Descrição</label>
-                    <input type="text" id="taskTitle" class="form-control" placeholder="Ex: Referência ou Atividade de Gestão" required>
-                </div>
-                <div class="form-group">
-                    <label for="taskCategory">Categoria</label>
-                    <select id="taskCategory" class="form-control">
-                        <option value="KIT">KIT</option>
-                        <option value="PISO">PISO</option>
-                        <option value="CAPA DE PROTEÇÃO">CAPA DE PROTEÇÃO</option>
-                        <option value="BANCO DE MOTO">BANCO DE MOTO</option>
-                        <option value="GESTÃO INTERNA">GESTÃO INTERNA</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="taskAction">Especificação da Tarefa</label>
-                    <select id="taskAction" class="form-control">
-                        <optgroup label="Operações da Equipe">
-                            <option value="Fazer modelo novo">Fazer modelo novo</option>
-                            <option value="Alterar modelo existente">Alterar modelo existente</option>
-                            <option value="Cadastrar modelo novo">Cadastrar modelo novo</option>
-                            <option value="Alterar cadastro de um modelo existente">Alterar cadastro de um modelo existente</option>
-                            <option value="Digitalizar modelo novo">Digitalizar modelo novo</option>
-                            <option value="Alterar modelo ja digitalizado">Alterar modelo ja digitalizado</option>
-                            <option value="Fazer personalizado">Fazer personalizado</option>
-                            <option value="Desenvolver nova arte personalizada">Desenvolver nova arte personalizada</option>
-                            <option value="alterar personalizado existente">alterar personalizado existente</option>
-                            <option value="Criar bordado a partir da imagem disponibilizada">Criar bordado a partir da imagem disponibilizada</option>
-                        </optgroup>
-                        <optgroup label="Atividades do Líder/Gestor">
-                            <option value="Treinamento e Alinhamento da equipe">Treinamento e Alinhamento da equipe</option>
-                            <option value="Desenvolvimento de ferramentas e softwares setoriais">Desenvolvimento de ferramentas e softwares setoriais</option>
-                            <option value="Auxílio técnico aos setores de produção">Auxílio técnico aos setores de produção</option>
-                            <option value="Organização, planejamento e metas do setor">Organização, planejamento e metas do setor</option>
-                            <option value="Medição de consumo">Medição de consumo</option>
-                            <option value="Fazer croqui">Fazer croqui</option>
-                            <option value="Alteração em croqui já existente">Alteração em croqui já existente</option>
-                        </optgroup>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="taskPriority">Sequência de Prioridade</label>
-                    <select id="taskPriority" class="form-control">
-                        <option value="1">Prioridade 1 (Máxima)</option>
-                        <option value="2">Prioridade 2 (Média)</option>
-                        <option value="3">Prioridade 3 (Normal)</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="taskDeadline">Prazo Limite para Entrega</label>
-                    <input type="date" id="taskDeadline" class="form-control" required>
-                </div>
-                <div class="form-group">
-                    <label for="taskDesc">Instruções Adicionais</label>
-                    <textarea id="taskDesc" class="form-control" rows="3" placeholder="Informações adicionais relevantes"></textarea>
-                </div>
-                <button type="submit" class="btn-submit">Direcionar e Enviar</button>
-            </form>
+            <button id="btnToggleForm" class="btn-submit" style="margin-bottom: 10px; background: var(--primary-color);" onclick="toggleFormTarefa()">➕ Lançar Nova Tarefa (Abrir Formulário)</button>
+            
+            <div id="taskFormBody" style="display: none; border-top: 1px dashed #ddd; padding-top: 15px;">
+                <h2>Lançar Nova Tarefa no Setor</h2>
+                <form id="taskForm">
+                    <div class="form-group">
+                        <label for="taskTitle">Referência / Nome do Modelo / Descrição</label>
+                        <input type="text" id="taskTitle" class="form-control" placeholder="Ex: Referência ou Atividade de Gestão" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="taskCategory">Categoria</label>
+                        <select id="taskCategory" class="form-control">
+                            <option value="KIT">KIT</option>
+                            <option value="PISO">PISO</option>
+                            <option value="CAPA DE PROTEÇÃO">CAPA DE PROTEÇÃO</option>
+                            <option value="BANCO DE MOTO">BANCO DE MOTO</option>
+                            <option value="GESTÃO INTERNA">GESTÃO INTERNA</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="taskAction">Especificação da Tarefa</label>
+                        <select id="taskAction" class="form-control">
+                            <optgroup label="Operações da Equipe">
+                                <option value="Fazer modelo novo">Fazer modelo novo</option>
+                                <option value="Alterar modelo existente">Alterar modelo existente</option>
+                                <option value="Cadastrar modelo novo">Cadastrar modelo novo</option>
+                                <option value="Alterar cadastro de um modelo existente">Alterar cadastro de um modelo existente</option>
+                                <option value="Digitalizar modelo novo">Digitalizar modelo novo</option>
+                                <option value="Alterar modelo ja digitalizado">Alterar modelo ja digitalizado</option>
+                                <option value="Fazer personalizado">Fazer personalizado</option>
+                                <option value="Desenvolver nova arte personalizada">Desenvolver nova arte personalizada</option>
+                                <option value="alterar personalizado existente">alterar personalizado existente</option>
+                                <option value="Criar bordado a partir da imagem disponibilizada">Criar bordado a partir da imagem disponibilizada</option>
+                            </optgroup>
+                            <optgroup label="Atividades do Líder/Gestor">
+                                <option value="Treinamento e Alinhamento da equipe">Treinamento e Alinhamento da equipe</option>
+                                <option value="Desenvolvimento de ferramentas e softwares setoriais">Desenvolvimento de ferramentas e softwares setoriais</option>
+                                <option value="Auxílio técnico aos setores de produção">Auxílio técnico aos setores de produção</option>
+                                <option value="Organização, planejamento e metas do setor">Organização, planejamento e metas do setor</option>
+                                <option value="Medição de consumo">Medição de consumo</option>
+                                <option value="Fazer croqui">Fazer croqui</option>
+                                <option value="Alteração em croqui já existente">Alteração em croqui já existente</option>
+                            </optgroup>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="taskPriority">Sequência de Prioridade</label>
+                        <select id="taskPriority" class="form-control">
+                            <option value="1">Prioridade 1 (Máxima)</option>
+                            <option value="2">Prioridade 2 (Média)</option>
+                            <option value="3">Prioridade 3 (Normal)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="taskDeadline">Prazo Limite para Entrega</label>
+                        <input type="date" id="taskDeadline" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="taskDesc">Instruções Adicionais</label>
+                        <textarea id="taskDesc" class="form-control" rows="3" placeholder="Informações adicionais relevantes"></textarea>
+                    </div>
+                    <button type="submit" class="btn-submit">Direcionar e Enviar</button>
+                </form>
+            </div>
         </div>
 
         <div>
+            <div id="realTimeStatusContainer" class="panel-box" style="border-top: 4px solid var(--danger-color); display: none;">
+                <h2>🔴 Atividades da Equipe em Tempo Real</h2>
+            </div>
+
             <div id="criticalAlertPanel" class="panel-box" style="border: 2px solid var(--danger-color); background: #fdf2f2; display: none;">
                 <h3 style="color: var(--danger-color); font-size: 1.05rem; margin-bottom: 5px;">⚠️ ATENÇÃO COM AS PRIORIDADES!</h3>
                 <p style="font-size: 0.9rem; color: #555;">Você possui tarefas de <strong>Prioridade 1</strong> atrasadas ou vencendo hoje alocadas na sua fila.</p>
@@ -209,9 +311,12 @@
             </div>
 
             <div class="panel-box">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 15px;">
                     <h2>Fila Geral de Monitoramento em Tempo Real</h2>
-                    <div>
+                    
+                    <div style="display: flex; gap: 10px; align-items: center;">
+                        <input type="text" id="taskSearchBar" class="form-control" style="width: 220px;" placeholder="🔍 Pesquisar modelo/instruções..." oninput="renderTasks()">
+                        
                         <select id="queueUserFilter" class="form-control" style="width: 250px;" onchange="renderTasks()">
                             <option value="todos">👁️ Ver todas as tarefas do setor</option>
                             <option value="minhas">👤 Ver apenas minhas tarefas</option>
@@ -487,10 +592,192 @@
         let tasks = []; let historicTasks = []; let mealLogs = {}; let descansoLogs = {};
         let currentUser = 'visitante'; let myChart = null; let timeChart = null;
 
-        let estadoAutomacao = {
-            almocoAtivo: false,
-            descansoAtivo: false
-        };
+        let estadoAutomacao = { almocoAtivo: false, descansoAtivo: false };
+        let listaIdsTarefasConhecidas = null;
+        let alertaPrioridadeAtivo = false;
+
+        // --- CONTROLE DE FLUXO DA TELA DE BOAS-VINDAS ARTÍSTICA ---
+        let timerSplashPreLogin = null;
+        let splashClicadoOuPassado = false;
+
+        function pularSplashPreLogin() {
+            if (splashClicadoOuPassado) return;
+            splashClicadoOuPassado = true;
+            if (timerSplashPreLogin) clearTimeout(timerSplashPreLogin);
+            
+            const splash = document.getElementById('welcomeSplash');
+            splash.style.opacity = '0';
+            splash.style.visibility = 'hidden';
+
+            setTimeout(() => {
+                if (currentUser === 'visitante') { abrirModalLogin(); }
+            }, 500);
+        }
+
+        function exibirSplashPostLogin() {
+            const splash = document.getElementById('welcomeSplash');
+            
+            document.getElementById('splashSystemTitle').innerText = "Acesso Autorizado";
+            document.getElementById('splashGreeting').innerText = `Bom trabalho, ${nomesExibicao[currentUser]}!`;
+            document.getElementById('splashVerse').innerText = '"O Senhor te abençoe e te guarde; o Senhor faça resplandecer o seu rosto sobre ti e te conceda graça."';
+            document.getElementById('splashRef').innerText = "Números 6:24-25";
+            
+            splash.onclick = null; 
+            document.getElementById('welcomeSplash').style.cursor = 'default';
+            
+            document.getElementById('btnStartDay').style.display = 'inline-block';
+            document.getElementById('splashTip').style.display = 'none';
+
+            splash.style.opacity = '1';
+            splash.style.visibility = 'visible';
+        }
+
+        function fecharSplashPostLogin() {
+            const splash = document.getElementById('welcomeSplash');
+            splash.style.opacity = '0';
+            splash.style.visibility = 'hidden';
+        }
+
+        function toggleFormTarefa() {
+            const form = document.getElementById('taskFormBody');
+            const btn = document.getElementById('btnToggleForm');
+            if (form.style.display === 'none') {
+                form.style.display = 'block';
+                btn.innerText = '◄ Minimizar Formulário de Cadastro';
+                btn.style.background = '#95a5a6';
+            } else {
+                form.style.display = 'none';
+                btn.innerText = '➕ Lançar Nova Tarefa (Abrir Formulário)';
+                btn.style.background = 'var(--primary-color)';
+            }
+        }
+
+        function renderizarStatusEquipeTempoReal() {
+            const container = document.getElementById('realTimeStatusContainer');
+            if (!container) return;
+            
+            const temPermissaoLancar = permissoesLancar[currentUser] || false;
+            if (currentUser !== 'admin' && !temPermissaoLancar && currentUser !== 'visitante') {
+                container.style.display = 'none';
+                return;
+            }
+            container.style.display = 'block';
+
+            const chavesEquipe = ['admin', 'usuario_1', 'usuario_2', 'usuario_3', 'usuario_4', 'usuario_5'];
+            let htmlGrid = '<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 15px; margin-top: 10px;">';
+
+            chavesEquipe.forEach(uKey => {
+                const nome = nomesExibicao[uKey];
+                const minhasTasks = tasks.filter(t => t.responsibles && t.responsibles.includes(uKey));
+                const taskAtiva = minhasTasks.find(t => {
+                    const ultimoLog = t.timeLogs && t.timeLogs.length > 0 ? t.timeLogs[t.timeLogs.length - 1] : null;
+                    return ultimoLog && ultimoLog.type === 'start';
+                });
+
+                let statusTexto = '<span style="color: #7f8c8d; font-weight: bold;">💤 Desconectado / Ocioso</span>';
+                let cardBg = '#fdfefe';
+                let bordaCor = '#bdc3c7';
+
+                const hojeStr = new Date().toISOString().split('T')[0];
+                const logAlmoco = mealLogs[hojeStr]?.[uKey];
+                const logDescanso = descansoLogs[hojeStr]?.[uKey];
+
+                if (logAlmoco && logAlmoco.start && !logAlmoco.end) {
+                    statusTexto = '<span style="color: #e67e22; font-weight: bold;">🍽️ Em Almoço</span>';
+                    cardBg = '#fffaf5'; bordaCor = '#e67e22';
+                } else if (logDescanso && logDescanso.start && !logDescanso.end) {
+                    statusTexto = '<span style="color: #9b59b6; font-weight: bold;">☕ Em Descanso</span>';
+                    cardBg = '#faf5ff'; bordaCor = '#9b59b6';
+                } else if (taskAtiva) {
+                    statusTexto = `<span style="color: var(--success-color); font-weight: bold;">▶️ Focando em:<br><small style="color:#333;">${taskAtiva.title}</small></span>`;
+                    cardBg = '#f5fdf7'; bordaCor = 'var(--success-color)';
+                } else if (minhasTasks.length > 0) {
+                    statusTexto = `<span style="color: #f39c12; font-weight: bold;">⏸️ Fila Coletiva (${minhasTasks.length} un)</span>`;
+                    cardBg = '#fffdf5'; bordaCor = '#f39c12';
+                }
+
+                htmlGrid += `
+                    <div style="background: ${cardBg}; border: 1px solid ${bordaCor}; border-left: 5px solid ${bordaCor}; padding: 12px; border-radius: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.02);">
+                        <strong style="color: var(--secondary-color); font-size: 0.95rem; display: block; margin-bottom: 4px;">${nome}</strong>
+                        <div style="font-size: 0.85rem; line-height: 1.3;">${statusTexto}</div>
+                    </div>
+                `;
+            });
+
+            htmlGrid += '</div>';
+            container.innerHTML = `<h2>🔴 Atividades da Equipe em Tempo Real</h2>` + htmlGrid;
+        }
+
+        function emitirSinalSonoro() {
+            try {
+                const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                let osc1 = audioCtx.createOscillator(); let gain1 = audioCtx.createGain();
+                osc1.type = 'square'; osc1.frequency.setValueAtTime(660, audioCtx.currentTime);
+                gain1.gain.setValueAtTime(0.2, audioCtx.currentTime);
+                osc1.connect(gain1); gain1.connect(audioCtx.destination);
+                osc1.start(); osc1.stop(audioCtx.currentTime + 0.15);
+            } catch (e) { console.log("Áudio bloqueado."); }
+        }
+
+        function mostrarPopupNotificacao(titulo, mensagem, corBorda) {
+            const idPopup = 'popup_' + Math.random().toString(36).substr(2, 9);
+            const div = document.createElement('div');
+            div.id = idPopup;
+            div.style = `
+                position: fixed; bottom: 20px; right: 20px; width: 350px; 
+                background: white; border-left: 6px solid ${corBorda}; 
+                box-shadow: 0 4px 15px rgba(0,0,0,0.25); padding: 15px; 
+                border-radius: 4px; z-index: 9999; animation: slideIn 0.3s ease-out;
+            `;
+            div.innerHTML = `
+                <h4 style="margin: 0 0 5px 0; color: #2c3e50; font-size: 1rem;">${titulo}</h4>
+                <p style="margin: 0 0 10px 0; color: #555; font-size: 0.9rem; line-height: 1.3;">${mensagem}</p>
+                <button onclick="document.getElementById('${idPopup}').remove()" style="
+                    background: #eee; border: none; padding: 4px 10px; border-radius: 3px; cursor: pointer; font-size: 0.8rem; font-weight: bold;
+                ">Entendido ✕</button>
+            `;
+            if (!document.getElementById('stylePopupAnim')) {
+                const style = document.createElement('style'); style.id = 'stylePopupAnim';
+                style.innerHTML = `@keyframes slideIn { from { transform: translateX(120%); } to { transform: translateX(0); } }`;
+                document.head.appendChild(style);
+            }
+            document.body.appendChild(div); emitirSinalSonoro();
+            setTimeout(() => { if(document.getElementById(idPopup)) document.getElementById(idPopup).remove(); }, 12000);
+        }
+
+        function verificarNovasTarefasEPrioridades(novasTarefas) {
+            if (currentUser === 'visitante' || currentUser === 'admin') return;
+            const minhasTasks = novasTarefas.filter(t => t.responsibles && t.responsibles.includes(currentUser));
+            const todosIdsAtuais = novasTarefas.map(t => t.id);
+
+            if (listaIdsTarefasConhecidas !== null) {
+                minhasTasks.forEach(task => {
+                    if (!listaIdsTarefasConhecidas.includes(task.id)) {
+                        mostrarPopupNotificacao(
+                            `📌 Nova Tarefa na sua Fila!`, 
+                            `A tarefa <strong>"${task.title}"</strong> (${task.category}) foi alocada para você.`,
+                            task.priority === "1" ? "#e74c3c" : "#2ecc71"
+                        );
+                    }
+                });
+            }
+            listaIdsTarefasConhecidas = todosIdsAtuais;
+
+            const tarefaEmExecucao = minhasTasks.find(t => {
+                const ultimoLog = t.timeLogs && t.timeLogs.length > 0 ? t.timeLogs[t.timeLogs.length - 1] : null;
+                return ultimoLog && ultimoLog.type === 'start';
+            });
+
+            if (tarefaEmExecucao) {
+                const prioridadeAtual = parseInt(tarefaEmExecucao.priority);
+                const temTarefaMaisUrgentePendente = minhasTasks.some(t => parseInt(t.priority) < prioridadeAtual);
+                if (temTarefaMaisUrgentePendente && !alertaPrioridadeAtivo) {
+                    alertaPrioridadeAtivo = true;
+                    mostrarPopupNotificacao(`⚠️ VIOLAÇÃO DE PRIORIDADE!`, `Você está executando uma tarefa de Prioridade ${prioridadeAtual}, mas há demandas mais urgentes pendentes.`, "#e74c3c");
+                    setTimeout(() => { alertaPrioridadeAtivo = false; }, 30000);
+                }
+            }
+        }
 
         const containerCampos = document.getElementById('userFieldsContainer');
         if(containerCampos) {
@@ -509,9 +796,9 @@
                             <input type="time" id="cfg_meal_out${i}" class="form-control" title="Fim do Almoço">
                         </div>
                         <div style="display:flex; gap:10px; align-items:center; margin-top:5px; border-top: 1px dashed #ddd; padding-top:5px;">
-                            <input type="password" id="cfg_pass${i}" class="form-control" style="width:130px; padding:5px; font-size:0.8rem;" placeholder="Senha de Acesso">
+                            <input type="password" id="cfg_pass${i}" class="form-control" style="width:130px; padding:5px; font-size:0.8rem;" placeholder="Senha">
                             <label style="font-size:0.75rem; font-weight:bold; color:var(--primary-color); cursor:pointer;">
-                                <input type="checkbox" id="cfg_perm${i}"> Substituto (Lança Tarefas) 👑
+                                <input type="checkbox" id="cfg_perm${i}"> Substituto 👑
                             </label>
                         </div>
                     </div>
@@ -534,21 +821,21 @@
                 if (document.getElementById('cfg_admin_nome')) document.getElementById('cfg_admin_nome').value = nomesExibicao['admin'];
                 if (document.getElementById('cfg_admin_in')) document.getElementById('cfg_admin_in').value = jornadas['admin'].in;
                 if (document.getElementById('cfg_admin_out')) document.getElementById('cfg_admin_out').value = jornadas['admin'].out;
-                if (document.getElementById('cfg_admin_meal_in')) document.getElementById('cfg_admin_meal_in').value = almocosPadrao['admin'].in || "12:00";
-                if (document.getElementById('cfg_admin_meal_out')) document.getElementById('cfg_admin_meal_out').value = almocosPadrao['admin'].out || "13:00";
+                if (document.getElementById('cfg_admin_meal_in')) document.getElementById('cfg_admin_meal_in').value = almocosPadrao['admin'].in;
+                if (document.getElementById('cfg_admin_meal_out')) document.getElementById('cfg_admin_meal_out').value = almocosPadrao['admin'].out;
 
                 for(let i=1; i<=5; i++) {
                     const uKey = `usuario_${i}`;
                     if (document.getElementById(`cfg_user${i}`)) document.getElementById(`cfg_user${i}`).value = nomesExibicao[uKey];
                     if (document.getElementById(`cfg_in${i}`)) document.getElementById(`cfg_in${i}`).value = jornadas[uKey].in;
                     if (document.getElementById(`cfg_out${i}`)) document.getElementById(`cfg_out${i}`).value = jornadas[uKey].out;
-                    if (document.getElementById(`cfg_meal_in${i}`)) document.getElementById(`cfg_meal_in${i}`).value = almocosPadrao[uKey].in || "12:00";
-                    if (document.getElementById(`cfg_meal_out${i}`)) document.getElementById(`cfg_meal_out${i}`).value = almocosPadrao[uKey].out || "13:00";
+                    if (document.getElementById(`cfg_meal_in${i}`)) document.getElementById(`cfg_meal_in${i}`).value = almocosPadrao[uKey].in;
+                    if (document.getElementById(`cfg_meal_out${i}`)) document.getElementById(`cfg_meal_out${i}`).value = almocosPadrao[uKey].out;
                     if (document.getElementById(`cfg_pass${i}`)) document.getElementById(`cfg_pass${i}`).value = senhasEquipe[uKey];
                     if (document.getElementById(`cfg_perm${i}`)) document.getElementById(`cfg_perm${i}`).checked = permissoesLancar[uKey];
                     if (document.getElementById(`lbl_user${i}`)) document.getElementById(`lbl_user${i}`).innerText = `Funcionário ${i} (${nomesExibicao[uKey]}):`;
                 }
-                atualizarNomesNoSeletorLogin(); renderTasks();
+                atualizarNomesNoSeletorLogin(); renderTasks(); renderizarStatusEquipeTempoReal();
             }
         });
 
@@ -559,39 +846,47 @@
         database.ref('tasks/ativas').on('value', (snapshot) => {
             tasks = snapshot.val() ? Object.values(snapshot.val()) : [];
             renderTasks(); verificarAlertasCriticos(); updateReportDashboard();
+            verificarNovasTarefasEPrioridades(tasks); renderizarStatusEquipeTempoReal();
         });
 
         database.ref('tasks/historico').on('value', (snapshot) => {
-            historicTasks = snapshot.val() ? Object.values(snapshot.val()) : [];
-            updateReportDashboard();
+            historicTasks = snapshot.val() ? Object.values(snapshot.val()) : []; updateReportDashboard();
         });
 
         database.ref('almoço/historico').on('value', (snapshot) => {
-            mealLogs = snapshot.val() || {}; atualizarPainelAlmoçoInterface(); updateReportDashboard();
+            mealLogs = snapshot.val() || {}; atualizarPainelAlmoçoInterface(); updateReportDashboard(); renderizarStatusEquipeTempoReal();
         });
 
         database.ref('descanso/historico').on('value', (snapshot) => {
-            descansoLogs = snapshot.val() || {}; atualizarPainelDescansoInterface(); updateReportDashboard();
+            descansoLogs = snapshot.val() || {}; atualizarPainelDescansoInterface(); updateReportDashboard(); renderizarStatusEquipeTempoReal();
         });
 
         function atualizarNomesNoSeletorLogin() {
             const select = document.getElementById('loginUser');
             select.options[0].text = nomesExibicao['admin'];
             for(let i=1; i<=5; i++) { select.options[i].text = nomesExibicao[`usuario_${i}`]; }
-            
             const filterAdmin = document.getElementById('filterAdminName');
             if(filterAdmin) filterAdmin.innerText = `Filtrar: ${nomesExibicao['admin']}`;
         }
 
         window.addEventListener('DOMContentLoaded', () => {
             currentUser = sessionStorage.getItem('modelagem_current_user') || 'visitante';
+            
+            document.getElementById('splashSystemTitle').innerText = "Engenharia e Modelagem";
+            document.getElementById('splashGreeting').innerText = "Gestão Inteligente de Tempo";
+            document.getElementById('splashVerse').innerText = '"Consagre ao Senhor tudo o que você faz, e os seus planos serão bem-sucedidos."';
+            document.getElementById('splashRef').innerText = "Provérbios 16:3";
+            document.getElementById('btnStartDay').style.display = 'none';
+            document.getElementById('splashTip').style.display = 'block';
+            document.getElementById('welcomeSplash').style.cursor = 'pointer';
+
             configurarInterfacePorUsuario();
             setInterval(() => { verificarEExecutarHorariosAutomaticos(); updateReportDashboard(); }, 1000);
+
+            timerSplashPreLogin = setTimeout(() => { pularSplashPreLogin(); }, 5000);
         });
 
-        function abrirModalLogin() { 
-            document.getElementById('loginModal').style.display = 'flex'; 
-        }
+        function abrirModalLogin() { document.getElementById('loginModal').style.display = 'flex'; }
         function fecharModalLogin() { document.getElementById('loginModal').style.display = 'none'; document.getElementById('loginPassword').value = ''; }
 
         function login() {
@@ -599,19 +894,15 @@
             const senhaDigitada = document.getElementById('loginPassword').value;
 
             if (userSelected === 'admin') {
-                if (senhaDigitada !== adminPasswordDB) {
-                    alert("Senha mestre incorreta!"); return;
-                }
+                if (senhaDigitada !== adminPasswordDB) { alert("Senha mestre incorreta!"); return; }
             } else {
-                const senhaCorreta = senhasEquipe[userSelected] || "123";
-                if (senhaDigitada !== senhaCorreta) {
-                    alert("Senha de usuário incorreta!"); return;
-                }
+                if (senhaDigitada !== (senhasEquipe[userSelected] || "123")) { alert("Senha de usuário incorreta!"); return; }
             }
             
             currentUser = userSelected;
             sessionStorage.setItem('modelagem_current_user', currentUser);
             fecharModalLogin(); configurarInterfacePorUsuario();
+            exibirSplashPostLogin();
         }
 
         function configurarInterfacePorUsuario() {
@@ -626,7 +917,6 @@
 
             document.getElementById('adminTabs').style.display = 'flex';
             userPanels.style.display = 'none';
-
             const temPermissaoLancar = permissoesLancar[currentUser] || false;
 
             if (currentUser === 'admin') {
@@ -642,22 +932,14 @@
                 reportButtons.style.display = 'none'; restrictedSection.style.display = 'none'; switchTab('painel');
             } else {
                 document.getElementById('userDisplay').innerText = nomesExibicao[currentUser] + (temPermissaoLancar ? " (Substituto 👑)" : "");
-                
-                if (temPermissaoLancar) {
-                    adminBox.style.display = 'block';
-                    container.classList.remove('full-width');
-                } else {
-                    adminBox.style.display = 'none';
-                    container.classList.add('full-width');
-                }
-
+                adminBox.style.display = temPermissaoLancar ? 'block' : 'none';
+                container.className = temPermissaoLancar ? 'dashboard-layout' : 'dashboard-layout full-width';
                 document.getElementById('adminTabs').style.display = temPermissaoLancar ? 'flex' : 'none';
-                btnGerenciamento.style.display = 'none'; 
-                btnLoginTrigger.style.display = 'none'; btnLogout.style.display = 'block';
+                btnGerenciamento.style.display = 'none'; btnLoginTrigger.style.display = 'none'; btnLogout.style.display = 'block';
                 reportButtons.style.display = 'flex'; restrictedSection.style.display = 'block'; userPanels.style.display = 'flex';
                 atualizarPainelAlmoçoInterface(); atualizarPainelDescansoInterface(); verificarAlertasCriticos();
             }
-            renderTasks(); updateReportDashboard();
+            renderTasks(); updateReportDashboard(); renderizarStatusEquipeTempoReal();
         }
 
         function logout() { sessionStorage.setItem('modelagem_current_user', 'visitante'); currentUser = 'visitante'; configurarInterfacePorUsuario(); }
@@ -679,15 +961,9 @@
 
         function verificarEExecutarHorariosAutomaticos() {
             if (currentUser === 'visitante' || currentUser === 'admin') return;
-
-            const agora = new Date();
-            const horaAtual = agora.getHours();
-            const minutoAtual = agora.getMinutes();
+            const agora = new Date(); const horaAtual = agora.getHours(); const minutoAtual = agora.getMinutes();
             const totalMinutos = (horaAtual * 60) + minutoAtual;
-            
-            const horaStr = String(horaAtual).padStart(2, '0');
-            const minStr = String(minutoAtual).padStart(2, '0');
-            const horaMinutoAtualStr = `${horaStr}:${minStr}`;
+            const horaMinutoAtualStr = `${String(horaAtual).padStart(2, '0')}:${String(minutoAtual).padStart(2, '0')}`;
             const hojeStr = agora.toISOString().split('T')[0];
 
             const configAlmoco = almocosPadrao[currentUser];
@@ -695,48 +971,38 @@
                 if (horaMinutoAtualStr >= configAlmoco.in && horaMinutoAtualStr < configAlmoco.out) {
                     if (!estadoAutomacao.almocoAtivo) {
                         const logHoje = mealLogs[hojeStr]?.[currentUser];
-                        if (!logHoje || !logHoje.start) {
-                            registrarAlmoço('start');
-                        }
+                        if (!logHoje || !logHoje.start) { registrarAlmoço('start'); }
                         estadoAutomacao.almocoAtivo = true;
                     }
-                } 
-                else if (horaMinutoAtualStr >= configAlmoco.out) {
+                } else if (horaMinutoAtualStr >= configAlmoco.out) {
                     if (estadoAutomacao.almocoAtivo) {
                         const logHoje = mealLogs[hojeStr]?.[currentUser];
-                        if (logHoje && logHoje.start && !logHoje.end) {
-                            registrarAlmoço('end');
-                        }
+                        if (logHoje && logHoje.start && !logHoje.end) { registrarAlmoço('end'); }
                         estadoAutomacao.almocoAtivo = false;
                     }
                 }
             }
 
-            const naJanelaDescansoManha = (totalMinutos >= 590 && totalMinutos < 600); 
-            const naJanelaDescansoTarde = (totalMinutos >= 930 && totalMinutos < 940); 
+            const naJanelaDescansoManha = (totalMinutos >= 590 && totalMinutos < 600);
+            const naJanelaDescansoTarde = (totalMinutos >= 930 && totalMinutos < 940);
 
             if (naJanelaDescansoManha || naJanelaDescansoTarde) {
                 if (!estadoAutomacao.descansoAtivo) {
                     const logHoje = descansoLogs[hojeStr]?.[currentUser];
-                    if (!logHoje || !logHoje.start) {
-                        registrarDescanso('start');
-                    }
+                    if (!logHoje || !logHoje.start) { registrarDescanso('start'); }
                     estadoAutomacao.descansoAtivo = true;
                 }
             } else {
                 if (estadoAutomacao.descansoAtivo) {
                     const logHoje = descansoLogs[hojeStr]?.[currentUser];
-                    if (logHoje && logHoje.start && !logHoje.end) {
-                        registrarDescanso('end');
-                    }
+                    if (logHoje && logHoje.start && !logHoje.end) { registrarDescanso('end'); }
                     estadoAutomacao.descansoAtivo = false;
                 }
             }
         }
 
         function registrarDescanso(status) {
-            const hojeStr = new Date().toISOString().split('T')[0];
-            const refPath = `descanso/historico/${hojeStr}/${currentUser}`;
+            const hojeStr = new Date().toISOString().split('T')[0]; const refPath = `descanso/historico/${hojeStr}/${currentUser}`;
             if (status === 'start') { database.ref(refPath).set({ start: new Date().getTime() }); } 
             else { database.ref(refPath).update({ end: new Date().getTime() }); }
         }
@@ -751,8 +1017,7 @@
         }
 
         function registrarAlmoço(status) {
-            const hojeStr = new Date().toISOString().split('T')[0];
-            const refPath = `almoço/historico/${hojeStr}/${currentUser}`;
+            const hojeStr = new Date().toISOString().split('T')[0]; const refPath = `almoço/historico/${hojeStr}/${currentUser}`;
             if (status === 'start') { database.ref(refPath).set({ start: new Date().getTime() }); } 
             else { database.ref(refPath).update({ end: new Date().getTime() }); }
         }
@@ -769,7 +1034,9 @@
         function renderTasks() {
             const taskList = document.getElementById('taskList'); if(!taskList) return;
             taskList.innerHTML = '';
+            
             const filtro = document.getElementById('queueUserFilter').value;
+            const textoBusca = document.getElementById('taskSearchBar').value.toLowerCase().trim();
             
             let filteredTasks = tasks.filter(t => {
                 if (filtro === 'minhas') return t.responsibles && t.responsibles.includes(currentUser);
@@ -777,8 +1044,17 @@
                 return true;
             });
 
+            if (textoBusca !== '') {
+                filteredTasks = filteredTasks.filter(t => {
+                    const noTitulo = t.title ? t.title.toLowerCase().includes(textoBusca) : false;
+                    const nasInstrucoes = t.desc ? t.desc.toLowerCase().includes(textoBusca) : false;
+                    const naCategoria = t.category ? t.category.toLowerCase().includes(textoBusca) : false;
+                    return noTitulo || nasInstrucoes || naCategoria;
+                });
+            }
+
             filteredTasks.sort((a, b) => a.priority - b.priority || new Date(a.deadline) - new Date(b.deadline));
-            if (filteredTasks.length === 0) { taskList.innerHTML = '<p style="color: #999; text-align: center; padding: 35px;">Nenhuma atividade ativa localizada.</p>'; return; }
+            if (filteredTasks.length === 0) { taskList.innerHTML = '<p style="color: #999; text-align: center; padding: 35px;">Nenhuma atividade localizada.</p>'; return; }
 
             const hoje = new Date().toISOString().split('T')[0];
 
@@ -796,9 +1072,7 @@
                     const pausas = task.timeLogs.filter(log => log.type === 'pause' && log.reason);
                     if (pausas.length > 0) {
                         motivosPausaHTML = `<div style="margin-top: 10px;">`;
-                        pausas.forEach(p => {
-                            motivosPausaHTML += `<div class="pause-reason-box"><strong>Motivo da Pausa (${p.byName}):</strong> ${p.reason}</div>`;
-                        });
+                        pausas.forEach(p => { motivosPausaHTML += `<div class="pause-reason-box"><strong>Pausa (${p.byName}):</strong> ${p.reason}</div>`; });
                         motivosPausaHTML += `</div>`;
                     }
                 }
@@ -808,18 +1082,7 @@
                 const podeControlar = currentUser === 'admin' || ehResponsavel || temPermissaoLancar;
                 const classeBotao = podeControlar ? "btn-action" : "btn-action btn-disabled";
                 const atributoDesabilitado = podeControlar ? "" : "disabled";
-
                 const isRunning = ultimoLog && ultimoLog.type === 'start';
-                let botoesAcaoHTML = `
-                    <div class="task-actions">
-                        ${currentUser === 'admin' || temPermissaoLancar ? `<button class="btn-action btn-delete" onclick="deleteTask('${task.id}')">Excluir</button>` : ''}
-                        ${!isRunning ? 
-                            `<button class="${classeBotao} btn-start" ${atributoDesabilitado} onclick="alterarCronometro('${task.id}', 'start')">Iniciar Task ▶️</button>` : 
-                            `<button class="${classeBotao} btn-pause" ${atributoDesabilitado} onclick="alterarCronometro('${task.id}', 'pause')">Pausar Task ⏸️</button>`
-                        }
-                        <button class="${classeBotao} btn-done" ${atributoDesabilitado} onclick="finishTask('${task.id}')">Concluir ✓</button>
-                    </div>
-                `;
 
                 card.innerHTML = `
                     <span class="prio-badge">Prioridade ${task.priority}</span>
@@ -831,7 +1094,14 @@
                         <span>👥 Alocado para: <strong>${task.responsibles ? task.responsibles.map(r => nomesExibicao[r]).join(' / ') : 'Setor'}</strong></span>
                         <span>${prazoStatus}</span>
                     </div>
-                    ${botoesAcaoHTML}
+                    <div class="task-actions">
+                        ${currentUser === 'admin' || temPermissaoLancar ? `<button class="btn-action btn-delete" onclick="deleteTask('${task.id}')">Excluir</button>` : ''}
+                        ${!isRunning ? 
+                            `<button class="${classeBotao} btn-start" ${atributoDesabilitado} onclick="alterarCronometro('${task.id}', 'start')">Iniciar Task ▶️</button>` : 
+                            `<button class="${classeBotao} btn-pause" ${atributoDesabilitado} onclick="alterarCronometro('${task.id}', 'pause')">Pausar Task ⏸️</button>`
+                        }
+                        <button class="${classeBotao} btn-done" ${atributoDesabilitado} onclick="finishTask('${task.id}')">Concluir ✓</button>
+                    </div>
                 `;
                 taskList.appendChild(card);
             });
@@ -839,22 +1109,12 @@
 
         function alterarCronometro(id, acao) {
             const task = tasks.find(t => t.id === id); if (!task) return;
-            const now = new Date().getTime();
-            if (!task.timeLogs) task.timeLogs = [];
+            const now = new Date().getTime(); if (!task.timeLogs) task.timeLogs = [];
 
             if (acao === 'pause') {
                 const motivo = prompt("Informe o motivo para pausar a tarefa (Obrigatório):"); 
-                if (!motivo || motivo.trim() === "") {
-                    alert("Você deve informar um motivo válido para registrar a interrupção.");
-                    return;
-                }
-                task.timeLogs.push({ 
-                    type: 'pause', 
-                    time: now, 
-                    by: currentUser, 
-                    byName: nomesExibicao[currentUser],
-                    reason: motivo.trim()
-                });
+                if (!motivo || motivo.trim() === "") { alert("Você deve informar um motivo válido."); return; }
+                task.timeLogs.push({ type: 'pause', time: now, by: currentUser, byName: nomesExibicao[currentUser], reason: motivo.trim() });
             } else {
                 task.timeLogs.push({ type: 'start', time: now, by: currentUser, byName: nomesExibicao[currentUser] });
             }
@@ -865,57 +1125,40 @@
             const compTask = tasks.find(t => t.id === id); if (!compTask) return;
             compTask.dateFinished = new Date().toISOString().split('T')[0];
             compTask.onTime = compTask.dateFinished <= compTask.deadline;
-            compTask.userWhoFinished = currentUser;
-            compTask.userWhoFinishedName = nomesExibicao[currentUser];
+            compTask.userWhoFinished = currentUser; compTask.userWhoFinishedName = nomesExibicao[currentUser];
 
             database.ref('tasks/historico/' + id).set(compTask).then(() => {
-                database.ref('tasks/ativas/' + id).remove();
-                alert("Tarefa concluída com sucesso!");
+                database.ref('tasks/ativas/' + id).remove(); alert("Tarefa concluída!");
             });
         }
 
         function calcularTempoTrabalhoEInterrupcoes(userKey, deDataStr, apenasHoje = false) {
-            const agoraMs = new Date().getTime();
-            let eventos = [];
-            
+            const agoraMs = new Date().getTime(); let eventos = [];
             const processarLogs = (t) => {
                 if (!t.timeLogs) return;
                 t.timeLogs.forEach(log => {
-                    if (log.by === userKey && log.time >= new Date(deDataStr).getTime()) {
-                        eventos.push({ time: log.time, type: log.type });
-                    }
+                    if (log.by === userKey && log.time >= new Date(deDataStr).getTime()) { eventos.push({ time: log.time, type: log.type }); }
                 });
             };
-
             historicTasks.forEach(t => { if(t.dateFinished >= deDataStr) processarLogs(t); });
             tasks.forEach(processarLogs);
-
             eventos.sort((a, b) => a.time - b.time);
 
-            let minutesWork = 0;
-            let minutesInterrupt = 0;
-
-            if (eventos.length === 0) {
-                return { trabalho: 0, interrupcao: 0 };
-            }
+            let minutesWork = 0; let minutesInterrupt = 0;
+            if (eventos.length === 0) return { trabalho: 0, interrupcao: 0 };
 
             for (let i = 0; i < eventos.length; i++) {
                 const eventoAtual = eventos[i];
                 let fimJanelaEventos = (i + 1 < eventos.length) ? eventos[i + 1].time : agoraMs;
                 if (fimJanelaEventos > agoraMs) fimJanelaEventos = agoraMs;
-
                 if (eventoAtual.time >= fimJanelaEventos) continue;
 
                 const msUteis = calcularMilissegundosUteisNoPeriodo(eventoAtual.time, fimJanelaEventos, userKey, apenasHoje);
                 const minutosConvertidos = Math.max(0, Math.round(msUteis / 1000 / 60));
 
-                if (eventoAtual.type === 'start') {
-                    minutesWork += minutosConvertidos;
-                } else if (eventoAtual.type === 'pause') {
-                    minutesInterrupt += minutosConvertidos;
-                }
+                if (eventoAtual.type === 'start') { minutesWork += minutosConvertidos; } 
+                else if (eventoAtual.type === 'pause') { minutesInterrupt += minutosConvertidos; }
             }
-
             return { trabalho: minutesWork, interrupcao: minutesInterrupt };
         }
 
@@ -938,70 +1181,46 @@
 
         function calcularMilissegundosUteisNoPeriodo(startMs, endMs, userKey, apenasHoje = false) {
             if (startMs >= endMs) return 0;
-            
             let totalMs = 0;
             const itemJornada = jornadas[userKey] || { in: "07:12", out: "17:00" };
             const [hIn, mIn] = itemJornada.in.split(':').map(Number);
             const [hOut, mOut] = itemJornada.out.split(':').map(Number);
 
-            let ponteiro = new Date(startMs);
-            const fimJanela = new Date(endMs);
-            const hojeStr = new Date().toISOString().split('T')[0];
+            let ponteiro = new Date(startMs); const fimJanela = new Date(endMs); const hojeStr = new Date().toISOString().split('T')[0];
 
             while (ponteiro <= fimJanela) {
-                const diaSemana = ponteiro.getDay();
-                const dataLoopStr = ponteiro.toISOString().split('T')[0];
-
+                const diaSemana = ponteiro.getDay(); const dataLoopStr = ponteiro.toISOString().split('T')[0];
                 if (diaSemana >= 1 && diaSemana <= 6 && (!apenasHoje || dataLoopStr === hojeStr)) {
                     const inicioComercial = new Date(ponteiro); inicioComercial.setHours(hIn, mIn, 0, 0);
                     const fimComercial = new Date(ponteiro); fimComercial.setHours(hOut, mOut, 0, 0);
-
-                    const maxStart = Math.max(startMs, inicioComercial.getTime());
-                    const minEnd = Math.min(endMs, fimComercial.getTime());
-
-                    if (maxStart < minEnd) {
-                        totalMs += (minEnd - maxStart);
-                    }
+                    const maxStart = Math.max(startMs, inicioComercial.getTime()); const minEnd = Math.min(endMs, fimComercial.getTime());
+                    if (maxStart < minEnd) { totalMs += (minEnd - maxStart); }
                 }
-                
-                ponteiro.setDate(ponteiro.getDate() + 1); 
-                ponteiro.setHours(0,0,0,0);
-                
-                if (ponteiro.getTime() > fimJanela.getTime() && ponteiro.toISOString().split('T')[0] !== fimJanela.toISOString().split('T')[0]) {
-                    break;
-                }
+                ponteiro.setDate(ponteiro.getDate() + 1); ponteiro.setHours(0,0,0,0);
+                if (ponteiro.getTime() > fimJanela.getTime()) break;
             }
             return totalMs;
         }
 
         function calcularEMostrarMetasDinamicas(metrics) {
             const totalConcluido = metrics.noPrazo + metrics.foraPrazo;
-            
             let pctEficiencia = totalConcluido > 0 ? Math.round((metrics.noPrazo / totalConcluido) * 100) : 0;
             document.getElementById('goalEffValue').innerText = `${pctEficiencia}%`;
             document.getElementById('goalEffBar').style.width = `${Math.min(pctEficiencia, 100)}%`;
-            document.getElementById('goalEffBar').style.background = pctEficiencia >= 90 ? '#2ecc71' : (pctEficiencia >= 75 ? '#f1c40f' : '#e74c3c');
 
-            let metaVolumeAlvo = 10; 
+            let metaVolumeAlvo = 10;
             if (metrics.periodo === 'hoje') metaVolumeAlvo = 2;
             if (metrics.periodo === 'quinzenal') metaVolumeAlvo = 20;
             if (metrics.periodo === 'mensal') metaVolumeAlvo = 40;
-            if (metrics.periodo === 'anual') metaVolumeAlvo = 450;
 
             let pctVolume = Math.round((totalConcluido / metaVolumeAlvo) * 100);
             document.getElementById('goalVolValue').innerText = `${totalConcluido} / ${metaVolumeAlvo}`;
             document.getElementById('goalVolBar').style.width = `${Math.min(pctVolume, 100)}%`;
-            document.getElementById('goalVolStatus').innerText = `Progresso da Meta: ${Math.min(pctVolume, 100)}% concluído`;
 
             const hojeStr = new Date().toISOString().split('T')[0];
             const tarefasAtrasadasSetor = tasks.filter(t => t.deadline < hojeStr).length;
-            const limiteAtrasosMax = 3; 
-
-            let conformidadeAtrasos = Math.max(0, 100 - (tarefasAtrasadasSetor * 33.3)); 
             document.getElementById('goalDelayValue').innerText = `${tarefasAtrasadasSetor} Ativas`;
-            document.getElementById('goalDelayBar').style.width = `${conformidadeAtrasos}%`;
-            document.getElementById('goalDelayBar').style.background = tarefasAtrasadasSetor <= limiteAtrasosMax ? '#2ecc71' : '#e74c3c';
-            document.getElementById('goalDelayStatus').innerText = tarefasAtrasadasSetor > 0 ? `⚠️ ${tarefasAtrasadasSetor} gargalos travando o setor` : '✅ Excelente: Zero atrasos hoje!';
+            document.getElementById('goalDelayBar').style.width = `${Math.max(0, 100 - (tarefasAtrasadasSetor * 33))}%`;
         }
 
         function updateReportDashboard() {
@@ -1021,15 +1240,7 @@
                 myChart = new Chart(ctxEff.getContext('2d'), {
                     type: 'doughnut',
                     data: { labels: ['No Prazo', 'Atrasado', 'Pendente'], datasets: [{ data: [metrics.noPrazo, metrics.foraPrazo, metrics.pendentes], backgroundColor: ['#2ecc71', '#e74c3c', '#f39c12'] }] },
-                    options: { 
-                        responsive: true, maintainAspectRatio: false,
-                        onClick: (evt, item) => {
-                            if(item && item.length > 0) {
-                                const statusMapeados = ['noPrazo', 'foraPrazo', 'pendentes'];
-                                abrirDetalhamentoStatus(statusMapeados[item[0].index]);
-                            }
-                        }
-                    }
+                    options: { responsive: true, maintainAspectRatio: false }
                 });
             }
 
@@ -1037,46 +1248,30 @@
             tbody.innerHTML = '';
             
             let labelsTime = []; let dataWork = []; const hojeStr = new Date().toISOString().split('T')[0]; const agoraMs = new Date().getTime();
-            
-            // CORRIGIDO: Agora inclui toda a equipe de 6 integrantes
             const chavesEquipe = ['admin', 'usuario_1', 'usuario_2', 'usuario_3', 'usuario_4', 'usuario_5'];
 
             chavesEquipe.forEach(userKey => {
                 const tempos = calcularTempoTrabalhoEInterrupcoes(userKey, metrics.dataCorte, metrics.apenasHoje);
-                let totalTrabalhoMin = tempos.trabalho;
-                let totalInterrupcoesMin = tempos.interrupcao;
+                let totalTrabalhoMin = tempos.trabalho; let totalInterrupcoesMin = tempos.interrupcao;
                 let totalAlmoçoMin = 0; let descansoLegalMin = 0;
 
-                const configAlmoco = almocosPadrao[userKey] || { in: "12:00", out: "13:00" };
-                if (configAlmoco.in && configAlmoco.out) {
+                const configAlmoco = almocosPadrao[userKey];
+                if (configAlmoco && configAlmoco.in && configAlmoco.out) {
                     const [hAlmIn, mAlmIn] = configAlmoco.in.split(':').map(Number);
                     const [hAlmOut, mAlmOut] = configAlmoco.out.split(':').map(Number);
-                    const minAlmocoTotal = (hAlmOut * 60 + mAlmOut) - (hAlmIn * 60 + mAlmIn);
-                    
-                    if (metrics.apenasHoje) {
-                        const dAlmIn = new Date(); dAlmIn.setHours(hAlmIn, mAlmIn, 0, 0);
-                        if (agoraMs >= dAlmIn.getTime()) {
-                            totalAlmoçoMin = Math.max(0, minAlmocoTotal);
-                        }
-                    } else {
-                        totalAlmoçoMin = Math.max(0, minAlmocoTotal);
-                    }
+                    if (metrics.apenasHoje && agoraMs >= new Date().setHours(hAlmIn, mAlmIn)) { totalAlmoçoMin = (hAlmOut*60+mAlmOut) - (hAlmIn*60+mAlmIn); }
+                    else if (!metrics.apenasHoje) { totalAlmoçoMin = (hAlmOut*60+mAlmOut) - (hAlmIn*60+mAlmIn); }
                 }
 
-                if(metrics.apenasHoje) {
-                    if (descansoLogs[hojeStr]?.[userKey]) { 
-                        descansoLegalMin = Math.max(0, Math.round(((descansoLogs[hojeStr][userKey].end || agoraMs) - descansoLogs[hojeStr][userKey].start) / 1000 / 60)); 
-                    }
+                if(metrics.apenasHoje && descansoLogs[hojeStr]?.[userKey]) {
+                    descansoLegalMin = Math.round(((descansoLogs[hojeStr][userKey].end || agoraMs) - descansoLogs[hojeStr][userKey].start) / 1000 / 60);
                 }
 
-                const itemJornada = jornadas[userKey] || { in: "07:12", out: "17:00" };
-                const [hIn, mIn] = itemJornada.in.split(':').map(Number);
-                const [hOut, mOut] = itemJornada.out.split(':').map(Number);
-                const dIn = new Date(); dIn.setHours(hIn, mIn, 0, 0); const dOut = new Date(); dOut.setHours(hOut, mOut, 0, 0);
-
+                const itemJornada = jornadas[userKey];
+                const [hIn, mIn] = itemJornada.in.split(':').map(Number); const [hOut, mOut] = itemJornada.out.split(':').map(Number);
                 let janelaTotalMinutosHoje = 0;
-                if (new Date().getDay() >= 1 && new Date().getDay() <= 6 && agoraMs > dIn.getTime()) {
-                    janelaTotalMinutosHoje = Math.max(0, Math.round((Math.min(dOut.getTime(), agoraMs) - dIn.getTime()) / 1000 / 60));
+                if (new Date().getDay() >= 1 && agoraMs > new Date().setHours(hIn, mIn)) {
+                    janelaTotalMinutosHoje = Math.round((Math.min(new Date().setHours(hOut, mOut), agoraMs) - new Date().setHours(hIn, mIn)) / 1000 / 60);
                 }
 
                 let totalOciosoMin = metrics.apenasHoje ? Math.max(0, janelaTotalMinutosHoje - totalTrabalhoMin - totalAlmoçoMin - descansoLegalMin - totalInterrupcoesMin) : 0;
@@ -1087,12 +1282,12 @@
                 tbody.innerHTML += `
                     <tr style="border-bottom: 1px solid #ddd; text-align: center;">
                         <td style="padding: 12px; text-align: left;"><strong>${nomesExibicao[userKey]}</strong></td>
-                        <td style="color: #7f8c8d; font-weight: 500;">${itemJornada.in} às ${itemJornada.out}</td>
-                        <td style="color: #2ecc71; font-weight: bold;">${formatTime(totalTrabalhoMin)}</td>
+                        <td>${itemJornada.in} às ${itemJornada.out}</td>
+                        <td style="color:#2ecc71; font-weight:bold;">${formatTime(totalTrabalhoMin)}</td>
                         <td>${formatTime(totalAlmoçoMin)}</td>
                         <td>${formatTime(descansoLegalMin)}</td>
-                        <td style="color: #e67e22; font-weight: bold;">${formatTime(totalInterrupcoesMin)}</td>
-                        <td style="color: #e74c3c; font-weight: bold;">${metrics.apenasHoje ? formatTime(totalOciosoMin) : 'Visão Diária'}</td>
+                        <td style="color:#e67e22; font-weight:bold;">${formatTime(totalInterrupcoesMin)}</td>
+                        <td style="color:#e74c3c; font-weight:bold;">${metrics.apenasHoje ? formatTime(totalOciosoMin) : 'Visão Diária'}</td>
                     </tr>
                 `;
             });
@@ -1109,32 +1304,24 @@
         }
 
         function abrirDetalhamentoStatus(tipoStatus) {
-            const metrics = getFilteredMetrics();
-            const modal = document.getElementById('fullscreenDetailsModal');
-            const titulo = document.getElementById('fullscreenModalTitle');
-            const tbody = document.getElementById('fullscreenDetailsTableBody');
+            const metrics = getFilteredMetrics(); const modal = document.getElementById('fullscreenDetailsModal');
+            const titulo = document.getElementById('fullscreenModalTitle'); const tbody = document.getElementById('fullscreenDetailsTableBody');
             tbody.innerHTML = ''; modal.style.display = 'flex';
 
-            let tarefasAlvo = [];
-            const filtradasHistorico = historicTasks.filter(t => t.dateFinished >= metrics.dataCorte);
-
-            if(tipoStatus === 'noPrazo') { titulo.innerText = "Tarefas Entregues No Prazo"; tarefasAlvo = filtradasHistorico.filter(t => t.onTime); } 
-            else if(tipoStatus === 'foraPrazo') { titulo.innerText = "Tarefas Entregues Com Atraso"; tarefasAlvo = filtradasHistorico.filter(t => !t.onTime); } 
-            else if(tipoStatus === 'pendentes') { titulo.innerText = "Demandas Pendentes"; tarefasAlvo = tasks; } 
-            else { titulo.innerText = "Geral Consolidados"; tarefasAlvo = [...filtradasHistorico, ...tasks]; }
-
-            if(tarefasAlvo.length === 0) { tbody.innerHTML = `<tr><td colspan="6" style="text-align: center; padding: 30px; color: #999;">Nenhum registro.</td></tr>`; return; }
+            let tarefasAlvo = []; const filtradasHistorico = historicTasks.filter(t => t.dateFinished >= metrics.dataCorte);
+            if(tipoStatus === 'noPrazo') { titulo.innerText = "Entregues No Prazo"; tarefasAlvo = filtradasHistorico.filter(t => t.onTime); } 
+            else if(tipoStatus === 'foraPrazo') { titulo.innerText = "Entregues Com Atraso"; tarefasAlvo = filtradasHistorico.filter(t => !t.onTime); } 
+            else { titulo.innerText = "Demandas Pendentes"; tarefasAlvo = tasks; }
 
             tarefasAlvo.forEach(t => {
-                const statusHTML = t.dateFinished ? `<span style="color: var(--success-color); font-weight: bold;">✓ Concluída</span>` : `<span style="color: var(--warning-color); font-weight: bold;">▶️ Ativa</span>`;
                 tbody.innerHTML += `
                     <tr style="border-bottom: 1px solid #eee; text-align: center;">
                         <td style="text-align: left; padding: 12px;"><strong>${t.title}</strong></td>
-                        <td><span style="background: #eee; padding: 3px 8px; border-radius: 4px;">${t.category}</span></td>
+                        <td>${t.category}</td>
                         <td>${t.action}</td>
                         <td>${t.responsibles ? t.responsibles.map(r => nomesExibicao[r]).join(', ') : 'Setor'}</td>
                         <td>${t.deadline.split('-').reverse().join('/')}</td>
-                        <td>${statusHTML}</td>
+                        <td>${t.dateFinished ? '✓ Concluída' : '▶️ Ativa'}</td>
                     </tr>
                 `;
             });
@@ -1150,50 +1337,11 @@
         }
 
         function exportPDF() {
-            const { jsPDF } = window.jspdf; 
-            const doc = new jsPDF();
-            
-            doc.setFontSize(18);
-            doc.text("RELATÓRIO OPERACIONAL E ESTATÍSTICO", 14, 20);
-            
-            const ctxEff = document.getElementById('efficiencyChart');
-            const ctxTime = document.getElementById('timeChart');
-            
-            let currentY = 30;
-
-            if (myChart && ctxEff) {
-                const effImg = myChart.toBase64Image();
-                doc.setFontSize(12);
-                doc.text("Gráfico de Eficiência Operacional:", 14, currentY);
-                doc.addImage(effImg, 'PNG', 14, currentY + 5, 80, 60);
-                currentY += 70;
-            }
-
-            if (timeChart && ctxTime) {
-                const timeImg = timeChart.toBase64Image();
-                doc.setFontSize(12);
-                doc.text("Gráfico Comparativo de Tempo Acumulado:", 14, currentY);
-                doc.addImage(timeImg, 'PNG', 14, currentY + 5, 120, 60);
-                currentY += 75;
-            }
-
-            if (currentY > 120) {
-                doc.addPage();
-                currentY = 20;
-            }
-
-            doc.setFontSize(14);
-            doc.text("Histórico de Tarefas Concluídas", 14, currentY);
-            
+            const { jsPDF } = window.jspdf; const doc = new jsPDF();
+            doc.setFontSize(16); doc.text("RELATÓRIO OPERACIONAL E ESTATÍSTICO", 14, 20);
             let corpo = historicTasks.map(t => [t.userWhoFinishedName||'Setor', t.title, t.dateFinished, t.onTime?"No Prazo":"Atrasado"]);
-            
-            doc.autoTable({ 
-                startY: currentY + 5, 
-                head: [['Responsável', 'Modelo', 'Conclusão', 'Status']], 
-                body: corpo 
-            });
-            
-            doc.save("Relatorio_Setorial_Com_Graficos.pdf");
+            doc.autoTable({ startY: 30, head: [['Responsável', 'Modelo', 'Conclusão', 'Status']], body: corpo });
+            doc.save("Relatorio_Setorial.pdf");
         }
 
         function salvarConfiguracaoEquipe() {
@@ -1204,40 +1352,37 @@
                     nome: document.getElementById(`cfg_user${i}`).value,
                     jornada: { in: document.getElementById(`cfg_in${i}`).value, out: document.getElementById(`cfg_out${i}`).value },
                     almoco: { in: document.getElementById(`cfg_meal_in${i}`).value, out: document.getElementById(`cfg_meal_out${i}`).value },
-                    senha: document.getElementById(`cfg_pass${i}`).value || "123",
-                    podeLancar: document.getElementById(`cfg_perm${i}`).checked
+                    senha: document.getElementById(`cfg_pass${i}`).value || "123", podeLancar: document.getElementById(`cfg_perm${i}`).checked
                 };
             }
-            
             configEquipe['admin'] = {
                 nome: document.getElementById('cfg_admin_nome').value || nomesExibicao['admin'],
                 jornada: { in: document.getElementById('cfg_admin_in').value, out: document.getElementById('cfg_admin_out').value },
                 almoco: { in: document.getElementById('cfg_admin_meal_in').value, out: document.getElementById('cfg_admin_meal_out').value }
             };
-
-            database.ref('configuracoes/equipe').set(configEquipe).then(() => alert("Configuração gravada com sucesso!"));
+            database.ref('configuracoes/equipe').set(configEquipe).then(() => alert("Configuração gravada!"));
         }
 
         function salvarSenhaAdmin() {
             const novaSenha = document.getElementById('cfg_adminPassword').value; if(!novaSenha) return;
-            database.ref('configuracoes/seguranca/adminPassword').set(novaSenha).then(() => { alert("Senha mestre updated!"); });
+            database.ref('configuracoes/seguranca/adminPassword').set(novaSenha).then(() => { alert("Senha mestre alterada!"); });
         }
 
         function criarBackupFirebase() {
             Promise.all([database.ref('tasks/ativas').once('value'), database.ref('tasks/historico').once('value')]).then(([sA, sH]) => {
-                database.ref('backup_sistema').set({ ativas: sA.val()||{}, historico: sH.val()||{} }).then(() => alert("Backup de segurança criado!"));
+                database.ref('backup_sistema').set({ ativas: sA.val()||{}, historico: sH.val()||{} }).then(() => alert("Backup criado!"));
             });
         }
 
         function restaurarBackupFirebase() {
-            if(!confirm("Deseja realmente restaurar os dados desse ponto de backup?")) return;
+            if(!confirm("Deseja restaurar os dados?")) return;
             database.ref('backup_sistema').once('value').then((snapshot) => {
                 const bkp = snapshot.val(); if(!bkp) return;
                 Promise.all([database.ref('tasks/ativas').set(bkp.ativas||null), database.ref('tasks/historico').set(bkp.historico||null)]).then(() => alert("Restauração concluída!"));
             });
         }
 
-        function deleteTask(id) { if(confirm("Deseja deletar permanentemente esta tarefa ativa?")) database.ref('tasks/ativas/' + id).remove(); }
+        function deleteTask(id) { if(confirm("Deseja deletar permanentemente?")) database.ref('tasks/ativas/' + id).remove(); }
         
         document.getElementById('taskForm').addEventListener('submit', (e) => {
             e.preventDefault(); const acao = document.getElementById('taskAction').value; const taskId = '_' + Math.random().toString(36).substr(2, 9);
@@ -1246,7 +1391,7 @@
                 action: acao, priority: document.getElementById('taskPriority').value, deadline: document.getElementById('taskDeadline').value,
                 desc: document.getElementById('taskDesc').value, responsibles: roteamentoUsuarios[acao] || [], timestampCreated: new Date().getTime(), timeLogs: []
             });
-            document.getElementById('taskForm').reset(); alert("Tarefa adicionada com sucesso!");
+            document.getElementById('taskForm').reset(); alert("Tarefa enviada!");
         });
     </script>
 </body>
