@@ -76,6 +76,7 @@
 
         .goals-section { display: grid; grid-template-columns: repeat(3, 1fr); gap: 15px; margin-bottom: 20px; }
         .goal-card { background: white; padding: 15px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
+        .goal-card padding: 15px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
         .goal-header { display: flex; justify-content: space-between; margin-bottom: 10px; font-size: 0.9rem; font-weight: bold; color: var(--secondary-color); }
         .progress-bar-bg { background: #e0e0e0; height: 12px; border-radius: 6px; overflow: hidden; width: 100%; margin-top: 5px; }
         .progress-bar-fill { background: var(--primary-color); height: 100%; width: 0%; transition: width 0.5s ease-in-out; }
@@ -180,6 +181,10 @@
                     <div class="form-group">
                         <label for="taskTitle">Referência / Nome do Modelo / Descrição</label>
                         <input type="text" id="taskTitle" class="form-control" placeholder="Ex: Referência ou Atividade de Gestão" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="taskRequester">Solicitante</label>
+                        <input type="text" id="taskRequester" class="form-control" placeholder="Ex: Nome do cliente, vendedor ou setor" required>
                     </div>
                     <div class="form-group">
                         <label for="taskCategory">Categoria</label>
@@ -445,6 +450,7 @@
                 <thead>
                     <tr>
                         <th style="text-align: left; padding: 12px;">Tarefa / Modelo</th>
+                        <th>Solicitante</th>
                         <th>Categoria</th>
                         <th>Especificação</th>
                         <th>Responsáveis</th>
@@ -1052,7 +1058,8 @@
                     const noTitulo = t.title ? t.title.toLowerCase().includes(textoBusca) : false;
                     const nasInstrucoes = t.desc ? t.desc.toLowerCase().includes(textoBusca) : false;
                     const naCategoria = t.category ? t.category.toLowerCase().includes(textoBusca) : false;
-                    return noTitulo || nasInstrucoes || naCategoria;
+                    const noSolicitante = t.requester ? t.requester.toLowerCase().includes(textoBusca) : false;
+                    return noTitulo || nasInstrucoes || naCategoria || noSolicitante;
                 });
             }
 
@@ -1101,7 +1108,7 @@
                 card.innerHTML = `
                     <span class="prio-badge">Prioridade ${task.priority}</span>
                     <h3>${task.title} <span style="font-size:0.85rem; color:#3498db; font-weight:bold; background:#e8f4fd; padding:3px 8px; border-radius:4px;">${task.category || 'KIT'}</span></h3>
-                    <div class="task-info-line" style="margin-top: 8px;"><strong>Ação:</strong> ${task.action} | <strong>Status:</strong> ${statusCronometro}</div>
+                    <div class="task-info-line" style="margin-top: 8px;"><strong>Solicitante:</strong> ${task.requester || 'Não informado'} | <strong>Ação:</strong> ${task.action} | <strong>Status:</strong> ${statusCronometro}</div>
                     ${task.desc ? `<div class="task-desc-box"><strong>Instruções:</strong> ${task.desc}</div>` : ''}
                     ${motivosPausaHTML}
                     <div class="task-meta">
@@ -1336,6 +1343,7 @@
                 tbody.innerHTML += `
                     <tr style="border-bottom: 1px solid #eee; text-align: center;">
                         <td style="text-align: left; padding: 12px;"><strong>${t.title}</strong></td>
+                        <td>${t.requester || 'Não informado'}</td>
                         <td>${t.category}</td>
                         <td>${t.action}</td>
                         <td>${t.responsibles ? t.responsibles.map(r => nomesExibicao[r]).join(', ') : 'Setor'}</td>
@@ -1348,18 +1356,20 @@
 
         function fecharFullscreenDetails() { document.getElementById('fullscreenDetailsModal').style.display = 'none'; }
 
+        // Mapeia os dados do relatório incluindo o Solicitante para o Excel
         function exportExcel() {
-            let linhas = [["Funcionário", "Tarefa", "Data Conclusão", "Status"]];
-            historicTasks.forEach(t => { linhas.push([t.userWhoFinishedName||'Setor', t.title, t.dateFinished, t.onTime?"No Prazo":"Atrasado"]); });
+            let linhas = [["Funcionário", "Solicitante", "Tarefa", "Data Conclusão", "Status"]];
+            historicTasks.forEach(t => { linhas.push([t.userWhoFinishedName||'Setor', t.requester||'Não informado', t.title, t.dateFinished, t.onTime?"No Prazo":"Atrasado"]); });
             const ws = XLSX.utils.aoa_to_sheet(linhas); const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, ws, "Produtividade");
             XLSX.writeFile(wb, "Relatorio_Produtividade.xlsx");
         }
 
+        // Mapeia os dados do relatório incluindo o Solicitante para o PDF
         function exportPDF() {
             const { jsPDF } = window.jspdf; const doc = new jsPDF();
             doc.setFontSize(16); doc.text("RELATÓRIO OPERACIONAL E ESTATÍSTICO", 14, 20);
-            let corpo = historicTasks.map(t => [t.userWhoFinishedName||'Setor', t.title, t.dateFinished, t.onTime?"No Prazo":"Atrasado"]);
-            doc.autoTable({ startY: 30, head: [['Responsável', 'Modelo', 'Conclusão', 'Status']], body: corpo });
+            let corpo = historicTasks.map(t => [t.userWhoFinishedName||'Setor', t.requester||'Não informado', t.title, t.dateFinished, t.onTime?"No Prazo":"Atrasado"]);
+            doc.autoTable({ startY: 30, head: [['Responsável', 'Solicitante', 'Modelo', 'Conclusão', 'Status']], body: corpo });
             doc.save("Relatorio_Setorial.pdf");
         }
 
@@ -1384,7 +1394,7 @@
 
         function salvarSenhaAdmin() {
             const novaSenha = document.getElementById('cfg_adminPassword').value; if(!novaSenha) return;
-            if (database) database.ref('configuracoes/seguranca/adminPassword').set(novaSenha).then(() => { alert("Senha mestre altered!"); });
+            if (database) database.ref('configuracoes/seguranca/adminPassword').set(novaSenha).then(() => { alert("Senha mestre alterada!"); });
         }
 
         function criarBackupFirebase() {
@@ -1406,9 +1416,10 @@
         
         document.getElementById('taskForm').addEventListener('submit', (e) => {
             e.preventDefault(); const acao = document.getElementById('taskAction').value; const taskId = '_' + Math.random().toString(36).substr(2, 9);
+            const solicitante = document.getElementById('taskRequester').value;
             if (database) {
                 database.ref('tasks/ativas/' + taskId).set({
-                    id: taskId, title: document.getElementById('taskTitle').value, category: document.getElementById('taskCategory').value,
+                    id: taskId, title: document.getElementById('taskTitle').value, requester: solicitante, category: document.getElementById('taskCategory').value,
                     action: acao, priority: document.getElementById('taskPriority').value, deadline: document.getElementById('taskDeadline').value,
                     desc: document.getElementById('taskDesc').value, responsibles: roteamentoUsuarios[acao] || [], timestampCreated: new Date().getTime(), timeLogs: []
                 });
