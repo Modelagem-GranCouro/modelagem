@@ -612,6 +612,21 @@
 
         let splashClicadoOuPassado = false;
 
+        const listaVersiculos = [
+            { texto: '"O Senhor te abençoe e te guarde; o Senhor faça resplandecer o seu rosto sobre ti e te conceda graça."', ref: "Números 6:24-25" },
+            { texto: '"Consagre ao Senhor tudo o que você faz, e os seus planos serão bem-sucedidos."', ref: "Provérbios 16:3" },
+            { texto: '"Tudo o que fizerem, façam de todo o coração, como para o Senhor, e não para os homens."', ref: "Colossenses 3:23" },
+            { texto: '"Seja forte e corajoso! Não se apavore nem desanime, pois o Senhor, o seu Deus, estará com você por onde você andar."', ref: "Josué 1:9" },
+            { texto: '"O próprio Senhor irá à sua frente e estará com você; ele nunca o deixará, nunca o abandonará. Não tenha medo! Não desanime!"', ref: "Deuteronômio 31:8" },
+            { texto: '"Confie no Senhor de todo o seu coração e não se apóie em seu próprio entendimento; reconheça o Senhor em todos os seus caminhos, e ele endireitará as suas veredas."', ref: "Provérbios 3:5-6" },
+            { texto: '"Mas os que esperam no Senhor renovarão as suas forças; subirão com asas como águias; correrão, e não se cansarão; caminharão, e não se fatigarão."', ref: "Isaías 40:31" }
+        ];
+
+        function obterVersiculoDoDia() {
+            const diaSemana = new Date().getDay(); 
+            return listaVersiculos[diaSemana];
+        }
+
         function pularSplashPreLogin() {
             if (splashClicadoOuPassado) return;
             splashClicadoOuPassado = true;
@@ -629,10 +644,12 @@
             const splash = document.getElementById('welcomeSplash');
             splash.style.display = 'flex';
             
+            const versiculoHoje = obterVersiculoDoDia();
+
             document.getElementById('splashSystemTitle').innerText = "Acesso Autorizado";
             document.getElementById('splashGreeting').innerText = `Bom trabalho, ${nomesExibicao[currentUser]}!`;
-            document.getElementById('splashVerse').innerText = '"O Senhor te abençoe e te guarde; o Senhor faça resplandecer o seu rosto sobre ti e te concessa graça."';
-            document.getElementById('splashRef').innerText = "Números 6:24-25";
+            document.getElementById('splashVerse').innerText = versiculoHoje.texto;
+            document.getElementById('splashRef').innerText = versiculoHoje.ref;
             
             splash.onclick = null; 
             document.getElementById('welcomeSplash').style.cursor = 'default';
@@ -694,7 +711,18 @@
                 const logAlmoco = mealLogs[hojeStr]?.[uKey];
                 const logDescanso = descansoLogs[hojeStr]?.[uKey];
 
-                if (logAlmoco && logAlmoco.start && !logAlmoco.end) {
+                if (uKey === 'admin') {
+                    if (logAlmoco && logAlmoco.start && !logAlmoco.end) {
+                        statusTexto = '<span style="color: #e67e22; font-weight: bold;">🍽️ Em Almoço</span>';
+                        cardBg = '#fffaf5'; bordaCor = '#e67e22';
+                    } else if (logDescanso && logDescanso.start && !logDescanso.end) {
+                        statusTexto = '<span style="color: #9b59b6; font-weight: bold;">☕ Em Descanso</span>';
+                        cardBg = '#faf5ff'; bordaCor = '#9b59b6';
+                    } else {
+                        statusTexto = '<span style="color: var(--success-color); font-weight: bold;">💼 Gestão e Supervisão Ativa</span>';
+                        cardBg = '#f5fdf7'; bordaCor = 'var(--success-color)';
+                    }
+                } else if (logAlmoco && logAlmoco.start && !logAlmoco.end) {
                     statusTexto = '<span style="color: #e67e22; font-weight: bold;">🍽️ Em Almoço</span>';
                     cardBg = '#fffaf5'; bordaCor = '#e67e22';
                 } else if (logDescanso && logDescanso.start && !logDescanso.end) {
@@ -894,7 +922,10 @@
             currentUser = sessionStorage.getItem('modelagem_current_user') || 'visitante';
             configurarInterfacePorUsuario();
             
-            // Corrige o fluxo da tela de splash para sempre permitir a entrada imediata
+            const versiculoHoje = obterVersiculoDoDia();
+            document.getElementById('splashVerse').innerText = versiculoHoje.texto;
+            document.getElementById('splashRef').innerText = versiculoHoje.ref;
+
             setTimeout(() => {
                 if (currentUser === 'visitante') {
                     pularSplashPreLogin();
@@ -947,7 +978,7 @@
                 document.getElementById('userDisplay').innerText = "Monitoramento Geral";
                 adminBox.style.display = 'none'; container.classList.add('full-width');
                 btnGerenciamento.style.display = 'none'; btnLoginTrigger.style.display = 'block'; btnLogout.style.display = 'none';
-                reportButtons.style.display = 'none'; restrictedSection.style.display = 'none'; switchTab('painel');
+                reportButtons.style.display = 'none'; restrictedSection.style.none; switchTab('painel');
             } else {
                 document.getElementById('userDisplay').innerText = nomesExibicao[currentUser] + (temPermissaoLancar ? " (Substituto 👑)" : "");
                 adminBox.style.display = temPermissaoLancar ? 'block' : 'none';
@@ -985,7 +1016,7 @@
 
             const pausarTarefasEmExecucaoAutomatico = (motivoPreDefinido) => {
                 tasks.forEach(task => {
-                    const ultimoLog = task.timeLogs && task.timeLogs.length > 0 ? task.timeLogs[task.timeLogs.length - 1] : null;
+                    const ultimoLog = task.timeLogs && task.timeLogs.length > 0 ? t.timeLogs[t.timeLogs.length - 1] : null;
                     if (ultimoLog && ultimoLog.type === 'start' && ultimoLog.by === currentUser) {
                         if (!task.timeLogs) task.timeLogs = [];
                         task.timeLogs.push({
@@ -1382,10 +1413,15 @@
             const chavesEquipe = ['admin', 'usuario_1', 'usuario_2', 'usuario_3', 'usuario_4', 'usuario_5'];
 
             chavesEquipe.forEach(userKey => {
-                const tempos = calcularTempoTrabalhoEInterrupcoes(userKey, metrics.dataCorte, metrics.apenasHoje);
-                let totalTrabalhoMin = tempos.trabalho; let totalInterrupcoesMin = tempos.interrupcao;
-                let totalAlmoçoMin = 0; let descansoLegalMin = 0;
+                let totalTrabalhoMin = 0;
+                let totalInterrupcoesMin = 0;
+                let totalAlmoçoMin = 0; 
+                let descansoLegalMin = 0;
 
+                const itemJornada = jornadas[userKey];
+                const [hIn, mIn] = itemJornada.in.split(':').map(Number); 
+                const [hOut, mOut] = itemJornada.out.split(':').map(Number);
+                
                 const configAlmoco = almocosPadrao[userKey];
                 if (configAlmoco && configAlmoco.in && configAlmoco.out) {
                     const [hAlmIn, mAlmIn] = configAlmoco.in.split(':').map(Number);
@@ -1398,11 +1434,23 @@
                     descansoLegalMin = Math.round(((descansoLogs[hojeStr][userKey].end || agoraMs) - descansoLogs[hojeStr][userKey].start) / 1000 / 60);
                 }
 
-                const itemJornada = jornadas[userKey];
-                const [hIn, mIn] = itemJornada.in.split(':').map(Number); const [hOut, mOut] = itemJornada.out.split(':').map(Number);
                 let janelaTotalMinutosHoje = 0;
                 if (new Date().getDay() >= 1 && agoraMs > new Date().setHours(hIn, mIn)) {
                     janelaTotalMinutosHoje = Math.round((Math.min(new Date().setHours(hOut, mOut), agoraMs) - new Date().setHours(hIn, mIn)) / 1000 / 60);
+                }
+
+                if (userKey === 'admin') {
+                    if (metrics.apenasHoje) {
+                        totalTrabalhoMin = Math.max(0, janelaTotalMinutosHoje - totalAlmoçoMin - descansoLegalMin);
+                    } else {
+                        const totalJornadaPadraoMin = (hOut * 60 + mOut) - (hIn * 60 + mIn) - totalAlmoçoMin;
+                        totalTrabalhoMin = totalJornadaPadraoMin;
+                    }
+                    totalInterrupcoesMin = 0; 
+                } else {
+                    const tempos = calcularTempoTrabalhoEInterrupcoes(userKey, metrics.dataCorte, metrics.apenasHoje);
+                    totalTrabalhoMin = tempos.trabalho;
+                    totalInterrupcoesMin = tempos.interrupcao;
                 }
 
                 let totalOciosoMin = metrics.apenasHoje ? Math.max(0, janelaTotalMinutosHoje - totalTrabalhoMin - totalAlmoçoMin - descansoLegalMin - totalInterrupcoesMin) : 0;
@@ -1462,6 +1510,7 @@
 
         function fecharFullscreenDetails() { document.getElementById('fullscreenDetailsModal').style.display = 'none'; }
 
+        // Linha abaixo alterada para contornar a limitação de aspas em strings literais para os métodos exportados
         function exportExcel() {
             let linhas = [["Funcionário", "Solicitante", "Tarefa", "Data Conclusão", "Status", "Pausas / Motivos"]];
             historicTasks.forEach(t => { 
