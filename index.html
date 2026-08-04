@@ -89,7 +89,7 @@
         th { background: var(--secondary-color); color: white; padding: 12px; text-align: center; font-size: 0.9rem; }
 
         .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); display: none; justify-content: center; align-items: center; z-index: 1000; }
-        .modal-box { background: white; padding: 25px; border-radius: 8px; width: 400px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); max-height: 90vh; overflow-y: auto; }
+        .modal-box { background: white; padding: 25px; border-radius: 8px; width: 450px; box-shadow: 0 4px 15px rgba(0,0,0,0.2); max-height: 90vh; overflow-y: auto; }
 
         .fullscreen-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(255,255,255,0.98); display: none; flex-direction: column; padding: 40px; z-index: 2000; overflow-y: auto; }
         .fullscreen-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px; border-bottom: 2px solid #eee; padding-bottom: 15px; }
@@ -138,6 +138,195 @@
         .btn-start-day:hover { background: #27ae60; transform: scale(1.05); box-shadow: 0 6px 20px rgba(46, 204, 113, 0.6); }
         .welcome-tip { font-size: 0.85rem; color: rgba(255,255,255,0.6); margin-top: 20px; }
         @keyframes fadeInUp { to { transform: translateY(0); opacity: 1; } }
+
+        /* --- STYLES FOR THE CUBAGEM TOOL --- */
+        #tabCubagem {
+            margin-top: 10px;
+        }
+        #tabCubagem .container-cubagem {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: #ffffff;
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
+            color: #1a2530;
+        }
+        #tabCubagem header.header-cubagem {
+            text-align: center;
+            border-bottom: 3px solid #2b6cb0;
+            padding-bottom: 15px;
+            margin-bottom: 25px;
+            position: relative;
+            background: transparent;
+            box-shadow: none;
+            display: block;
+        }
+        #tabCubagem header.header-cubagem h1 {
+            margin: 0;
+            color: #2b6cb0;
+            font-size: 24px;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
+        #tabCubagem .btn-admin {
+            position: absolute;
+            right: 0;
+            top: 5px;
+            background: #4a5568;
+            color: white;
+            border: none;
+            padding: 8px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        #tabCubagem .btn-admin:hover { background: #2d3748; }
+        
+        #tabCubagem .admin-panel {
+            background: #fffaf0;
+            border: 2px dashed #dd6b20;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+            display: none;
+        }
+        #tabCubagem .admin-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+            gap: 15px;
+            margin-top: 10px;
+        }
+
+        #tabCubagem .section-title {
+            background: #2b6cb0;
+            color: white;
+            padding: 10px 15px;
+            font-size: 15px;
+            font-weight: bold;
+            border-radius: 6px 6px 0 0;
+            margin: 20px 0 0 0;
+        }
+        #tabCubagem .config-panel {
+            background: #edf2f7;
+            padding: 20px;
+            border-radius: 8px;
+            margin-bottom: 25px;
+        }
+        #tabCubagem .grid-inputs-unicos {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 15px;
+            margin-top: 15px;
+        }
+        #tabCubagem .form-group {
+            display: flex;
+            flex-direction: column;
+            margin-bottom: 10px;
+        }
+        #tabCubagem .form-group label {
+            font-weight: 600;
+            margin-bottom: 6px;
+            font-size: 13px;
+            color: #4a5568;
+        }
+        #tabCubagem select, #tabCubagem input[type="text"], #tabCubagem input[type="number"] {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #cbd5e0;
+            border-radius: 6px;
+            background: #fff;
+            font-size: 14px;
+        }
+        #tabCubagem input:focus, #tabCubagem select:focus { border-color: #2b6cb0; outline: none; }
+        
+        #tabCubagem .grid-produto {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 15px;
+            margin-bottom: 15px;
+        }
+
+        #tabCubagem .table-responsive {
+            overflow-x: auto;
+            margin-bottom: 25px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+        }
+        #tabCubagem table {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+        }
+        #tabCubagem th, #tabCubagem td {
+            border: 1px solid #e2e8f0;
+            padding: 8px 12px;
+            text-align: center;
+            font-size: 13px;
+            color: #1a2530;
+        }
+        #tabCubagem th { background-color: #edf2f7; color: #2d3748; font-weight: 700; }
+        #tabCubagem .part-header { font-weight: bold; color: #2b6cb0; background: #f7fafc; text-align: left; }
+        #tabCubagem .input-table { width: 85px; padding: 6px; border: 1px solid #cbd5e0; border-radius: 4px; text-align: center; }
+        #tabCubagem .unit-label { font-size: 11px; color: #718096; display: block; margin-top: 2px; }
+        
+        #tabCubagem .dashboard {
+            margin-top: 30px;
+            border-top: 2px dashed #cbd5e0;
+            padding-top: 25px;
+        }
+        #tabCubagem .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+            gap: 15px;
+        }
+        #tabCubagem .card {
+            background: #fff;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 15px;
+            border-left: 4px solid #4a5568;
+            box-shadow: none;
+            margin-bottom: 0;
+        }
+        #tabCubagem .card.destaque-c { border-left-color: #dd6b20; background: #fffaf0; }
+        #tabCubagem .card.destaque-v { border-left-color: #3182ce; background: #ebf8ff; }
+        #tabCubagem .card.destaque-e { border-left-color: #38a169; background: #f0fff4; }
+        #tabCubagem .card.destaque-t { border-left-color: #805ad5; background: #faf5ff; }
+        #tabCubagem .card.prod-info { border-left-color: #4a5568; background: #f7fafc; grid-column: 1 / -1; }
+        #tabCubagem .card-title { font-size: 11px; text-transform: uppercase; color: #718096; font-weight: bold; margin-bottom: 5px; }
+        #tabCubagem .card-value { font-size: 18px; font-weight: bold; color: #2d3748; }
+        #tabCubagem .card-sub { font-size: 11px; color: #a0aec0; margin-top: 4px; }
+        #tabCubagem .badge-perda { background: #feebc8; color: #c05621; padding: 2px 6px; border-radius: 4px; font-size: 10px; font-weight: bold; }
+        #tabCubagem .badge-perda.v-e { background: #e2e8f0; color: #4a5568; }
+        #tabCubagem .badge-perda.t-p { background: #e9d8fd; color: #6b46c1; }
+
+        /* Estilos do filtro avançado */
+        .filter-container {
+            display: flex;
+            gap: 10px;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+        .checkbox-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 15px;
+        }
+        .checkbox-label {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 0.95rem;
+            cursor: pointer;
+            color: #333;
+        }
+        .checkbox-label input[type="checkbox"] {
+            width: 18px;
+            height: 18px;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
@@ -168,6 +357,7 @@
     <div class="nav-tabs" id="adminTabs">
         <button id="btnTabPainel" class="tab-btn active" onclick="switchTab('painel')">Painel de Monitoramento Geral</button>
         <button id="btnTabRelatorios" class="tab-btn" onclick="switchTab('relatorios')">Relatórios &amp; Gráficos Estatísticos</button>
+        <button id="btnTabCubagem" class="tab-btn" onclick="switchTab('cubagem')" style="display: none;">Calculadora de Cubagem 📊</button>
         <button id="btnTabGerenciamento" class="tab-btn" onclick="switchTab('gerenciamento')" style="display: none;">Gerenciar Equipe &amp; Backup</button>
     </div>
 
@@ -273,9 +463,22 @@
             <div class="panel-box">
                 <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 15px;">
                     <h2>Fila Geral de Monitoramento em Tempo Real</h2>
-                    <div style="display: flex; gap: 10px; align-items: center;">
-                        <input type="text" id="taskSearchBar" class="form-control" style="width: 220px;" placeholder="🔍 Pesquisar modelo/instruções..." oninput="renderTasks()">
-                        <select id="queueUserFilter" class="form-control" style="width: 250px;" onchange="renderTasks()">
+                    <div class="filter-container">
+                        <input type="text" id="taskSearchBar" class="form-control" style="width: 250px;" placeholder="🔍 Buscar modelo, cliente, data, instrução..." oninput="renderTasks()">
+                        <select id="filterActionSelect" class="form-control" style="width: 210px;" onchange="renderTasks()">
+                            <option value="todos">Todas as Especificações</option>
+                            <option value="Fazer modelo novo">Fazer modelo novo</option>
+                            <option value="Alterar modelo existente">Alterar modelo existente</option>
+                            <option value="Cadastrar modelo novo">Cadastrar modelo novo</option>
+                            <option value="Alterar cadastro de um modelo existente">Alterar cadastro de um modelo existente</option>
+                            <option value="Digitalizar modelo novo">Digitalizar modelo novo</option>
+                            <option value="Alterar modelo ja digitalizado">Alterar modelo ja digitalizado</option>
+                            <option value="Fazer personalizado">Fazer personalizado</option>
+                            <option value="Desenvolver nova arte personalizada">Desenvolver nova arte personalizada</option>
+                            <option value="alterar personalizado existente">alterar personalizado existente</option>
+                            <option value="Criar bordado a partir da imagem disponibilizada">Criar bordado a partir da imagem disponibilizada</option>
+                        </select>
+                        <select id="queueUserFilter" class="form-control" style="width: 220px;" onchange="renderTasks()">
                             <option value="todos">👁️ Ver todas as tarefas do setor</option>
                             <option value="minhas">👤 Ver apenas minhas tarefas</option>
                             <option value="admin" id="filterAdminName">Filtrar: Wesley</option>
@@ -377,7 +580,7 @@
         <div class="panel-box" id="restrictedTimeReportSection">
             <h2>Relatório de Tempo por Colaborador</h2>
             <div class="action-bar" id="reportButtonsContainer">
-                <button class="btn-export" style="background: #e74c3c;" onclick="exportPDF()">Exportar PDF 📄</button>
+                <button class="btn-export" style="background: #e74c3c;" onclick="abrirModalOpcoesPDF()">Exportar PDF Personalizado 📄</button>
                 <button class="btn-export" style="background: #2ecc71;" onclick="exportExcel()">Exportar Excel 📊</button>
             </div>
             <div class="table-responsive">
@@ -395,6 +598,155 @@
                     </thead>
                     <tbody id="timeTableBody"></tbody>
                 </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- TAB DA FERRAMENTA DE CUBAGEM (RESTRITA A ADMIN E DIGITALIZADOR) -->
+    <div id="tabCubagem" style="display: none;">
+        <div class="container-cubagem">
+            <header class="header-cubagem">
+                <h1>Sistema de Cubagem Automotiva</h1>
+                <button class="btn-admin" onclick="toggleAdminTool()">⚙️ Painel Admin</button>
+            </header>
+
+            <div class="admin-panel" id="painel-admin-tool">
+                <h3 style="margin: 0; color: #dd6b20;">⚙️ Configurações do Sistema (Apenas Administrador)</h3>
+                <div class="admin-grid">
+                    <div class="form-group">
+                        <label>Largura Padrão (cm):</label>
+                        <input type="number" id="cfg_largura" value="138" min="1" oninput="calcularTudo()">
+                    </div>
+                    <div class="form-group">
+                        <label>Perda Couro (%):</label>
+                        <input type="number" id="cfg_perda_couro" value="7" min="0" max="100" oninput="calcularTudo()">
+                    </div>
+                    <div class="form-group">
+                        <label>Perda Vinil/Espuma/Thermo (%):</label>
+                        <input type="number" id="cfg_perda_outros" value="5" min="0" max="100" oninput="calcularTudo()">
+                    </div>
+                </div>
+            </div>
+
+            <div class="config-panel" style="background: #edf2f7; border-left: 5px solid #4a5568;">
+                <h3 style="margin: 0 0 15px 0; color: #2c3e50;">📋 Identificação e Tipo de Produto</h3>
+                <div class="grid-produto">
+                    <div class="form-group">
+                        <label>Tipo de Produto:</label>
+                        <select id="prod_categoria" onchange="alternarFluxoCategoria()">
+                            <option value="KIT">Kit de Bancos / Acabamentos</option>
+                            <option value="PISO">Piso Automotivo</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Código do Produto:</label>
+                        <input type="text" id="prod_codigo" placeholder="Ex: KIT-012" oninput="calcularTudo()">
+                    </div>
+                    <div class="form-group">
+                        <label>Nome do Produto / Modelo:</label>
+                        <input type="text" id="prod_nome" placeholder="Ex: Civic G10" oninput="calcularTudo()">
+                    </div>
+                    <div class="form-group" id="f-tipo-kit">
+                        <label>Tipo de Kit:</label>
+                        <select id="prod_tipo" onchange="calcularTudo()">
+                            <option value="Padrao">Padrão</option>
+                            <option value="Personalizado">Personalizado (Costura Programada)</option>
+                        </select>
+                    </div>
+                    <div class="form-group" id="f-qtd-cores">
+                        <label>Quantidade de Cores do Kit:</label>
+                        <select id="prod_qtd_cores" onchange="renderizarCamposCubagemKit()">
+                            <option value="1">1 Cor</option>
+                            <option value="2">2 Cores</option>
+                            <option value="3">3 Cores</option>
+                            <option value="4">4 Cores</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+
+            <div class="config-panel">
+                <h3 style="margin: 0 0 10px 0; color: #2c3e50;">1. Medição Geral de Materiais</h3>
+                <p style="margin: 0 0 15px 0; font-size: 13px; color: #718096;">Insira o comprimento de cada material em centímetros.</p>
+                
+                <div id="opcoes-corte-kit" style="display: flex; gap: 20px; flex-wrap: wrap; margin-bottom: 15px;">
+                    <div class="form-group" style="min-width: 250px;">
+                        <label>Possibilidade de Corte (Por Cor Selecionada):</label>
+                        <select id="tipo_corte" onchange="calcularTudo()">
+                            <option value="70/30">70/30 (70% Couro / 30% Vinil)</option>
+                            <option value="50/50">50/50 (50% Couro / 50% Vinil)</option>
+                            <option value="40/60">40/60 (40% Couro / 60% Vinil)</option>
+                            <option value="30/70">30/70 (30% Couro / 70% Vinil)</option>
+                            <option value="100V">100V (100% Vinil)</option>
+                            <option value="100C">100C (100% Couro)</option>
+                        </select>
+                    </div>
+                    <div class="form-group" style="min-width: 150px;">
+                        <label>Utiliza Thermoflex?</label>
+                        <select id="usa_thermoflex" onchange="alternarThermoflex()">
+                            <option value="Nao">Não</option>
+                            <option value="Sim">Sim</option>
+                        </select>
+                    </div>
+                </div>
+
+                <div class="grid-inputs-unicos" id="campos-cubagem-kit"></div>
+
+                <div class="grid-inputs-unicos" id="campos-cubagem-piso" style="display:none;">
+                    <div class="form-group"><label style="color:#3182ce;">Vinil Dublado com EVA - Comprimento (cm):</label><input type="number" id="alt_piso_eva" value="0" oninput="calcularTudo()"></div>
+                    <div class="form-group"><label style="color:#4a5568;">Vinil Sem Espuma (Piso) - Comprimento (cm):</label><input type="number" id="alt_piso_sem_esp" value="0" oninput="calcularTudo()"></div>
+                </div>
+            </div>
+
+            <div id="bloco-tabelas-kit">
+                <h3 class="section-title">2. Componentes Lineares dos Bancos (Metros Lineares)</h3>
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Parte do Kit</th><th>Guarnição J</th><th>Guarnição Seta</th><th>Velcro Original</th><th>Velcro Macho</th><th>Velcro Fêmea</th><th>Zíper</th><th>Paleta de Bolsa</th><th>Elástico</th>
+                            </tr>
+                        </thead>
+                        <tbody id="corpo-bancos"></tbody>
+                    </table>
+                </div>
+
+                <h3 class="section-title">3. Componentes Lineares de APC, Portas e Consoles (Metros Lineares)</h3>
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Parte do Kit</th><th>Guarnição J</th><th>Guarnição Seta</th><th>Velcro Original</th><th>Velcro Macho</th><th>Velcro Fêmea</th><th>Zíper</th><th>Elástico</th>
+                            </tr>
+                        </thead>
+                        <tbody id="corpo-apc"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div id="bloco-tabelas-piso" style="display:none;">
+                <h3 class="section-title">2. Componentes Lineares e Acessórios do Piso</h3>
+                <div class="table-responsive">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Velcro Macho (m)</th><th>Velcro Fêmea (m)</th><th>Cadenino (m)</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td><input type="number" class="input-table-piso" data-piso="VELCRO MACHO" value="0" oninput="calcularTudo()"></td>
+                                <td><input type="number" class="input-table-piso" data-piso="VELCRO FEMEA" value="0" oninput="calcularTudo()"></td>
+                                <td><input type="number" class="input-table-piso" data-piso="CADENINO" value="0" oninput="calcularTudo()"></td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="dashboard">
+                <h2>📊 Resumo Consolidado de Matéria-Prima (Com Margem de Perda)</h2>
+                <div class="dashboard-grid" id="dashboard-resultados"></div>
             </div>
         </div>
     </div>
@@ -436,6 +788,46 @@
                         <button class="btn-submit" style="background: #95a5a6;" onclick="restaurarBackupFirebase()">Restaurar Backup 🔄</button>
                     </div>
                 </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- MODAL OPÇÕES DE EXPORTAÇÃO PDF PERSONALIZADO -->
+    <div class="modal-overlay" id="pdfOptionsModal">
+        <div class="modal-box">
+            <h2 style="margin-bottom: 15px; font-size: 1.2rem; color: var(--secondary-color);">📄 Configuração do Relatório PDF</h2>
+            <p style="font-size: 0.85rem; color: #666; margin-bottom: 15px;">Selecione os elementos que deseja incluir no documento gerado:</p>
+            
+            <div class="checkbox-group">
+                <label class="checkbox-label">
+                    <input type="checkbox" id="pdfOptMetrics" checked>
+                    <span>📊 Métricas e Indicadores de Produtividade</span>
+                </label>
+                <label class="checkbox-label">
+                    <input type="checkbox" id="pdfOptTimeReport" checked>
+                    <span>⏱️ Relatório de Horas por Colaborador</span>
+                </label>
+                <label class="checkbox-label">
+                    <input type="checkbox" id="pdfOptTasks" checked>
+                    <span>📋 Tabela de Tarefas e Histórico</span>
+                </label>
+                <label class="checkbox-label" style="margin-left: 20px;">
+                    <input type="checkbox" id="pdfOptPauses" checked>
+                    <span>↳ Incluir Motivos de Pausa detalhados</span>
+                </label>
+                <label class="checkbox-label" style="margin-left: 20px;">
+                    <input type="checkbox" id="pdfOptDesc" checked>
+                    <span>↳ Incluir Instruções Adicionais da Tarefa</span>
+                </label>
+                <label class="checkbox-label" id="pdfCubagemOptionWrapper">
+                    <input type="checkbox" id="pdfOptCubagem" checked>
+                    <span>📏 Resumo de Cubagem (Produto Atualmente Medido)</span>
+                </label>
+            </div>
+
+            <div style="display: flex; gap: 10px; margin-top: 25px;">
+                <button class="btn-submit" style="background: #7f8c8d;" onclick="fecharModalOpcoesPDF()">Cancelar</button>
+                <button class="btn-submit" style="background: #e74c3c;" onclick="gerarPDFPersonalizado()">Gerar e Baixar PDF 🚀</button>
             </div>
         </div>
     </div>
@@ -926,6 +1318,8 @@
             document.getElementById('splashVerse').innerText = versiculoHoje.texto;
             document.getElementById('splashRef').innerText = versiculoHoje.ref;
 
+            inicializarCubagemTool();
+
             setTimeout(() => {
                 if (currentUser === 'visitante') {
                     pularSplashPreLogin();
@@ -958,6 +1352,7 @@
             const container = document.getElementById('tabPainel');
             const adminBox = document.getElementById('adminFormBox');
             const btnGerenciamento = document.getElementById('btnTabGerenciamento');
+            const btnCubagem = document.getElementById('btnTabCubagem');
             const btnLoginTrigger = document.getElementById('btnLoginTrigger');
             const btnLogout = document.getElementById('btnLogout');
             const reportButtons = document.getElementById('reportButtonsContainer');
@@ -967,6 +1362,16 @@
             document.getElementById('adminTabs').style.display = 'flex';
             userPanels.style.display = 'none';
             const temPermissaoLancar = permissoesLancar[currentUser] || false;
+
+            // REGRA DE SEGURANÇA: CALCULADORA VISÍVEL SOMENTE PARA ADMIN E DIGITALIZADOR (USUARIO_3)
+            if (currentUser === 'admin' || currentUser === 'usuario_3') {
+                btnCubagem.style.display = 'block';
+            } else {
+                btnCubagem.style.display = 'none';
+                if (document.getElementById('tabCubagem').style.display === 'block') {
+                    switchTab('painel');
+                }
+            }
 
             if (currentUser === 'admin') {
                 document.getElementById('userDisplay').innerText = nomesExibicao[currentUser];
@@ -994,11 +1399,22 @@
         function logout() { sessionStorage.setItem('modelagem_current_user', 'visitante'); currentUser = 'visitante'; configurarInterfacePorUsuario(); }
 
         function switchTab(tab) {
-            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
-            document.getElementById('tabPainel').style.display = 'none'; document.getElementById('tabRelatorios').style.display = 'none'; document.getElementById('tabGerenciamento').style.display = 'none';
+            // VERIFICAÇÃO DE PERMISSÃO PARA CUBAGEM
+            if (tab === 'cubagem' && currentUser !== 'admin' && currentUser !== 'usuario_3') {
+                alert("Acesso restrito! Apenas o Administrador e o Digitalizador possuem permissão para esta ferramenta.");
+                return;
+            }
+
+            document.querySelectorAll('.nav-tabs .tab-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById('tabPainel').style.display = 'none'; 
+            document.getElementById('tabRelatorios').style.display = 'none'; 
+            document.getElementById('tabGerenciamento').style.display = 'none';
+            document.getElementById('tabCubagem').style.display = 'none';
+
             if (tab === 'painel') { document.getElementById('btnTabPainel').classList.add('active'); document.getElementById('tabPainel').style.display = 'grid'; }
             else if (tab === 'relatorios') { document.getElementById('btnTabRelatorios').classList.add('active'); document.getElementById('tabRelatorios').style.display = 'block'; updateReportDashboard(); }
             else if (tab === 'gerenciamento') { document.getElementById('btnTabGerenciamento').classList.add('active'); document.getElementById('tabGerenciamento').style.display = 'block'; }
+            else if (tab === 'cubagem') { document.getElementById('btnTabCubagem').classList.add('active'); document.getElementById('tabCubagem').style.display = 'block'; calcularTudo(); }
         }
 
         function verificarAlertasCriticos() {
@@ -1016,7 +1432,7 @@
 
             const pausarTarefasEmExecucaoAutomatico = (motivoPreDefinido) => {
                 tasks.forEach(task => {
-                    const ultimoLog = task.timeLogs && task.timeLogs.length > 0 ? t.timeLogs[t.timeLogs.length - 1] : null;
+                    const ultimoLog = task.timeLogs && task.timeLogs.length > 0 ? task.timeLogs[task.timeLogs.length - 1] : null;
                     if (ultimoLog && ultimoLog.type === 'start' && ultimoLog.by === currentUser) {
                         if (!task.timeLogs) task.timeLogs = [];
                         task.timeLogs.push({
@@ -1122,16 +1538,26 @@
             }).join('<br>');
         }
 
+        /* --- FILTRO INTELIGENTE E RENDERIZAÇÃO DE TAREFAS --- */
         function renderTasks() {
             const taskList = document.getElementById('taskList'); if(!taskList) return;
             taskList.innerHTML = '';
             
-            const filtro = document.getElementById('queueUserFilter').value;
+            const filtroUsuario = document.getElementById('queueUserFilter').value;
+            const filtroAcao = document.getElementById('filterActionSelect').value;
             const textoBusca = document.getElementById('taskSearchBar').value.toLowerCase().trim();
             
             let filteredTasks = tasks.filter(t => {
-                if (filtro === 'minhas') return t.responsibles && t.responsibles.includes(currentUser);
-                if (filtro !== 'todos' && filtro !== 'minhas') return t.responsibles && t.responsibles.includes(filtro);
+                if (filtroUsuario === 'minhas') {
+                    if (!t.responsibles || !t.responsibles.includes(currentUser)) return false;
+                } else if (filtroUsuario !== 'todos') {
+                    if (!t.responsibles || !t.responsibles.includes(filtroUsuario)) return false;
+                }
+
+                if (filtroAcao !== 'todos' && t.action !== filtroAcao) {
+                    return false;
+                }
+
                 return true;
             });
 
@@ -1141,12 +1567,17 @@
                     const nasInstrucoes = t.desc ? t.desc.toLowerCase().includes(textoBusca) : false;
                     const naCategoria = t.category ? t.category.toLowerCase().includes(textoBusca) : false;
                     const noSolicitante = t.requester ? t.requester.toLowerCase().includes(textoBusca) : false;
-                    return noTitulo || nasInstrucoes || naCategoria || noSolicitante;
+                    const naAcao = t.action ? t.action.toLowerCase().includes(textoBusca) : false;
+                    const dataBr = t.deadline ? t.deadline.split('-').reverse().join('/') : '';
+                    const noPrazo = t.deadline ? (t.deadline.includes(textoBusca) || dataBr.includes(textoBusca)) : false;
+                    const nosResponsaveis = t.responsibles ? t.responsibles.some(r => nomesExibicao[r] && nomesExibicao[r].toLowerCase().includes(textoBusca)) : false;
+
+                    return noTitulo || nasInstrucoes || naCategoria || noSolicitante || naAcao || noPrazo || nosResponsaveis;
                 });
             }
 
             filteredTasks.sort((a, b) => a.priority - b.priority || new Date(a.deadline) - new Date(b.deadline));
-            if (filteredTasks.length === 0) { taskList.innerHTML = '<p style="color: #999; text-align: center; padding: 35px;">Nenhuma atividade localizada.</p>'; return; }
+            if (filteredTasks.length === 0) { taskList.innerHTML = '<p style="color: #999; text-align: center; padding: 35px;">Nenhuma atividade localizada com os filtros selecionados.</p>'; return; }
 
             const hoje = new Date().toISOString().split('T')[0];
 
@@ -1248,7 +1679,7 @@
             if (database) {
                 database.ref('tasks/ativas/' + id).set(task).then(() => {
                     fecharModalEdicao();
-                    alert("Tarefa updated successfully!");
+                    alert("Tarefa atualizada com sucesso!");
                 });
             }
         }
@@ -1510,7 +1941,221 @@
 
         function fecharFullscreenDetails() { document.getElementById('fullscreenDetailsModal').style.display = 'none'; }
 
-        // Linha abaixo alterada para contornar a limitação de aspas em strings literais para os métodos exportados
+        /* --- MODAL E EXPORTAÇÃO PDF PERSONALIZADO --- */
+        function abrirModalOpcoesPDF() {
+            // Mostrar ou ocultar opção de cubagem dependendo do usuário
+            const optWrapper = document.getElementById('pdfCubagemOptionWrapper');
+            if (currentUser === 'admin' || currentUser === 'usuario_3') {
+                optWrapper.style.display = 'flex';
+            } else {
+                optWrapper.style.display = 'none';
+                document.getElementById('pdfOptCubagem').checked = false;
+            }
+            document.getElementById('pdfOptionsModal').style.display = 'flex';
+        }
+
+        function fecharModalOpcoesPDF() {
+            document.getElementById('pdfOptionsModal').style.display = 'none';
+        }
+
+        function gerarPDFPersonalizado() {
+            const incMetrics = document.getElementById('pdfOptMetrics').checked;
+            const incTime = document.getElementById('pdfOptTimeReport').checked;
+            const incTasks = document.getElementById('pdfOptTasks').checked;
+            const incPauses = document.getElementById('pdfOptPauses').checked;
+            const incDesc = document.getElementById('pdfOptDesc').checked;
+            const incCubagem = document.getElementById('pdfOptCubagem').checked;
+
+            fecharModalOpcoesPDF();
+
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF();
+            let currentY = 15;
+
+            // Cabeçalho Principal
+            doc.setFontSize(16);
+            doc.setTextColor(41, 128, 185);
+            doc.text("ENGENHARIA E MODELAGEM - RELATÓRIO EXECUTIVO", 14, currentY);
+            currentY += 8;
+
+            doc.setFontSize(9);
+            doc.setTextColor(100);
+            doc.text(`Gerado em: ${new Date().toLocaleString('pt-BR')} | Período: ${document.getElementById('reportPeriod').value.toUpperCase()} | Emitido por: ${nomesExibicao[currentUser] || 'Sistema'}`, 14, currentY);
+            currentY += 10;
+
+            // 1. MÉTRICAS E INDICADORES
+            if (incMetrics) {
+                const metrics = getFilteredMetrics();
+                doc.setFontSize(12);
+                doc.setTextColor(44, 62, 80);
+                doc.text("1. Resumo de Indicadores Gerais", 14, currentY);
+                currentY += 4;
+
+                doc.autoTable({
+                    startY: currentY,
+                    head: [['Concluídas no Prazo', 'Concluídas fora do Prazo', 'Tarefas Pendentes', 'Total Filtrado']],
+                    body: [[metrics.noPrazo, metrics.foraPrazo, metrics.pendentes, metrics.noPrazo + metrics.foraPrazo + metrics.pendentes]],
+                    theme: 'grid',
+                    headStyles: { fillColor: [41, 128, 185] },
+                    styles: { fontSize: 9, halign: 'center' }
+                });
+                currentY = doc.lastAutoTable.finalY + 10;
+            }
+
+            // 2. RELATÓRIO DE TEMPO POR COLABORADOR
+            if (incTime) {
+                doc.setFontSize(12);
+                doc.setTextColor(44, 62, 80);
+                doc.text("2. Relatório de Horas por Colaborador", 14, currentY);
+                currentY += 4;
+
+                const rowsTempo = [];
+                const chavesEquipe = ['admin', 'usuario_1', 'usuario_2', 'usuario_3', 'usuario_4', 'usuario_5'];
+                const metrics = getFilteredMetrics();
+                const hojeStr = new Date().toISOString().split('T')[0];
+                const agoraMs = new Date().getTime();
+
+                chavesEquipe.forEach(userKey => {
+                    let totalTrabalhoMin = 0; let totalInterrupcoesMin = 0; let totalAlmoçoMin = 0; let descansoLegalMin = 0;
+                    const itemJornada = jornadas[userKey];
+                    const [hIn, mIn] = itemJornada.in.split(':').map(Number); 
+                    const [hOut, mOut] = itemJornada.out.split(':').map(Number);
+                    
+                    const configAlmoco = almocosPadrao[userKey];
+                    if (configAlmoco && configAlmoco.in && configAlmoco.out) {
+                        const [hAlmIn, mAlmIn] = configAlmoco.in.split(':').map(Number);
+                        const [hAlmOut, mAlmOut] = configAlmoco.out.split(':').map(Number);
+                        if (metrics.apenasHoje && agoraMs >= new Date().setHours(hAlmIn, mAlmIn)) { totalAlmoçoMin = (hAlmOut*60+mAlmOut) - (hAlmIn*60+mAlmIn); }
+                        else if (!metrics.apenasHoje) { totalAlmoçoMin = (hAlmOut*60+mAlmOut) - (hAlmIn*60+mAlmIn); }
+                    }
+
+                    if(metrics.apenasHoje && descansoLogs[hojeStr]?.[userKey]) {
+                        descansoLegalMin = Math.round(((descansoLogs[hojeStr][userKey].end || agoraMs) - descansoLogs[hojeStr][userKey].start) / 1000 / 60);
+                    }
+
+                    let janelaTotalMinutosHoje = 0;
+                    if (new Date().getDay() >= 1 && agoraMs > new Date().setHours(hIn, mIn)) {
+                        janelaTotalMinutosHoje = Math.round((Math.min(new Date().setHours(hOut, mOut), agoraMs) - new Date().setHours(hIn, mIn)) / 1000 / 60);
+                    }
+
+                    if (userKey === 'admin') {
+                        if (metrics.apenasHoje) { totalTrabalhoMin = Math.max(0, janelaTotalMinutosHoje - totalAlmoçoMin - descansoLegalMin); }
+                        else { totalTrabalhoMin = (hOut * 60 + mOut) - (hIn * 60 + mIn) - totalAlmoçoMin; }
+                        totalInterrupcoesMin = 0; 
+                    } else {
+                        const tempos = calcularTempoTrabalhoEInterrupcoes(userKey, metrics.dataCorte, metrics.apenasHoje);
+                        totalTrabalhoMin = tempos.trabalho; totalInterrupcoesMin = tempos.interrupcao;
+                    }
+
+                    let totalOciosoMin = metrics.apenasHoje ? Math.max(0, janelaTotalMinutosHoje - totalTrabalhoMin - totalAlmoçoMin - descansoLegalMin - totalInterrupcoesMin) : 0;
+                    const formatTime = (min) => min > 0 ? `${Math.floor(min/60)}h ${min%60}m` : "0m";
+
+                    rowsTempo.push([
+                        nomesExibicao[userKey],
+                        `${itemJornada.in} ás ${itemJornada.out}`,
+                        formatTime(totalTrabalhoMin),
+                        formatTime(totalAlmoçoMin),
+                        formatTime(descansoLegalMin),
+                        formatTime(totalInterrupcoesMin),
+                        metrics.apenasHoje ? formatTime(totalOciosoMin) : 'Visão Diária'
+                    ]);
+                });
+
+                doc.autoTable({
+                    startY: currentY,
+                    head: [['Funcionário', 'Jornada', 'Trabalho', 'Almoço', 'Descanso', 'Interrupções', 'Ociosidade']],
+                    body: rowsTempo,
+                    theme: 'striped',
+                    headStyles: { fillColor: [44, 62, 80] },
+                    styles: { fontSize: 8, halign: 'center' }
+                });
+                currentY = doc.lastAutoTable.finalY + 10;
+            }
+
+            // 3. DETALHAMENTO DE TAREFAS
+            if (incTasks) {
+                if (currentY > 230) { doc.addPage(); currentY = 15; }
+                
+                doc.setFontSize(12);
+                doc.setTextColor(44, 62, 80);
+                doc.text("3. Tabela Detalhada de Tarefas e Produção", 14, currentY);
+                currentY += 4;
+
+                const todasTarefas = [...tasks, ...historicTasks];
+                const rowsTarefas = todasTarefas.map(t => {
+                    let detalheExtra = "";
+                    if (incDesc && t.desc) detalheExtra += `Instruções: ${t.desc}
+`;
+                    if (incPauses && t.timeLogs) {
+                        const pausas = t.timeLogs.filter(l => l.type === 'pause');
+                        if (pausas.length > 0) {
+                            detalheExtra += "Pausas: " + pausas.map(p => `[${p.byName} | Sol: ${p.requestedBy||'N/I'} | Motivo: ${p.reason}]`).join("; ");
+                        }
+                    }
+
+                    return [
+                        t.title || 'Sem título',
+                        t.requester || 'Não informado',
+                        t.category || 'KIT',
+                        t.action || 'Geral',
+                        t.responsibles ? t.responsibles.map(r => nomesExibicao[r]).join(', ') : 'Setor',
+                        t.deadline ? t.deadline.split('-').reverse().join('/') : '',
+                        t.dateFinished ? '✓ Concluída' : '▶️ Ativa',
+                        detalheExtra || 'Sem observações'
+                    ];
+                });
+
+                doc.autoTable({
+                    startY: currentY,
+                    head: [['Modelo/Referência', 'Solicitante', 'Cat.', 'Ação', 'Responsáveis', 'Prazo', 'Status', 'Observações / Pausas']],
+                    body: rowsTarefas,
+                    theme: 'grid',
+                    headStyles: { fillColor: [41, 128, 185] },
+                    styles: { fontSize: 7, cellPadding: 2 },
+                    columnStyles: { 7: { cellWidth: 50 } }
+                });
+                currentY = doc.lastAutoTable.finalY + 10;
+            }
+
+            // 4. RESUMO DE CUBAGEM (MATÉRIA-PRIMA)
+            if (incCubagem && (currentUser === 'admin' || currentUser === 'usuario_3')) {
+                if (currentY > 220) { doc.addPage(); currentY = 15; }
+
+                doc.setFontSize(12);
+                doc.setTextColor(44, 62, 80);
+                doc.text("4. Dados e Resumo de Matéria-Prima (Calculadora de Cubagem)", 14, currentY);
+                currentY += 4;
+
+                const cat = document.getElementById('prod_categoria').value;
+                const codigo = document.getElementById('prod_codigo').value || "Não informado";
+                const nomeProd = document.getElementById('prod_nome').value || "Não informado";
+
+                const rowsCubagem = [];
+                rowsCubagem.push(["Identificação do Produto", `Código: ${codigo} | Modelo: ${nomeProd} | Categoria: ${cat}`]);
+
+                const cardsCubagem = document.querySelectorAll('#dashboard-resultados .card');
+                cardsCubagem.forEach(card => {
+                    const title = card.querySelector('.card-title')?.innerText || '';
+                    const val = card.querySelector('.card-value')?.innerText || '';
+                    const sub = card.querySelector('.card-sub')?.innerText || '';
+                    if (title && val) {
+                        rowsCubagem.push([title, `${val} ${sub ? '(' + sub + ')' : ''}`]);
+                    }
+                });
+
+                doc.autoTable({
+                    startY: currentY,
+                    head: [['Especificação / Material', 'Resultado Consolidado / Medição']],
+                    body: rowsCubagem,
+                    theme: 'striped',
+                    headStyles: { fillColor: [221, 107, 32] },
+                    styles: { fontSize: 8 }
+                });
+            }
+
+            doc.save(`Relatorio_Personalizado_${new Date().toISOString().split('T')[0]}.pdf`);
+        }
+
         function exportExcel() {
             let linhas = [["Funcionário", "Solicitante", "Tarefa", "Data Conclusão", "Status", "Pausas / Motivos"]];
             historicTasks.forEach(t => { 
@@ -1522,14 +2167,7 @@
         }
 
         function exportPDF() {
-            const { jsPDF } = window.jspdf; const doc = new jsPDF();
-            doc.setFontSize(16); doc.text("RELATÓRIO OPERACIONAL E ESTATÍSTICO", 14, 20);
-            let corpo = historicTasks.map(t => {
-                let pausasTexto = t.timeLogs ? t.timeLogs.filter(l => l.type === 'pause').map(l => `${l.reason} (Sol: ${l.requestedBy||'N/I'})`).join(', ') : 'Nenhuma';
-                return [t.userWhoFinishedName||'Setor', t.requester||'Não informado', t.title, t.dateFinished, t.onTime?"No Prazo":"Atrasado", pausasTexto];
-            });
-            doc.autoTable({ startY: 30, head: [['Responsável', 'Solicitante', 'Modelo', 'Conclusão', 'Status', 'Pausas']], body: corpo });
-            doc.save("Relatorio_Setorial.pdf");
+            abrirModalOpcoesPDF();
         }
 
         function salvarConfiguracaoEquipe() {
@@ -1585,6 +2223,285 @@
             }
             document.getElementById('taskForm').reset(); alert("Tarefa enviada!");
         });
+
+        /* --- LÓGICA DA CALCULADORA DE CUBAGEM --- */
+        const partesBancos = [
+            { id: "ED", letra: "B" }, { id: "AD", letra: "C" }, { id: "ET", letra: "D" },
+            { id: "AT", letra: "E" }, { id: "ETPM", letra: "G" }, { id: "ATPM", letra: "H" }
+        ];
+
+        const partesAPC = [
+            { id: "PORTAS", letra: "F" }, { id: "PAINEL", letra: "F" },
+            { id: "APC", letra: "A" }, { id: "APB", letra: "A" }, { id: "CONSOLE", letra: "A" }
+        ];
+
+        function toggleAdminTool() {
+            const p = document.getElementById('painel-admin-tool');
+            p.style.display = (p.style.display === 'block') ? 'none' : 'block';
+        }
+
+        function alternarThermoflex() {
+            const usa = document.getElementById('usa_thermoflex').value;
+            const el = document.getElementById('f-alt-thermo');
+            if(el) {
+                el.style.display = (usa === 'Sim') ? 'flex' : 'none';
+                if(usa === 'Nao') document.getElementById('alt_thermo').value = 0;
+            }
+            calcularTudo();
+        }
+
+        function alternarFluxoCategoria() {
+            const cat = document.getElementById('prod_categoria').value;
+            const isKit = cat === 'KIT';
+
+            document.getElementById('f-tipo-kit').style.display = isKit ? 'flex' : 'none';
+            document.getElementById('f-qtd-cores').style.display = isKit ? 'flex' : 'none';
+            document.getElementById('opcoes-corte-kit').style.display = isKit ? 'flex' : 'none';
+
+            document.getElementById('campos-cubagem-kit').style.display = isKit ? 'grid' : 'none';
+            document.getElementById('campos-cubagem-piso').style.display = isKit ? 'none' : 'grid';
+
+            document.getElementById('bloco-tabelas-kit').style.display = isKit ? 'block' : 'none';
+            document.getElementById('bloco-tabelas-piso').style.display = isKit ? 'none' : 'block';
+
+            if(isKit) renderizarCamposCubagemKit();
+            calcularTudo();
+        }
+
+        function renderizarCamposCubagemKit() {
+            const qtdCores = parseInt(document.getElementById('prod_qtd_cores').value) || 1;
+            const container = document.getElementById('campos-cubagem-kit');
+            
+            const valoresAntigos = {};
+            container.querySelectorAll('input').forEach(i => valoresAntigos[i.id] = i.value);
+
+            let html = '';
+
+            for(let i = 1; i <= qtdCores; i++) {
+                let sufixo = qtdCores > 1 ? ` Cor ${i}` : '';
+                let idSufixo = `_c${i}`;
+
+                html += `
+                    <div class="form-group"><label style="color:#dd6b20;">COURO${sufixo} - Comprimento (cm):</label><input type="number" id="alt_couro${idSufixo}" value="${valoresAntigos[`alt_couro${idSufixo}`] || 0}" oninput="calcularTudo()"></div>
+                    <div class="form-group"><label>Vinil Espuma Média${sufixo} - Comprimento (cm):</label><input type="number" id="alt_v_media${idSufixo}" value="${valoresAntigos[`alt_v_media${idSufixo}`] || 0}" oninput="calcularTudo()"></div>
+                    <div class="form-group"><label>Vinil Espuma Fina${sufixo} - Comprimento (cm):</label><input type="number" id="alt_v_fina${idSufixo}" value="${valoresAntigos[`alt_v_fina${idSufixo}`] || 0}" oninput="calcularTudo()"></div>
+                    <div class="form-group"><label>Vinil Sem Espuma${sufixo} - Comprimento (cm):</label><input type="number" id="alt_v_sem${idSufixo}" value="${valoresAntigos[`alt_v_sem${idSufixo}`] || 0}" oninput="calcularTudo()"></div>
+                `;
+            }
+
+            html += `
+                <div class="form-group"><label style="color:#38a169;">Espuma Média - Comprimento (cm):</label><input type="number" id="alt_e_media" value="${valoresAntigos['alt_e_media'] || 0}" oninput="calcularTudo()"></div>
+                <div class="form-group"><label style="color:#38a169;">Espuma Fina - Comprimento (cm):</label><input type="number" id="alt_e_fina" value="${valoresAntigos['alt_e_fina'] || 0}" oninput="calcularTudo()"></div>
+            `;
+
+            const usaThermo = document.getElementById('usa_thermoflex').value;
+            let displayThermo = usaThermo === "Sim" ? "flex" : "none";
+            html += `
+                <div class="form-group" id="f-alt-thermo" style="display:${displayThermo};"><label style="color:#805ad5;">Thermoflex - Comprimento (cm):</label><input type="number" id="alt_thermo" value="${valoresAntigos['alt_thermo'] || 0}" oninput="calcularTudo()"></div>
+            `;
+
+            container.innerHTML = html;
+            calcularTudo();
+        }
+
+        function inicializarCubagemTool() {
+            const cb = document.getElementById('corpo-bancos');
+            if (!cb) return;
+            cb.innerHTML = '';
+            partesBancos.forEach(p => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td class="part-header">${p.id} (${p.letra})</td>
+                    <td><input type="number" class="input-table" data-mat="GUARNIÇÃO J" value="0" oninput="calcularTudo()"><span class="unit-label">m</span></td>
+                    <td><input type="number" class="input-table" data-mat="GUARNIÇÃO SETA" value="0" oninput="calcularTudo()"><span class="unit-label">m</span></td>
+                    <td><input type="number" class="input-table" data-mat="VELCRO ORIGINAL" value="0" oninput="calcularTudo()"><span class="unit-label">m</span></td>
+                    <td><input type="number" class="input-table" data-mat="VELCRO MACHO" value="0" oninput="calcularTudo()"><span class="unit-label">m</span></td>
+                    <td><input type="number" class="input-table" data-mat="VELCRO FEMEA" value="0" oninput="calcularTudo()"><span class="unit-label">m</span></td>
+                    <td><input type="number" class="input-table" data-mat="ZIPPER" value="0" oninput="calcularTudo()"><span class="unit-label">m</span></td>
+                    <td><input type="number" class="input-table" data-mat="PALETA DE BOLSA" value="0" oninput="calcularTudo()"><span class="unit-label">m</span></td>
+                    <td><input type="number" class="input-table" data-mat="ELÁSTICO" value="0" oninput="calcularTudo()"><span class="unit-label">m</span></td>
+                `;
+                cb.appendChild(tr);
+            });
+
+            const ca = document.getElementById('corpo-apc');
+            if (!ca) return;
+            ca.innerHTML = '';
+            partesAPC.forEach(p => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td class="part-header">${p.id} (${p.letra})</td>
+                    <td><input type="number" class="input-table" data-mat="GUARNIÇÃO J" value="0" oninput="calcularTudo()"><span class="unit-label">m</span></td>
+                    <td><input type="number" class="input-table" data-mat="GUARNIÇÃO SETA" value="0" oninput="calcularTudo()"><span class="unit-label">m</span></td>
+                    <td><input type="number" class="input-table" data-mat="VELCRO ORIGINAL" value="0" oninput="calcularTudo()"><span class="unit-label">m</span></td>
+                    <td><input type="number" class="input-table" data-mat="VELCRO MACHO" value="0" oninput="calcularTudo()"><span class="unit-label">m</span></td>
+                    <td><input type="number" class="input-table" data-mat="VELCRO FEMEA" value="0" oninput="calcularTudo()"><span class="unit-label">m</span></td>
+                    <td><input type="number" class="input-table" data-mat="ZIPPER" value="0" oninput="calcularTudo()"><span class="unit-label">m</span></td>
+                    <td><input type="number" class="input-table" data-mat="ELÁSTICO" value="0" oninput="calcularTudo()"><span class="unit-label">m</span></td>
+                `;
+                ca.appendChild(tr);
+            });
+            
+            renderizarCamposCubagemKit();
+        }
+
+        function cmParaM2(comprimentoCm) {
+            const larguraConfig = parseFloat(document.getElementById('cfg_largura').value) || 138;
+            return (larguraConfig / 100) * ((parseFloat(comprimentoCm) || 0) / 100);
+        }
+
+        function calcularTudo() {
+            const categoria = document.getElementById('prod_categoria').value;
+            const prodCodigo = document.getElementById('prod_codigo').value || "Não informado";
+            const prodNome = document.getElementById('prod_nome').value || "Não informado";
+            
+            const pCouro = (parseFloat(document.getElementById('cfg_perda_couro').value) || 0) / 100;
+            const pOutros = (parseFloat(document.getElementById('cfg_perda_outros').value) || 0) / 100;
+
+            const dash = document.getElementById('dashboard-resultados');
+            if (!dash) return;
+            dash.innerHTML = '';
+
+            dash.innerHTML += `
+                <div class="card prod-info">
+                    <div class="card-title">📦 Produto Em Medição (${categoria})</div>
+                    <div style="font-size:14px; margin-top:5px;">
+                        <strong>Código:</strong> ${prodCodigo} | <strong>Modelo/Nome:</strong> ${prodNome}
+                    </div>
+                </div>
+            `;
+
+            if (categoria === "KIT") {
+                const tipoCorte = document.getElementById('tipo_corte').value;
+                const qtdCores = parseInt(document.getElementById('prod_qtd_cores').value) || 1;
+                const usaThermo = document.getElementById('usa_thermoflex').value;
+
+                let percCouro = 0, percVinil = 0;
+                if (tipoCorte === "70/30") { percCouro = 0.7; percVinil = 0.3; }
+                else if (tipoCorte === "50/50") { percCouro = 0.5; percVinil = 0.5; }
+                else if (tipoCorte === "40/60") { percCouro = 0.4; percVinil = 0.6; }
+                else if (tipoCorte === "30/70") { percCouro = 0.3; percVinil = 0.7; }
+                else if (tipoCorte === "100V") { percCouro = 0; percVinil = 1; }
+                else if (tipoCorte === "100C") { percCouro = 1; percVinil = 0; }
+
+                for (let i = 1; i <= qtdCores; i++) {
+                    let labelSufixo = qtdCores > 1 ? ` Cor ${i}` : '';
+                    let idSufixo = `_c${i}`;
+
+                    const cmC = parseFloat(document.getElementById(`alt_couro${idSufixo}`)?.value) || 0;
+                    const m2CBase = cmParaM2(cmC) * percCouro;
+                    if(m2CBase > 0) {
+                        dash.innerHTML += `
+                            <div class="card destaque-c">
+                                <div class="card-title">COURO${labelSufixo} [Corte: ${tipoCorte}] <span class="badge-perda">${(pCouro*100).toFixed(0)}% Perda</span></div>
+                                <div class="card-value">${(m2CBase * (1 + pCouro)).toFixed(2)} m²</div>
+                                <div class="card-sub">Líquido: ${m2CBase.toFixed(2)} m²</div>
+                            </div>`;
+                    }
+
+                    const cmVM = parseFloat(document.getElementById(`alt_v_media${idSufixo}`)?.value) || 0;
+                    const m2VMBase = cmParaM2(cmVM) * percVinil;
+                    if(m2VMBase > 0) {
+                        dash.innerHTML += `
+                            <div class="card destaque-v">
+                                <div class="card-title">VINIL ESPUMA MÉDIA${labelSufixo} [Corte: ${tipoCorte}] <span class="badge-perda v-e">${(pOutros*100).toFixed(0)}% Perda</span></div>
+                                <div class="card-value">${(m2VMBase * (1 + pOutros)).toFixed(2)} m²</div>
+                                <div class="card-sub">Líquido: ${m2VMBase.toFixed(2)} m²</div>
+                            </div>`;
+                    }
+
+                    const cmVF = parseFloat(document.getElementById(`alt_v_fina${idSufixo}`)?.value) || 0;
+                    const m2VFBase = cmParaM2(cmVF) * percVinil;
+                    if(m2VFBase > 0) {
+                        dash.innerHTML += `
+                            <div class="card destaque-v">
+                                <div class="card-title">VINIL ESPUMA FINA${labelSufixo} [Corte: ${tipoCorte}] <span class="badge-perda v-e">${(pOutros*100).toFixed(0)}% Perda</span></div>
+                                <div class="card-value">${(m2VFBase * (1 + pOutros)).toFixed(2)} m²</div>
+                                <div class="card-sub">Líquido: ${m2VFBase.toFixed(2)} m²</div>
+                            </div>`;
+                    }
+
+                    const cmVS = parseFloat(document.getElementById(`alt_v_sem${idSufixo}`)?.value) || 0;
+                    const m2VSBase = cmParaM2(cmVS) * percVinil;
+                    if(m2VSBase > 0) {
+                        dash.innerHTML += `
+                            <div class="card destaque-v">
+                                <div class="card-title">VINIL SEM ESPUMA${labelSufixo} [Corte: ${tipoCorte}] <span class="badge-perda v-e">${(pOutros*100).toFixed(0)}% Perda</span></div>
+                                <div class="card-value">${(m2VSBase * (1 + pOutros)).toFixed(2)} m²</div>
+                                <div class="card-sub">Líquido: ${m2VSBase.toFixed(2)} m²</div>
+                            </div>`;
+                    }
+                }
+
+                const espMedM2 = cmParaM2(document.getElementById('alt_e_media')?.value || 0);
+                const espFinM2 = cmParaM2(document.getElementById('alt_e_fina')?.value || 0);
+                const thermoM2 = (usaThermo === "Sim") ? cmParaM2(document.getElementById('alt_thermo')?.value || 0) : 0;
+
+                if (espMedM2 > 0) {
+                    dash.innerHTML += `
+                        <div class="card destaque-e">
+                            <div class="card-title">ESPUMA MÉDIA <span class="badge-perda v-e">${(pOutros*100).toFixed(0)}% Perda</span></div>
+                            <div class="card-value">${(espMedM2 * (1 + pOutros)).toFixed(2)} m²</div>
+                            <div class="card-sub">Líquido: ${espMedM2.toFixed(2)} m²</div>
+                        </div>`;
+                }
+                if (espFinM2 > 0) {
+                    dash.innerHTML += `
+                        <div class="card destaque-e">
+                            <div class="card-title">ESPUMA FINA <span class="badge-perda v-e">${(pOutros*100).toFixed(0)}% Perda</span></div>
+                            <div class="card-value">${(espFinM2 * (1 + pOutros)).toFixed(2)} m²</div>
+                            <div class="card-sub">Líquido: ${espFinM2.toFixed(2)} m²</div>
+                        </div>`;
+                }
+                if (thermoM2 > 0) {
+                    dash.innerHTML += `
+                        <div class="card destaque-t">
+                            <div class="card-title">THERMOFLEX <span class="badge-perda t-p">${(pOutros*100).toFixed(0)}% Perda</span></div>
+                            <div class="card-value">${(thermoM2 * (1 + pOutros)).toFixed(2)} m²</div>
+                            <div class="card-sub">Líquido: ${thermoM2.toFixed(2)} m²</div>
+                        </div>`;
+                }
+
+                const lineares = { "GUARNIÇÃO J":0, "GUARNIÇÃO SETA":0, "VELCRO ORIGINAL":0, "VELCRO MACHO":0, "VELCRO FEMEA":0, "ZIPPER":0, "PALETA DE BOLSA":0, "ELÁSTICO":0 };
+                document.querySelectorAll('#tabCubagem .input-table').forEach(input => {
+                    lineares[input.getAttribute('data-mat')] += parseFloat(input.value) || 0;
+                });
+                for (const [mat, m] of Object.entries(lineares)) {
+                    if (m > 0) {
+                        dash.innerHTML += `<div class="card"><div class="card-title">${mat} (SOMA TOTAL)</div><div class="card-value">${m.toFixed(2)} m</div></div>`;
+                    }
+                }
+
+            } else {
+                const evaM2 = cmParaM2(document.getElementById('alt_piso_eva').value);
+                const vinilSemEspM2 = cmParaM2(document.getElementById('alt_piso_sem_esp').value);
+
+                if (evaM2 > 0) {
+                    dash.innerHTML += `
+                        <div class="card destaque-v">
+                            <div class="card-title">VINIL DUBLADO COM EVA <span class="badge-perda v-e">${(pOutros*100).toFixed(0)}% Perda</span></div>
+                            <div class="card-value">${(evaM2 * (1 + pOutros)).toFixed(2)} m²</div>
+                            <div class="card-sub">Líquido: ${evaM2.toFixed(2)} m²</div>
+                        </div>`;
+                }
+                if (vinilSemEspM2 > 0) {
+                    dash.innerHTML += `
+                        <div class="card destaque-v">
+                            <div class="card-title">VINIL SEM ESPUMA (PISO) <span class="badge-perda v-e">${(pOutros*100).toFixed(0)}% Perda</span></div>
+                            <div class="card-value">${(vinilSemEspM2 * (1 + pOutros)).toFixed(2)} m²</div>
+                            <div class="card-sub">Líquido: ${vinilSemEspM2.toFixed(2)} m²</div>
+                        </div>`;
+                }
+
+                document.querySelectorAll('#tabCubagem .input-table-piso').forEach(input => {
+                    const mat = input.getAttribute('data-piso');
+                    const m = parseFloat(input.value) || 0;
+                    if (m > 0) {
+                        dash.innerHTML += `<div class="card"><div class="card-title">${mat} (SOMA TOTAL)</div><div class="card-value">${m.toFixed(2)} m</div></div>`;
+                    }
+                });
+            }
+        }
     </script>
 </body>
 </html>
