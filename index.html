@@ -1299,15 +1299,40 @@
 
         function atualizarNomesNoSeletorLogin() {
             const select = document.getElementById('loginUser');
-            select.options[0].text = nomesExibicao['admin'];
-            for(let i=1; i<=5; i++) { select.options[i].text = nomesExibicao[`usuario_${i}`]; }
-            
-            if(document.getElementById('filterAdminName')) document.getElementById('filterAdminName').innerText = `Filtrar: ${nomesExibicao['admin']}`;
-            if(document.getElementById('filterUser1')) document.getElementById('filterUser1').innerText = `Filtrar: ${nomesExibicao['usuario_1']}`;
-            if(document.getElementById('filterUser2')) document.getElementById('filterUser2').innerText = `Filtrar: ${nomesExibicao['usuario_2']}`;
-            if(document.getElementById('filterUser3')) document.getElementById('filterUser3').innerText = `Filtrar: ${nomesExibicao['usuario_3']}`;
-            if(document.getElementById('filterUser4')) document.getElementById('filterUser4').innerText = `Filtrar: ${nomesExibicao['usuario_4']}`;
-            if(document.getElementById('filterUser5')) document.getElementById('filterUser5').innerText = `Filtrar: ${nomesExibicao['usuario_5']}`;
+            if (select && select.options.length > 0) {
+                select.options[0].text = nomesExibicao['admin'];
+                for(let i=1; i<=5; i++) { if(select.options[i]) select.options[i].text = nomesExibicao[`usuario_${i}`]; }
+            }
+
+            const queueSelect = document.getElementById('queueUserFilter');
+            if (queueSelect) {
+                const valAtual = queueSelect.value;
+                queueSelect.innerHTML = `
+                    <option value="todos">👁️ Ver todas as tarefas do setor</option>
+                    <option value="minhas">👤 Ver apenas minhas tarefas</option>
+                `;
+                
+                const chavesEquipe = ['admin', 'usuario_1', 'usuario_2', 'usuario_3', 'usuario_4', 'usuario_5'];
+                const agrupadoPorNome = {};
+                
+                chavesEquipe.forEach(k => {
+                    const nome = (nomesExibicao[k] || '').trim();
+                    if (nome) {
+                        if (!agrupadoPorNome[nome]) agrupadoPorNome[nome] = [];
+                        agrupadoPorNome[nome].push(k);
+                    }
+                });
+                
+                Object.keys(agrupadoPorNome).forEach(nome => {
+                    const opt = document.createElement('option');
+                    opt.value = agrupadoPorNome[nome].join(',');
+                    opt.textContent = `Filtrar: ${nome}`;
+                    queueSelect.appendChild(opt);
+                });
+                
+                queueSelect.value = valAtual;
+                if (!queueSelect.value) queueSelect.value = 'todos';
+            }
         }
 
         window.addEventListener('DOMContentLoaded', () => {
@@ -1551,7 +1576,8 @@
                 if (filtroUsuario === 'minhas') {
                     if (!t.responsibles || !t.responsibles.includes(currentUser)) return false;
                 } else if (filtroUsuario !== 'todos') {
-                    if (!t.responsibles || !t.responsibles.includes(filtroUsuario)) return false;
+                    const chavesFiltro = filtroUsuario.split(',');
+                    if (!t.responsibles || !t.responsibles.some(r => chavesFiltro.includes(r))) return false;
                 }
 
                 if (filtroAcao !== 'todos' && t.action !== filtroAcao) {
