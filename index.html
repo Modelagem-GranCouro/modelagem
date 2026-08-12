@@ -392,6 +392,7 @@
                             <optgroup label="Operações da Equipe">
                                 <option value="Fazer modelo novo">Fazer modelo novo</option>
                                 <option value="Alterar modelo existente">Alterar modelo existente</option>
+                                <option value="Auxílio técnico aos setores de produção">Auxílio técnico aos setores de produção</option>
                                 <option value="Cadastrar modelo novo">Cadastrar modelo novo</option>
                                 <option value="Alterar cadastro de um modelo existente">Alterar cadastro de um modelo existente</option>
                                 <option value="Digitalizar modelo novo">Digitalizar modelo novo</option>
@@ -400,15 +401,14 @@
                                 <option value="Desenvolver nova arte personalizada">Desenvolver nova arte personalizada</option>
                                 <option value="alterar personalizado existente">alterar personalizado existente</option>
                                 <option value="Criar bordado a partir da imagem disponibilizada">Criar bordado a partir da imagem disponibilizada</option>
+                                <option value="Fazer croqui">Fazer croqui</option>
+                                <option value="Alteração em croqui já existente">Alteração em croqui já existente</option>
                             </optgroup>
                             <optgroup label="Atividades do Líder/Gestor">
                                 <option value="Treinamento e Alinhamento da equipe">Treinamento e Alinhamento da equipe</option>
                                 <option value="Desenvolvimento de ferramentas e softwares setoriais">Desenvolvimento de ferramentas e softwares setoriais</option>
-                                <option value="Auxílio técnico aos setores de produção">Auxílio técnico aos setores de produção</option>
                                 <option value="Organização, planejamento e metas do setor">Organização, planejamento e metas do setor</option>
                                 <option value="Medição de consumo">Medição de consumo</option>
-                                <option value="Fazer croqui">Fazer croqui</option>
-                                <option value="Alteração em croqui já existente">Alteração em croqui já existente</option>
                             </optgroup>
                         </select>
                     </div>
@@ -468,19 +468,21 @@
                         <select id="filterActionSelect" class="form-control" style="width: 210px;" onchange="renderTasks()">
                             <option value="todos">Todas as Especificações</option>
                             <option value="Fazer modelo novo">Fazer modelo novo</option>
-                            <option value="Alterar modelo existente">Alterar modelo existente</option>
-                            <option value="Cadastrar modelo novo">Cadastrar modelo novo</option>
-                            <option value="Alterar cadastro de um modelo existente">Alterar cadastro de um modelo existente</option>
-                            <option value="Digitalizar modelo novo">Digitalizar modelo novo</option>
-                            <option value="Alterar modelo ja digitalizado">Alterar modelo ja digitalizado</option>
-                            <option value="Fazer personalizado">Fazer personalizado</option>
-                            <option value="Desenvolver nova arte personalizada">Desenvolver nova arte personalizada</option>
-                            <option value="alterar personalizado existente">alterar personalizado existente</option>
-                            <option value="Criar bordado a partir da imagem disponibilizada">Criar bordado a partir da imagem disponibilizada</option>
+                                <option value="Alterar modelo existente">Alterar modelo existente</option>
+                                <option value="Auxílio técnico aos setores de produção">Auxílio técnico aos setores de produção</option>
+                                <option value="Cadastrar modelo novo">Cadastrar modelo novo</option>
+                                <option value="Alterar cadastro de um modelo existente">Alterar cadastro de um modelo existente</option>
+                                <option value="Digitalizar modelo novo">Digitalizar modelo novo</option>
+                                <option value="Alterar modelo ja digitalizado">Alterar modelo ja digitalizado</option>
+                                <option value="Fazer personalizado">Fazer personalizado</option>
+                                <option value="Desenvolver nova arte personalizada">Desenvolver nova arte personalizada</option>
+                                <option value="alterar personalizado existente">alterar personalizado existente</option>
+                                <option value="Criar bordado a partir da imagem disponibilizada">Criar bordado a partir da imagem disponibilizada</option>
+                                <option value="Fazer croqui">Fazer croqui</option>
+                                <option value="Alteração em croqui já existente">Alteração em croqui já existente</option>
                         </select>
                         <select id="queueUserFilter" class="form-control" style="width: 220px;" onchange="renderTasks()">
                             <option value="todos">👁️ Ver todas as tarefas do setor</option>
-                            <option value="minhas">👤 Ver apenas minhas tarefas</option>
                             <option value="admin" id="filterAdminName">Filtrar: Wesley</option>
                             <option value="usuario_1" id="filterUser1">Filtrar: Modelista</option>
                             <option value="usuario_2" id="filterUser2">Filtrar: Auxiliar 1 (Cadastro)</option>
@@ -723,9 +725,9 @@
                     </div>
                 </div>
 
-                <div class="grid-inputs-unicos" id="campos-cubagem-kit"></div>
+                <div class="grid-inputs-unicos" id="campos-consumo-kit"></div>
 
-                <div class="grid-inputs-unicos" id="campos-cubagem-piso" style="display:none;">
+                <div class="grid-inputs-unicos" id="campos-consumo-piso" style="display:none;">
                     <div class="form-group"><label style="color:#3182ce;">Vinil Dublado com EVA - Comprimento (cm):</label><input type="number" id="alt_piso_eva" value="0" oninput="calcularTudo()"></div>
                     <div class="form-group"><label style="color:#4a5568;">Vinil Sem Espuma (Piso) - Comprimento (cm):</label><input type="number" id="alt_piso_sem_esp" value="0" oninput="calcularTudo()"></div>
                 </div>
