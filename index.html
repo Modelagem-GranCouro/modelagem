@@ -547,26 +547,55 @@
 
         <div id="sectorRating" class="rating-box rating-boa">REGULARIDADE DO SETOR: ATIVA</div>
 
-        <div class="metrics-grid">
-            <div class="metric-card" onclick="abrirDetalhamentoStatus('noPrazo')">
-                <h3 id="mNoPrazo" style="color: var(--success-color);">0</h3>
-                <p>CONCLUÍDAS NO PRAZO 🔍</p>
-            </div>
-            <div class="metric-card" onclick="abrirDetalhamentoStatus('foraPrazo')">
-                <h3 id="mForaPrazo" style="color: var(--danger-color);">0</h3>
-                <p>CONCLUÍDAS FORA DO PRAZO 🔍</p>
-            </div>
-            <div class="metric-card" onclick="abrirDetalhamentoStatus('pendentes')">
-                <h3 id="mPendentes" style="color: var(--warning-color);">0</h3>
-                <p>DEMANDAS PENDENTES 🔍</p>
-            </div>
-            <div class="metric-card" onclick="abrirDetalhamentoStatus('total')">
-                <h3 id="mTotal">0</h3>
-                <p>TOTAL FILTRADO 🔍</p>
-            </div>
-        </div>
+        <div class="metrics-grid" style="grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));">
+    <div class="metric-card" onclick="abrirDetalhamentoStatus('noPrazo')">
+        <h3 id="mNoPrazo" style="color: var(--success-color);">0</h3>
+        <p>CONCLUÍDAS NO PRAZO 🔍</p>
+    </div>
+    <div class="metric-card" onclick="abrirDetalhamentoStatus('foraPrazo')">
+        <h3 id="mForaPrazo" style="color: var(--danger-color);">0</h3>
+        <p>CONCLUÍDAS FORA DO PRAZO 🔍</p>
+    </div>
+    <div class="metric-card" onclick="abrirDetalhamentoStatus('pendentes')">
+        <h3 id="mPendentes" style="color: var(--warning-color);">0</h3>
+        <p>DEMANDAS PENDENTES 🔍</p>
+    </div>
+    <div class="metric-card">
+        <h3 id="mMainPause" style="color: #e67e22; font-size: 1.2rem;">-</h3>
+        <p>MAIOR MOTIVO DE PAUSA ⚠️</p>
+    </div>
+
+    <div class="metric-card">
+        <h3 id="mTempoMedio" style="color: var(--primary-color);">0h 0m</h3>
+        <p>TEMPO MÉDIO DE CONCLUSÃO ⏱️</p>
+    </div>
+    <div class="metric-card">
+        <h3 id="mTaxaRefazimento" style="color: #e67e22;">0%</h3>
+        <p>TAXA DE REFAZIMENTO 🔄</p>
+    </div>
+</div>
 
         <div class="charts-section">
+<div class="panel-box">
+    <h2>Desempenho Individual por Colaborador</h2>
+    <div class="table-responsive">
+        <table>
+            <thead>
+                <tr>
+                    <th>Colaborador</th>
+                    <th>Tarefas Concluídas</th>
+                    <th>No Prazo</th>
+                    <th>Atrasadas</th>
+                    <th>Eficiência (%)</th>
+                    <th>Tempo Médio / Tarefa</th>
+                    <th>Refazimentos / Alterações</th>
+                </tr>
+            </thead>
+            <tbody id="userPerformanceTableBody">
+                </tbody>
+        </table>
+    </div>
+</div>
             <div class="chart-container">
                 <h4 style="margin-bottom: 10px; font-size: 0.95rem; color: #555;">Gráfico de Eficiência Operacional</h4>
                 <canvas id="efficiencyChart"></canvas>
@@ -606,7 +635,7 @@
     <div id="tabCubagem" style="display: none;">
         <div class="container-cubagem">
             <header class="header-cubagem">
-                <h1>Sistema de Cubagem Automotiva</h1>
+                <h1>Medição de consumo por produto</h1>
                 <button class="btn-admin" onclick="toggleAdminTool()">⚙️ Painel Admin</button>
             </header>
 
@@ -2528,6 +2557,155 @@
                 });
             }
         }
+// 1. Alternar exibição do campo de datas personalizadas
+function toggleCustomDates() {
+    const period = document.getElementById('reportPeriod').value;
+    const customContainer = document.getElementById('customDateContainer');
+    if (period === 'custom') {
+        customContainer.style.display = 'flex';
+    } else {
+        customContainer.style.display = 'none';
+        updateReportDashboard(); // Atualiza automaticamente se mudar para um período pré-definido
+    }
+}
+
+// 2. Filtrar tarefas por período
+function getFilteredTasksByDate(tasksList) {
+    const period = document.getElementById('reportPeriod').value;
+    const now = new Date();
+    let startDate, endDate;
+
+    if (period === 'hoje') {
+        startDate = new Date(now.setHours(0,0,0,0));
+        endDate = new Date(now.setHours(23,59,59,999));
+    } else if (period === 'semanal') {
+        const firstDay = now.getDate() - now.getDay();
+        startDate = new Date(now.setDate(firstDay));
+        startDate.setHours(0,0,0,0);
+        endDate = new Date();
+        endDate.setHours(23,59,59,999);
+    } else if (period === 'quinzenal') {
+        startDate = new Date();
+        startDate.setDate(now.getDate() - 15);
+        startDate.setHours(0,0,0,0);
+        endDate = new Date();
+        endDate.setHours(23,59,59,999);
+    } else if (period === 'mensal') {
+        startDate = new Date(now.getFullYear(), now.getMonth(), 1);
+        endDate = new Date(now.getFullYear(), now.getMonth() + 1, 0, 23, 59, 59);
+    } else if (period === 'anual') {
+        startDate = new Date(now.getFullYear(), 0, 1);
+        endDate = new Date(now.getFullYear(), 11, 31, 23, 59, 59);
+    } else if (period === 'custom') {
+        const startVal = document.getElementById('reportStartDate').value;
+        const endVal = document.getElementById('reportEndDate').value;
+        if (!startVal || !endVal) return tasksList; // Retorna tudo caso não tenha selecionado
+        startDate = new Date(startVal + 'T00:00:00');
+        endDate = new Date(endVal + 'T23:59:59');
+    }
+
+    return tasksList.filter(task => {
+        // Usa a data de criação ou conclusão da tarefa para o filtro
+        const taskDate = task.completedAt ? new Date(task.completedAt) : new Date(task.createdAt);
+        return taskDate >= startDate && taskDate <= endDate;
+    });
+}
+
+// 3. Atualizar o Painel Principal de Relatórios com os Novos Indicadores
+function updateReportDashboard() {
+    // Exemplo: assumindo que 'allTasks' é o array global de tarefas cadastradas
+    const tasks = getFilteredTasksByDate(allTasks || []);
+    
+    const completedTasks = tasks.filter(t => t.status === 'concluida');
+    
+    // --- A. Tempo Médio de Conclusão ---
+    let totalSeconds = 0;
+    completedTasks.forEach(t => {
+        // timeSpent em segundos ou minutos dependendo de como está armazenado na sua lógica
+        totalSeconds += (t.totalTimeSpent || 0); 
+    });
+    
+    const avgSeconds = completedTasks.length > 0 ? (totalSeconds / completedTasks.length) : 0;
+    const avgHours = Math.floor(avgSeconds / 3600);
+    const avgMinutes = Math.floor((avgSeconds % 3600) / 60);
+    
+    document.getElementById('mTempoMedio').innerText = `${avgHours}h ${avgMinutes}m`;
+
+    // --- B. Taxa de Refazimento ---
+    // Identifica tarefas de refazimento/alteração pela especificação ou flag
+    const refazimentoKeywords = ['alterar', 'ajuste', 'refazer', 'revisar'];
+    const refazimentoTasks = tasks.filter(t => {
+        const action = (t.action || '').toLowerCase();
+        return refazimentoKeywords.some(kw => action.includes(kw)) || t.isRefazimento === true;
+    });
+
+    const taxaRefazimento = tasks.length > 0 ? ((refazimentoTasks.length / tasks.length) * 100).toFixed(1) : 0;
+    document.getElementById('mTaxaRefazimento').innerText = `${taxaRefazimento}%`;
+
+    // --- C. Desempenho Individual por Colaborador ---
+    renderUserPerformanceTable(tasks);
+}
+
+// 4. Renderizar Tabela de Desempenho por Colaborador
+function renderUserPerformanceTable(tasks) {
+    const tableBody = document.getElementById('userPerformanceTableBody');
+    if (!tableBody) return;
+
+    // Agrupa dados por usuário/colaborador
+    const statsByUser = {};
+
+    tasks.forEach(t => {
+        const user = t.assignedToName || t.assignedTo || 'Não atribuído';
+        if (!statsByUser[user]) {
+            statsByUser[user] = {
+                concluidas: 0,
+                noPrazo: 0,
+                atrasadas: 0,
+                tempoTotal: 0,
+                refazimentos: 0
+            };
+        }
+
+        if (t.status === 'concluida') {
+            statsByUser[user].concluidas++;
+            statsByUser[user].tempoTotal += (t.totalTimeSpent || 0);
+
+            if (t.wasLate) {
+                statsByUser[user].atrasadas++;
+            } else {
+                statsByUser[user].noPrazo++;
+            }
+        }
+
+        const action = (t.action || '').toLowerCase();
+        if (action.includes('alterar') || action.includes('refazer') || t.isRefazimento) {
+            statsByUser[user].refazimentos++;
+        }
+    });
+
+    // Gera o HTML da tabela
+    let html = '';
+    for (const [user, data] of Object.entries(statsByUser)) {
+        const eficiencia = data.concluidas > 0 ? ((data.noPrazo / data.concluidas) * 100).toFixed(1) : '0.0';
+        const avgSec = data.concluidas > 0 ? (data.tempoTotal / data.concluidas) : 0;
+        const avgH = Math.floor(avgSec / 3600);
+        const avgM = Math.floor((avgSec % 3600) / 60);
+
+        html += `
+            <tr>
+                <td style="text-align: left; font-weight: bold;">${user}</td>
+                <td>${data.concluidas}</td>
+                <td style="color: var(--success-color); font-weight: bold;">${data.noPrazo}</td>
+                <td style="color: var(--danger-color); font-weight: bold;">${data.atrasadas}</td>
+                <td><span class="user-badge">${eficiencia}%</span></td>
+                <td>${avgH}h ${avgM}m</td>
+                <td>${data.refazimentos}</td>
+            </tr>
+        `;
+    }
+
+    tableBody.innerHTML = html || '<tr><td colspan="7">Nenhum dado encontrado para o período selecionado.</td></tr>';
+}
     </script>
 </body>
 </html>
