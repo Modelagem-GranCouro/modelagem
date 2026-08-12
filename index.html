@@ -82,7 +82,7 @@
         .progress-bar-fill { background: var(--primary-color); height: 100%; width: 0%; transition: width 0.5s ease-in-out; }
         .goal-status { font-size: 0.8rem; margin-top: 5px; text-align: right; font-weight: bold; color: #666; }
 
-        .charts-section { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px; }
+        .charts-section { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; margin-bottom: 20px; }
         .chart-container { background: white; padding: 20px; border-radius: 8px; height: 320px; position: relative; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
         .table-responsive { width: 100%; overflow-x: auto; background: white; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.05); }
         table { width: 100%; border-collapse: collapse; }
@@ -140,155 +140,32 @@
         @keyframes fadeInUp { to { transform: translateY(0); opacity: 1; } }
 
         /* --- STYLES FOR THE CUBAGEM TOOL --- */
-        #tabCubagem {
-            margin-top: 10px;
-        }
-        #tabCubagem .container-cubagem {
-            max-width: 1200px;
-            margin: 0 auto;
-            background: #ffffff;
-            padding: 25px;
-            border-radius: 12px;
-            box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08);
-            color: #1a2530;
-        }
-        #tabCubagem header.header-cubagem {
-            text-align: center;
-            border-bottom: 3px solid #2b6cb0;
-            padding-bottom: 15px;
-            margin-bottom: 25px;
-            position: relative;
-            background: transparent;
-            box-shadow: none;
-            display: block;
-        }
-        #tabCubagem header.header-cubagem h1 {
-            margin: 0;
-            color: #2b6cb0;
-            font-size: 24px;
-            text-transform: uppercase;
-            letter-spacing: 1px;
-        }
-        #tabCubagem .btn-admin {
-            position: absolute;
-            right: 0;
-            top: 5px;
-            background: #4a5568;
-            color: white;
-            border: none;
-            padding: 8px 12px;
-            border-radius: 6px;
-            cursor: pointer;
-            font-size: 12px;
-            font-weight: bold;
-        }
+        #tabCubagem { margin-top: 10px; }
+        #tabCubagem .container-cubagem { max-width: 1200px; margin: 0 auto; background: #ffffff; padding: 25px; border-radius: 12px; box-shadow: 0 8px 24px rgba(0, 0, 0, 0.08); color: #1a2530; }
+        #tabCubagem header.header-cubagem { text-align: center; border-bottom: 3px solid #2b6cb0; padding-bottom: 15px; margin-bottom: 25px; position: relative; background: transparent; box-shadow: none; display: block; }
+        #tabCubagem header.header-cubagem h1 { margin: 0; color: #2b6cb0; font-size: 24px; text-transform: uppercase; letter-spacing: 1px; }
+        #tabCubagem .btn-admin { position: absolute; right: 0; top: 5px; background: #4a5568; color: white; border: none; padding: 8px 12px; border-radius: 6px; cursor: pointer; font-size: 12px; font-weight: bold; }
         #tabCubagem .btn-admin:hover { background: #2d3748; }
-        
-        #tabCubagem .admin-panel {
-            background: #fffaf0;
-            border: 2px dashed #dd6b20;
-            padding: 15px;
-            border-radius: 8px;
-            margin-bottom: 25px;
-            display: none;
-        }
-        #tabCubagem .admin-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
-            gap: 15px;
-            margin-top: 10px;
-        }
-
-        #tabCubagem .section-title {
-            background: #2b6cb0;
-            color: white;
-            padding: 10px 15px;
-            font-size: 15px;
-            font-weight: bold;
-            border-radius: 6px 6px 0 0;
-            margin: 20px 0 0 0;
-        }
-        #tabCubagem .config-panel {
-            background: #edf2f7;
-            padding: 20px;
-            border-radius: 8px;
-            margin-bottom: 25px;
-        }
-        #tabCubagem .grid-inputs-unicos {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-            gap: 15px;
-            margin-top: 15px;
-        }
-        #tabCubagem .form-group {
-            display: flex;
-            flex-direction: column;
-            margin-bottom: 10px;
-        }
-        #tabCubagem .form-group label {
-            font-weight: 600;
-            margin-bottom: 6px;
-            font-size: 13px;
-            color: #4a5568;
-        }
-        #tabCubagem select, #tabCubagem input[type="text"], #tabCubagem input[type="number"] {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #cbd5e0;
-            border-radius: 6px;
-            background: #fff;
-            font-size: 14px;
-        }
+        #tabCubagem .admin-panel { background: #fffaf0; border: 2px dashed #dd6b20; padding: 15px; border-radius: 8px; margin-bottom: 25px; display: none; }
+        #tabCubagem .admin-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px; margin-top: 10px; }
+        #tabCubagem .section-title { background: #2b6cb0; color: white; padding: 10px 15px; font-size: 15px; font-weight: bold; border-radius: 6px 6px 0 0; margin: 20px 0 0 0; }
+        #tabCubagem .config-panel { background: #edf2f7; padding: 20px; border-radius: 8px; margin-bottom: 25px; }
+        #tabCubagem .grid-inputs-unicos { display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 15px; margin-top: 15px; }
+        #tabCubagem .form-group { display: flex; flex-direction: column; margin-bottom: 10px; }
+        #tabCubagem .form-group label { font-weight: 600; margin-bottom: 6px; font-size: 13px; color: #4a5568; }
+        #tabCubagem select, #tabCubagem input[type="text"], #tabCubagem input[type="number"] { width: 100%; padding: 10px; border: 1px solid #cbd5e0; border-radius: 6px; background: #fff; font-size: 14px; }
         #tabCubagem input:focus, #tabCubagem select:focus { border-color: #2b6cb0; outline: none; }
-        
-        #tabCubagem .grid-produto {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-            gap: 15px;
-            margin-bottom: 15px;
-        }
-
-        #tabCubagem .table-responsive {
-            overflow-x: auto;
-            margin-bottom: 25px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
-        }
-        #tabCubagem table {
-            width: 100%;
-            border-collapse: collapse;
-            background: white;
-        }
-        #tabCubagem th, #tabCubagem td {
-            border: 1px solid #e2e8f0;
-            padding: 8px 12px;
-            text-align: center;
-            font-size: 13px;
-            color: #1a2530;
-        }
+        #tabCubagem .grid-produto { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; margin-bottom: 15px; }
+        #tabCubagem .table-responsive { overflow-x: auto; margin-bottom: 25px; box-shadow: 0 2px 4px rgba(0,0,0,0.02); }
+        #tabCubagem table { width: 100%; border-collapse: collapse; background: white; }
+        #tabCubagem th, #tabCubagem td { border: 1px solid #e2e8f0; padding: 8px 12px; text-align: center; font-size: 13px; color: #1a2530; }
         #tabCubagem th { background-color: #edf2f7; color: #2d3748; font-weight: 700; }
         #tabCubagem .part-header { font-weight: bold; color: #2b6cb0; background: #f7fafc; text-align: left; }
         #tabCubagem .input-table { width: 85px; padding: 6px; border: 1px solid #cbd5e0; border-radius: 4px; text-align: center; }
         #tabCubagem .unit-label { font-size: 11px; color: #718096; display: block; margin-top: 2px; }
-        
-        #tabCubagem .dashboard {
-            margin-top: 30px;
-            border-top: 2px dashed #cbd5e0;
-            padding-top: 25px;
-        }
-        #tabCubagem .dashboard-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-            gap: 15px;
-        }
-        #tabCubagem .card {
-            background: #fff;
-            border: 1px solid #e2e8f0;
-            border-radius: 8px;
-            padding: 15px;
-            border-left: 4px solid #4a5568;
-            box-shadow: none;
-            margin-bottom: 0;
-        }
+        #tabCubagem .dashboard { margin-top: 30px; border-top: 2px dashed #cbd5e0; padding-top: 25px; }
+        #tabCubagem .dashboard-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 15px; }
+        #tabCubagem .card { background: #fff; border: 1px solid #e2e8f0; border-radius: 8px; padding: 15px; border-left: 4px solid #4a5568; box-shadow: none; margin-bottom: 0; }
         #tabCubagem .card.destaque-c { border-left-color: #dd6b20; background: #fffaf0; }
         #tabCubagem .card.destaque-v { border-left-color: #3182ce; background: #ebf8ff; }
         #tabCubagem .card.destaque-e { border-left-color: #38a169; background: #f0fff4; }
@@ -301,32 +178,10 @@
         #tabCubagem .badge-perda.v-e { background: #e2e8f0; color: #4a5568; }
         #tabCubagem .badge-perda.t-p { background: #e9d8fd; color: #6b46c1; }
 
-        /* Estilos do filtro avançado */
-        .filter-container {
-            display: flex;
-            gap: 10px;
-            align-items: center;
-            flex-wrap: wrap;
-        }
-        .checkbox-group {
-            display: flex;
-            flex-direction: column;
-            gap: 10px;
-            margin-top: 15px;
-        }
-        .checkbox-label {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            font-size: 0.95rem;
-            cursor: pointer;
-            color: #333;
-        }
-        .checkbox-label input[type="checkbox"] {
-            width: 18px;
-            height: 18px;
-            cursor: pointer;
-        }
+        .filter-container { display: flex; gap: 10px; align-items: center; flex-wrap: wrap; }
+        .checkbox-group { display: flex; flex-direction: column; gap: 10px; margin-top: 15px; }
+        .checkbox-label { display: flex; align-items: center; gap: 10px; font-size: 0.95rem; cursor: pointer; color: #333; }
+        .checkbox-label input[type="checkbox"] { width: 18px; height: 18px; cursor: pointer; }
     </style>
 </head>
 <body>
@@ -406,8 +261,7 @@
                                 <option value="Desenvolvimento de ferramentas e softwares setoriais">Desenvolvimento de ferramentas e softwares setoriais</option>
                                 <option value="Auxílio técnico aos setores de produção">Auxílio técnico aos setores de produção</option>
                                 <option value="Organização, planejamento e metas do setor">Organização, planejamento e metas do setor</option>
-                                <option value="Medição de consumo">Medição de consumo</option>
-                                <option value="Fazer croqui">Fazer croqui</option>
+                                <option value="Medição de consumo">Medição de consumo</option> <option value="Fazer croqui">Fazer croqui</option>
                                 <option value="Alteração em croqui já existente">Alteração em croqui já existente</option>
                             </optgroup>
                         </select>
@@ -494,21 +348,28 @@
             </div>
         </div>
     </div>
-
-    <div id="tabRelatorios" style="display: none;">
-        <div class="panel-box" style="display: flex; justify-content: space-between; align-items: center;">
+<div id="tabRelatorios" style="display: none;">
+        <div class="panel-box" style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 15px;">
             <div>
-                <h2>Indicadores de Produtividade do Setor</h2>
-                <p style="font-size: 0.85rem; color: #666;">Selecione a visualização de tempo do relatório.</p>
+                <h2>Indicadores de Produtividade & Desempenho do Setor</h2>
+                <p style="font-size: 0.85rem; color: #666;">Filtre o período de análise da equipe.</p>
             </div>
-            <div>
-                <select id="reportPeriod" class="form-control" style="width: 200px;" onchange="updateReportDashboard()">
+            <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+                <select id="reportPeriod" class="form-control" style="width: 180px;" onchange="toggleCustomDates()">
                     <option value="hoje">Apenas Hoje</option>
-                    <option value="semanal">Esta Semana (7 dias)</option>
-                    <option value="quinzenal">Quinzena (15 dias)</option>
-                    <option value="mensal">Mês Atual (30 dias)</option>
+                    <option value="semanal">Esta Semana</option>
+                    <option value="quinzenal">Quinzena</option>
+                    <option value="mensal" selected>Mês Atual</option>
                     <option value="anual">Visão Anual</option>
+                    <option value="custom">Data Personalizada 📅</option>
                 </select>
+
+                <div id="customDateContainer" style="display: none; gap: 5px; align-items: center;">
+                    <input type="date" id="reportStartDate" class="form-control" style="width: 140px;">
+                    <span>até</span>
+                    <input type="date" id="reportEndDate" class="form-control" style="width: 140px;">
+                    <button class="btn-submit" style="padding: 8px 12px; font-size: 0.85rem;" onclick="updateReportDashboard()">Filtrar</button>
+                </div>
             </div>
         </div>
 
@@ -560,9 +421,9 @@
                 <h3 id="mPendentes" style="color: var(--warning-color);">0</h3>
                 <p>DEMANDAS PENDENTES 🔍</p>
             </div>
-            <div class="metric-card" onclick="abrirDetalhamentoStatus('total')">
-                <h3 id="mTotal">0</h3>
-                <p>TOTAL FILTRADO 🔍</p>
+            <div class="metric-card">
+                <h3 id="mMainPause" style="color: #e67e22; font-size: 1.2rem;">-</h3>
+                <p>MAIOR MOTIVO DE PAUSA ⚠️</p>
             </div>
         </div>
 
@@ -574,6 +435,10 @@
             <div class="chart-container">
                 <h4 style="margin-bottom: 10px; font-size: 0.95rem; color: #555;">Gráfico Comparativo de Gestão de Tempo Acumulado</h4>
                 <canvas id="timeChart"></canvas>
+            </div>
+            <div class="chart-container">
+                <h4 style="margin-bottom: 10px; font-size: 0.95rem; color: #555;">Motivos e Ocorrências de Pausas</h4>
+                <canvas id="pauseReasonsChart"></canvas>
             </div>
         </div>
 
@@ -602,7 +467,6 @@
         </div>
     </div>
 
-    <!-- TAB DA FERRAMENTA DE CUBAGEM (RESTRITA A ADMIN E DIGITALIZADOR) -->
     <div id="tabCubagem" style="display: none;">
         <div class="container-cubagem">
             <header class="header-cubagem">
@@ -668,7 +532,7 @@
             <div class="config-panel">
                 <h3 style="margin: 0 0 10px 0; color: #2c3e50;">1. Medição Geral de Materiais</h3>
                 <p style="margin: 0 0 15px 0; font-size: 13px; color: #718096;">Insira o comprimento de cada material em centímetros.</p>
-                
+
                 <div id="opcoes-corte-kit" style="display: flex; gap: 20px; flex-wrap: wrap; margin-bottom: 15px;">
                     <div class="form-group" style="min-width: 250px;">
                         <label>Possibilidade de Corte (Por Cor Selecionada):</label>
@@ -704,40 +568,71 @@
                     <table>
                         <thead>
                             <tr>
-                                <th>Parte do Kit</th><th>Guarnição J</th><th>Guarnição Seta</th><th>Velcro Original</th><th>Velcro Macho</th><th>Velcro Fêmea</th><th>Zíper</th><th>Paleta de Bolsa</th><th>Elástico</th>
+                                <th>Parte do Kit</th>
+                                <th>Guarnição J</th>
+                                <th>Guarnição Seta</th>
+                                <th>Velcro Original</th>
+                                <th>Velcro Macho</th>
+                                <th>Velcro Fêmea</th>
+                                <th>Zíper</th>
+                                <th>Paleta de Bolsa</th>
+                                <th>Elástico</th>
                             </tr>
                         </thead>
-                        <tbody id="corpo-bancos"></tbody>
+                        <tbody>
+                            <tr><td class="part-header">Banco Dianteiro Motorista</td><td><input type="number" class="input-table" data-mat="gJ" value="0" oninput="calcularTudo()"><span class="unit-label">metros</span></td><td><input type="number" class="input-table" data-mat="gSeta" value="0" oninput="calcularTudo()"><span class="unit-label">metros</span></td><td><input type="number" class="input-table" data-mat="vOrig" value="0" oninput="calcularTudo()"><span class="unit-label">metros</span></td><td><input type="number" class="input-table" data-mat="vMacho" value="0" oninput="calcularTudo()"><span class="unit-label">metros</span></td><td><input type="number" class="input-table" data-mat="vFemea" value="0" oninput="calcularTudo()"><span class="unit-label">metros</span></td><td><input type="number" class="input-table" data-mat="ziper" value="0" oninput="calcularTudo()"><span class="unit-label">metros</span></td><td><input type="number" class="input-table" data-mat="paleta" value="0" oninput="calcularTudo()"><span class="unit-label">metros</span></td><td><input type="number" class="input-table" data-mat="elastico" value="0" oninput="calcularTudo()"><span class="unit-label">metros</span></td></tr>
+                            <tr><td class="part-header">Banco Dianteiro Carona</td><td><input type="number" class="input-table" data-mat="gJ" value="0" oninput="calcularTudo()"><span class="unit-label">metros</span></td><td><input type="number" class="input-table" data-mat="gSeta" value="0" oninput="calcularTudo()"><span class="unit-label">metros</span></td><td><input type="number" class="input-table" data-mat="vOrig" value="0" oninput="calcularTudo()"><span class="unit-label">metros</span></td><td><input type="number" class="input-table" data-mat="vMacho" value="0" oninput="calcularTudo()"><span class="unit-label">metros</span></td><td><input type="number" class="input-table" data-mat="vFemea" value="0" oninput="calcularTudo()"><span class="unit-label">metros</span></td><td><input type="number" class="input-table" data-mat="ziper" value="0" oninput="calcularTudo()"><span class="unit-label">metros</span></td><td><input type="number" class="input-table" data-mat="paleta" value="0" oninput="calcularTudo()"><span class="unit-label">metros</span></td><td><input type="number" class="input-table" data-mat="elastico" value="0" oninput="calcularTudo()"><span class="unit-label">metros</span></td></tr>
+                            <tr><td class="part-header">Banco Traseiro Assento/Encosto</td><td><input type="number" class="input-table" data-mat="gJ" value="0" oninput="calcularTudo()"><span class="unit-label">metros</span></td><td><input type="number" class="input-table" data-mat="gSeta" value="0" oninput="calcularTudo()"><span class="unit-label">metros</span></td><td><input type="number" class="input-table" data-mat="vOrig" value="0" oninput="calcularTudo()"><span class="unit-label">metros</span></td><td><input type="number" class="input-table" data-mat="vMacho" value="0" oninput="calcularTudo()"><span class="unit-label">metros</span></td><td><input type="number" class="input-table" data-mat="vFemea" value="0" oninput="calcularTudo()"><span class="unit-label">metros</span></td><td><input type="number" class="input-table" data-mat="ziper" value="0" oninput="calcularTudo()"><span class="unit-label">metros</span></td><td><input type="number" class="input-table" data-mat="paleta" value="0" oninput="calcularTudo()"><span class="unit-label">metros</span></td><td><input type="number" class="input-table" data-mat="elastico" value="0" oninput="calcularTudo()"><span class="unit-label">metros</span></td></tr>
+                        </tbody>
                     </table>
                 </div>
 
-                <h3 class="section-title">3. Componentes Lineares de APC, Portas e Consoles (Metros Lineares)</h3>
+                <h3 class="section-title">3. Componentes Adicionais e Insumos Unitários (Unidades)</h3>
                 <div class="table-responsive">
                     <table>
                         <thead>
                             <tr>
-                                <th>Parte do Kit</th><th>Guarnição J</th><th>Guarnição Seta</th><th>Velcro Original</th><th>Velcro Macho</th><th>Velcro Fêmea</th><th>Zíper</th><th>Elástico</th>
+                                <th>Parte do Kit</th>
+                                <th>Cursor Zíper</th>
+                                <th>Grampo Anel</th>
+                                <th>Presilha</th>
+                                <th>Sacola Kit</th>
+                                <th>Plástico Fechamento</th>
                             </tr>
                         </thead>
-                        <tbody id="corpo-apc"></tbody>
+                        <tbody>
+                            <tr><td class="part-header">Banco Dianteiro Motorista</td><td><input type="number" class="input-table" data-mat="cursor" value="0" oninput="calcularTudo()"><span class="unit-label">unidades</span></td><td><input type="number" class="input-table" data-mat="grampo" value="0" oninput="calcularTudo()"><span class="unit-label">unidades</span></td><td><input type="number" class="input-table" data-mat="presilha" value="0" oninput="calcularTudo()"><span class="unit-label">unidades</span></td><td><input type="number" class="input-table" data-mat="sacola" value="0" oninput="calcularTudo()"><span class="unit-label">unidades</span></td><td><input type="number" class="input-table" data-mat="plastico" value="0" oninput="calcularTudo()"><span class="unit-label">unidades</span></td></tr>
+                            <tr><td class="part-header">Banco Dianteiro Carona</td><td><input type="number" class="input-table" data-mat="cursor" value="0" oninput="calcularTudo()"><span class="unit-label">unidades</span></td><td><input type="number" class="input-table" data-mat="grampo" value="0" oninput="calcularTudo()"><span class="unit-label">unidades</span></td><td><input type="number" class="input-table" data-mat="presilha" value="0" oninput="calcularTudo()"><span class="unit-label">unidades</span></td><td><input type="number" class="input-table" data-mat="sacola" value="0" oninput="calcularTudo()"><span class="unit-label">unidades</span></td><td><input type="number" class="input-table" data-mat="plastico" value="0" oninput="calcularTudo()"><span class="unit-label">unidades</span></td></tr>
+                            <tr><td class="part-header">Banco Traseiro Assento/Encosto</td><td><input type="number" class="input-table" data-mat="cursor" value="0" oninput="calcularTudo()"><span class="unit-label">unidades</span></td><td><input type="number" class="input-table" data-mat="grampo" value="0" oninput="calcularTudo()"><span class="unit-label">unidades</span></td><td><input type="number" class="input-table" data-mat="presilha" value="0" oninput="calcularTudo()"><span class="unit-label">unidades</span></td><td><input type="number" class="input-table" data-mat="sacola" value="0" oninput="calcularTudo()"><span class="unit-label">unidades</span></td><td><input type="number" class="input-table" data-mat="plastico" value="0" oninput="calcularTudo()"><span class="unit-label">unidades</span></td></tr>
+                        </tbody>
                     </table>
                 </div>
             </div>
 
             <div id="bloco-tabelas-piso" style="display:none;">
-                <h3 class="section-title">2. Componentes Lineares e Acessórios do Piso</h3>
+                <h3 class="section-title">2. Insumos e Materiais de Piso Automotivo</h3>
                 <div class="table-responsive">
                     <table>
                         <thead>
                             <tr>
-                                <th>Velcro Macho (m)</th><th>Velcro Fêmea (m)</th><th>Cadenino (m)</th>
+                                <th>Tipo de Piso</th>
+                                <th>Velcro Macho</th>
+                                <th>Velcro Fêmea</th>
+                                <th>Linha de Costura</th>
+                                <th>Etiqueta Modelo</th>
+                                <th>Presilhas / Travas</th>
+                                <th>Sacola / Embalagem</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr>
-                                <td><input type="number" class="input-table-piso" data-piso="VELCRO MACHO" value="0" oninput="calcularTudo()"></td>
-                                <td><input type="number" class="input-table-piso" data-piso="VELCRO FEMEA" value="0" oninput="calcularTudo()"></td>
-                                <td><input type="number" class="input-table-piso" data-piso="CADENINO" value="0" oninput="calcularTudo()"></td>
+                                <td class="part-header">Medição Geral de Piso</td>
+                                <td><input type="number" class="input-table input-table-piso" data-piso="Velcro Macho" value="0" oninput="calcularTudo()"><span class="unit-label">metros</span></td>
+                                <td><input type="number" class="input-table input-table-piso" data-piso="Velcro Fêmea" value="0" oninput="calcularTudo()"><span class="unit-label">metros</span></td>
+                                <td><input type="number" class="input-table input-table-piso" data-piso="Linha de Costura" value="0" oninput="calcularTudo()"><span class="unit-label">metros</span></td>
+                                <td><input type="number" class="input-table input-table-piso" data-piso="Etiqueta Modelo" value="0" oninput="calcularTudo()"><span class="unit-label">unidades</span></td>
+                                <td><input type="number" class="input-table input-table-piso" data-piso="Presilhas / Travas" value="0" oninput="calcularTudo()"><span class="unit-label">unidades</span></td>
+                                <td><input type="number" class="input-table input-table-piso" data-piso="Sacola / Embalagem" value="0" oninput="calcularTudo()"><span class="unit-label">unidades</span></td>
                             </tr>
                         </tbody>
                     </table>
@@ -745,124 +640,38 @@
             </div>
 
             <div class="dashboard">
-                <h2>📊 Resumo Consolidado de Matéria-Prima (Com Margem de Perda)</h2>
-                <div class="dashboard-grid" id="dashboard-resultados"></div>
+                <h2 style="margin: 0 0 20px 0; font-size: 18px; color: #2d3748;">📊 Resultado da Cubagem e Apuração Final</h2>
+                <div class="dashboard-grid" id="dashboard-cards"></div>
             </div>
         </div>
     </div>
 
     <div id="tabGerenciamento" style="display: none;">
-        <div class="dashboard-layout" style="grid-template-columns: 1fr 1fr;">
-            <div class="panel-box">
-                <h2>Customizar Integrantes da Equipe e Jornadas</h2>
-                <div style="max-height: 500px; overflow-y: auto; padding-right: 10px;" id="userFieldsContainer">
-                    <div style="border: 1px solid #d4e6f1; padding: 10px; border-radius: 6px; margin-bottom: 15px; background: #f4f9fd;">
-                        <span style="font-weight: bold; font-size: 0.85rem; color: #2980b9; display: block; margin-bottom: 5px;">Gestor Master:</span>
-                        <input type="text" id="cfg_admin_nome" class="form-control" style="margin-bottom: 5px;" placeholder="Nome do Gestor">
-                        <div style="display: flex; gap: 10px; margin-bottom: 5px;">
-                            <input type="time" id="cfg_admin_in" class="form-control" title="Início da Jornada">
-                            <input type="time" id="cfg_admin_out" class="form-control" title="Fim da Jornada">
-                        </div>
-                        <div style="display: flex; gap: 10px; align-items: center;">
-                            <span style="font-size: 0.75rem; font-weight: bold; color: #e67e22;">Almoço:</span>
-                            <input type="time" id="cfg_admin_meal_in" class="form-control" title="Início do Almoço">
-                            <input type="time" id="cfg_admin_meal_out" class="form-control" title="Fim do Almoço">
-                        </div>
-                    </div>
-                </div>
-                <button class="btn-submit" style="margin-top: 15px; background: var(--success-color);" onclick="salvarConfiguracaoEquipe()">Gravar Configurações</button>
+        <div class="panel-box">
+            <h2>Gerenciamento da Equipe & Cadastros</h2>
+            <div style="display: flex; gap: 15px; flex-wrap: wrap;">
+                <button class="btn-submit" style="width: auto; background: var(--secondary-color);" onclick="abrirModalEquipe()">Gerenciar Membros &amp; Senhas 👥</button>
+                <button class="btn-submit" style="width: auto; background: #8e44ad;" onclick="abrirModalAuditLogs()">Visualizar Logs de Auditoria 📜</button>
             </div>
-            <div>
-                <div class="panel-box">
-                    <h2>Segurança do Painel</h2>
-                    <div class="form-group">
-                        <label for="cfg_adminPassword">Alterar Senha do Administrador</label>
-                        <input type="password" id="cfg_adminPassword" class="form-control" placeholder="Digite a nova senha">
-                    </div>
-                    <button class="btn-submit" style="background: var(--secondary-color);" onclick="salvarSenhaAdmin()">Atualizar Senha Master</button>
-                </div>
-                <div class="panel-box">
-                    <h2>Backup Preventivo e Restauração Secura</h2>
-                    <div style="display: flex; gap: 10px;">
-                        <button class="btn-submit" style="background: #34495e;" onclick="criarBackupFirebase()">Gerar Ponto de Backup 💾</button>
-                        <button class="btn-submit" style="background: #95a5a6;" onclick="restaurarBackupFirebase()">Restaurar Backup 🔄</button>
-                    </div>
-                </div>
+        </div>
+        <div class="panel-box">
+            <h2>Gestão de Backup de Dados</h2>
+            <p style="font-size: 0.9rem; color: #666; margin-bottom: 15px;">Exporte e importe backups completos do banco de dados.</p>
+            <div style="display: flex; gap: 15px; flex-wrap: wrap;">
+                <button class="btn-submit" style="width: auto; background: #27ae60;" onclick="exportBackupJSON()">Exportar Backup (JSON) 💾</button>
+                <button class="btn-submit" style="width: auto; background: #e67e22;" onclick="document.getElementById('importBackupFile').click()">Importar Backup (JSON) 📥</button>
+                <input type="file" id="importBackupFile" style="display: none;" accept=".json" onchange="importBackupJSON(event)">
             </div>
         </div>
     </div>
 
-    <!-- MODAL OPÇÕES DE EXPORTAÇÃO PDF PERSONALIZADO -->
-    <div class="modal-overlay" id="pdfOptionsModal">
+    <div id="modalLogin" class="modal-overlay">
         <div class="modal-box">
-            <h2 style="margin-bottom: 15px; font-size: 1.2rem; color: var(--secondary-color);">📄 Configuração do Relatório PDF</h2>
-            <p style="font-size: 0.85rem; color: #666; margin-bottom: 15px;">Selecione os elementos que deseja incluir no documento gerado:</p>
-            
-            <div class="checkbox-group">
-                <label class="checkbox-label">
-                    <input type="checkbox" id="pdfOptMetrics" checked>
-                    <span>📊 Métricas e Indicadores de Produtividade</span>
-                </label>
-                <label class="checkbox-label">
-                    <input type="checkbox" id="pdfOptTimeReport" checked>
-                    <span>⏱️ Relatório de Horas por Colaborador</span>
-                </label>
-                <label class="checkbox-label">
-                    <input type="checkbox" id="pdfOptTasks" checked>
-                    <span>📋 Tabela de Tarefas e Histórico</span>
-                </label>
-                <label class="checkbox-label" style="margin-left: 20px;">
-                    <input type="checkbox" id="pdfOptPauses" checked>
-                    <span>↳ Incluir Motivos de Pausa detalhados</span>
-                </label>
-                <label class="checkbox-label" style="margin-left: 20px;">
-                    <input type="checkbox" id="pdfOptDesc" checked>
-                    <span>↳ Incluir Instruções Adicionais da Tarefa</span>
-                </label>
-                <label class="checkbox-label" id="pdfCubagemOptionWrapper">
-                    <input type="checkbox" id="pdfOptCubagem" checked>
-                    <span>📏 Resumo de Cubagem (Produto Atualmente Medido)</span>
-                </label>
-            </div>
-
-            <div style="display: flex; gap: 10px; margin-top: 25px;">
-                <button class="btn-submit" style="background: #7f8c8d;" onclick="fecharModalOpcoesPDF()">Cancelar</button>
-                <button class="btn-submit" style="background: #e74c3c;" onclick="gerarPDFPersonalizado()">Gerar e Baixar PDF 🚀</button>
-            </div>
-        </div>
-    </div>
-
-    <div class="fullscreen-overlay" id="fullscreenDetailsModal">
-        <div class="fullscreen-header">
-            <h2 id="fullscreenModalTitle" style="color: var(--secondary-color);">Detalhamento de Atividades</h2>
-            <button class="tab-btn" style="background: var(--danger-color); color: white; padding: 8px 20px;" onclick="fecharFullscreenDetails()">Fechar Tela Cheia ✕</button>
-        </div>
-        <div class="table-responsive" style="box-shadow: none;">
-            <table>
-                <thead>
-                    <tr>
-                        <th style="text-align: left; padding: 12px;">Tarefa / Modelo</th>
-                        <th>Solicitante</th>
-                        <th>Categoria</th>
-                        <th>Especificação</th>
-                        <th>Responsáveis</th>
-                        <th>Prazo Final</th>
-                        <th>Histórico de Pausas / Motivos</th>
-                        <th>Status Técnico</th>
-                    </tr>
-                </thead>
-                <tbody id="fullscreenDetailsTableBody"></tbody>
-            </table>
-        </div>
-    </div>
-
-    <div class="modal-overlay" id="loginModal">
-        <div class="modal-box">
-            <h2 style="margin-bottom: 15px; font-size: 1.2rem;">Autenticação Corporativa</h2>
+            <h2>Acesso Restrito ao Setor</h2>
             <div class="form-group">
-                <label for="loginUser">Selecione seu Usuário/Setor</label>
+                <label for="loginUser">Selecione seu Perfil</label>
                 <select id="loginUser" class="form-control">
-                    <option value="admin">Wesley</option>
+                    <option value="admin">Wesley (Gestor / Admin)</option>
                     <option value="usuario_1">Modelista</option>
                     <option value="usuario_2">Auxiliar 1 (Cadastro)</option>
                     <option value="usuario_3">Digitalizador</option>
@@ -870,32 +679,67 @@
                     <option value="usuario_5">Auxiliar 2 (Personalizado)</option>
                 </select>
             </div>
-            <div class="form-group" id="loginPasswordGroup">
-                <label for="loginPassword">Senha de Acesso</label>
-                <input type="password" id="loginPassword" class="form-control" placeholder="••••••">
+            <div class="form-group">
+                <label for="loginPass">Senha de Acesso</label>
+                <input type="password" id="loginPass" class="form-control" placeholder="Digite a senha">
             </div>
-            <div style="display: flex; gap: 10px; margin-top: 20px;">
-                <button class="btn-submit" style="background: #7f8c8d;" onclick="fecharModalLogin()">Cancel</button>
-                <button class="btn-submit" onclick="login()">Confirmar Entrada</button>
-            </div>
+            <button class="btn-submit" onclick="realizarLogin()">Entrar</button>
+            <button class="btn-submit" style="background: #95a5a6; margin-top: 10px;" onclick="fecharModalLogin()">Cancelar</button>
         </div>
     </div>
 
-    <div class="modal-overlay" id="editTaskModal">
+    <div id="modalPauseReason" class="modal-overlay">
         <div class="modal-box">
-            <h2 style="margin-bottom: 15px; font-size: 1.2rem; color: var(--secondary-color);">Editar Dados da Tarefa</h2>
+            <h2>Informe o Motivo da Pausa</h2>
+            <div class="form-group">
+                <label for="pauseReasonSelect">Motivo Principal</label>
+                <select id="pauseReasonSelect" class="form-control" onchange="toggleCustomPauseInput()">
+                    <option value="Falta de Material/Insumo">Falta de Material/Insumo</option>
+                    <option value="Dúvida Técnica com Gestor">Dúvida Técnica com Gestor</option>
+                    <option value="Ajuste/Manutenção de Máquina">Ajuste/Manutenção de Máquina</option>
+                    <option value="Aguardando Aprovação de Cliente">Aguardando Aprovação de Cliente</option>
+                    <option value="Interrupção Externa/Atendimento">Interrupção Externa/Atendimento</option>
+                    <option value="Outro Motivo">Outro Motivo (Especificar)</option>
+                </select>
+            </div>
+            <div class="form-group" id="customPauseReasonGroup" style="display: none;">
+                <label for="customPauseReason">Descreva o Motivo</label>
+                <input type="text" id="customPauseReason" class="form-control" placeholder="Especifique a causa da pausa...">
+            </div>
+            <button class="btn-submit" style="background: var(--warning-color); color: #333;" onclick="confirmarPausaComMotivo()">Confirmar Pausa ⏸️</button>
+        </div>
+    </div>
+
+    <div id="modalPDFOptions" class="modal-overlay">
+        <div class="modal-box">
+            <h2>Opções do Relatório PDF</h2>
+            <p style="font-size: 0.85rem; color: #666; margin-bottom: 15px;">Escolha o escopo das informações para exportação.</p>
+            <div class="form-group">
+                <label for="pdfScope">Visualização do Relatório</label>
+                <select id="pdfScope" class="form-control">
+                    <option value="geral">Relatório Geral do Setor (Todos Colaboradores)</option>
+                    <option value="especifico">Relatório Individual de Colaborador</option>
+                </select>
+            </div>
+            <div class="checkbox-group">
+                <label class="checkbox-label"><input type="checkbox" id="pdfIncCharts" checked> Incluir Captura dos Gráficos de Desempenho</label>
+                <label class="checkbox-label"><input type="checkbox" id="pdfIncTable" checked> Incluir Tabela de Apuração de Horas</label>
+                <label class="checkbox-label"><input type="checkbox" id="pdfIncTasks" checked> Incluir Lista Consolidada de Tarefas Finalizadas</label>
+            </div>
+            <button class="btn-submit" style="margin-top: 20px; background: #e74c3c;" onclick="gerarPDFPersonalizado()">Gerar PDF 📄</button>
+            <button class="btn-submit" style="background: #95a5a6; margin-top: 8px;" onclick="fecharModalOpcoesPDF()">Cancelar</button>
+        </div>
+    </div>
+
+    <div id="modalEditTask" class="modal-overlay">
+        <div class="modal-box">
+            <h2>Editar Tarefa do Setor</h2>
             <input type="hidden" id="editTaskId">
+            <div class="form-group"><label for="editTitle">Referência / Modelo</label><input type="text" id="editTitle" class="form-control" required></div>
+            <div class="form-group"><label for="editRequester">Solicitante</label><input type="text" id="editRequester" class="form-control" required></div>
             <div class="form-group">
-                <label for="editTaskTitle">Referência / Modelo</label>
-                <input type="text" id="editTaskTitle" class="form-control" required>
-            </div>
-            <div class="form-group">
-                <label for="editTaskRequester">Solicitante</label>
-                <input type="text" id="editTaskRequester" class="form-control" required>
-            </div>
-            <div class="form-group">
-                <label for="editTaskCategory">Categoria</label>
-                <select id="editTaskCategory" class="form-control">
+                <label for="editCategory">Categoria</label>
+                <select id="editCategory" class="form-control">
                     <option value="KIT">KIT</option>
                     <option value="PISO">PISO</option>
                     <option value="CAPA DE PROTEÇÃO">CAPA DE PROTEÇÃO</option>
@@ -904,1628 +748,917 @@
                 </select>
             </div>
             <div class="form-group">
-                <label for="editTaskPriority">Sequência de Prioridade</label>
-                <select id="editTaskPriority" class="form-control">
+                <label for="editAction">Especificação</label>
+                <select id="editAction" class="form-control">
+                    <option value="Fazer modelo novo">Fazer modelo novo</option>
+                    <option value="Alterar modelo existente">Alterar modelo existente</option>
+                    <option value="Cadastrar modelo novo">Cadastrar modelo novo</option>
+                    <option value="Alterar cadastro de um modelo existente">Alterar cadastro de um modelo existente</option>
+                    <option value="Digitalizar modelo novo">Digitalizar modelo novo</option>
+                    <option value="Alterar modelo ja digitalizado">Alterar modelo ja digitalizado</option>
+                    <option value="Fazer personalizado">Fazer personalizado</option>
+                    <option value="Desenvolver nova arte personalizada">Desenvolver nova arte personalizada</option>
+                    <option value="alterar personalizado existente">alterar personalizado existente</option>
+                    <option value="Criar bordado a partir da imagem disponibilizada">Criar bordado a partir da imagem disponibilizada</option>
+                </select>
+            </div>
+            <div class="form-group">
+                <label for="editPriority">Prioridade</label>
+                <select id="editPriority" class="form-control">
                     <option value="1">Prioridade 1 (Máxima)</option>
                     <option value="2">Prioridade 2 (Média)</option>
                     <option value="3">Prioridade 3 (Normal)</option>
                 </select>
             </div>
-            <div class="form-group">
-                <label for="editTaskDeadline">Prazo Limite</label>
-                <input type="date" id="editTaskDeadline" class="form-control" required>
-            </div>
-            <div class="form-group">
-                <label for="editTaskDesc">Instruções Adicionais</label>
-                <textarea id="editTaskDesc" class="form-control" rows="3"></textarea>
-            </div>
-            <div style="display: flex; gap: 10px; margin-top: 20px;">
-                <button class="btn-submit" style="background: #7f8c8d;" onclick="fecharModalEdicao()">Cancelar</button>
-                <button class="btn-submit" style="background: var(--success-color);" onclick="salvarEdicaoTarefa()">Salvar Alterações</button>
-            </div>
+            <div class="form-group"><label for="editDeadline">Prazo Limite</label><input type="date" id="editDeadline" class="form-control" required></div>
+            <div class="form-group"><label for="editDesc">Instruções Adicionais</label><textarea id="editDesc" class="form-control" rows="3"></textarea></div>
+            <button class="btn-submit" onclick="salvarEdicaoTarefa()">Salvar Alterações</button>
+            <button class="btn-submit" style="background: #95a5a6; margin-top: 8px;" onclick="fecharModalEdicao()">Cancelar</button>
         </div>
     </div>
 
-    <script>
+    <div id="modalEquipe" class="modal-overlay">
+        <div class="modal-box" style="width: 550px;">
+            <h2>Gerenciamento da Equipe & Senhas</h2>
+            <div class="table-responsive" style="margin-bottom: 15px;">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Perfil / Cargo</th>
+                            <th>Nome do Colaborador</th>
+                            <th>Senha Atual</th>
+                        </tr>
+                    </thead>
+                    <tbody id="equipeTableBody"></tbody>
+                </table>
+            </div>
+            <button class="btn-submit" onclick="salvarConfiguracoesEquipe()">Salvar Nomes e Senhas</button>
+            <button class="btn-submit" style="background: #95a5a6; margin-top: 8px;" onclick="fecharModalEquipe()">Fechar</button>
+        </div>
+    </div>
+
+    <div id="modalAuditLogs" class="modal-overlay">
+        <div class="modal-box" style="width: 700px;">
+            <h2>Logs de Auditoria do Sistema</h2>
+            <div class="table-responsive" style="max-height: 400px; overflow-y: auto;">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Data/Hora</th>
+                            <th>Usuário</th>
+                            <th>Ação Registrada</th>
+                        </tr>
+                    </thead>
+                    <tbody id="auditLogsTableBody"></tbody>
+                </table>
+            </div>
+            <button class="btn-submit" style="background: #95a5a6; margin-top: 15px;" onclick="fecharModalAuditLogs()">Fechar</button>
+        </div>
+    </div>
+
+    <div id="fullscreenDetails" class="fullscreen-overlay">
+        <div class="fullscreen-header">
+            <h2 id="fsTitle">Detalhamento de Entregas</h2>
+            <button class="tab-btn" style="background: #e74c3c; color: white;" onclick="fecharDetalhamentoStatus()">Fechar Tela Cheia ❌</button>
+        </div>
+        <div class="table-responsive">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Prioridade</th>
+                        <th>Modelo / Atividade</th>
+                        <th>Solicitante</th>
+                        <th>Responsável</th>
+                        <th>Categoria</th>
+                        <th>Especificação</th>
+                        <th>Prazo Final</th>
+                        <th>Status / Conclusão</th>
+                        <th>Tempo Efetivo</th>
+                    </tr>
+                </thead>
+                <tbody id="fsTableBody"></tbody>
+            </table>
+        </div>
+    </div>
+<script>
+        // CONFIGURAÇÃO DO FIREBASE (SISTEMA INTEGRADO)
         const firebaseConfig = {
-            apiKey: "COLE_AQUI_SUA_API_KEY", 
-            authDomain: "engenhariagrancouro.firebaseapp.com",
-            databaseURL: "https://engenhariagrancouro-default-rtdb.firebaseio.com",
-            projectId: "engenhariagrancouro",
-            storageBucket: "engenhariagrancouro.appspot.com",
-            messagingSenderId: "COLE_AQUI_SEU_MESSAGING_SENDER_ID", 
-            appId: "COLE_AQUI_SEU_APP_ID" 
+            databaseURL: "https://gestao-tempo-30bce-default-rtdb.firebaseio.com/"
         };
-        
-        let database = null;
-        try {
+        if (!firebase.apps.length) {
             firebase.initializeApp(firebaseConfig);
-            database = firebase.database();
-        } catch(e) {
-            console.warn("Firebase não inicializado. Chaves fictícias detectadas.");
+        }
+        const db = firebase.database();
+
+        // ESTADO GLOBAL DO SISTEMA
+        let currentUser = null;
+        let tasks = [];
+        let timeLogs = {};
+        let auditLogs = [];
+        let systemUsers = {
+            admin: { name: "Wesley", pass: "1234", role: "admin" },
+            usuario_1: { name: "Modelista", pass: "1234", role: "user" },
+            usuario_2: { name: "Auxiliar 1 (Cadastro)", pass: "1234", role: "user" },
+            usuario_3: { name: "Digitalizador", pass: "1234", role: "user" },
+            usuario_4: { name: "Desenhista", pass: "1234", role: "user" },
+            usuario_5: { name: "Auxiliar 2 (Personalizado)", pass: "1234", role: "user" }
+        };
+
+        let pendingPauseTaskId = null;
+        let effChartInstance = null;
+        let timeChartInstance = null;
+        let pauseChartInstance = null;
+
+        // INICIALIZAÇÃO E OBTENÇÃO DE DADOS EM TEMPO REAL
+        window.onload = function() {
+            db.ref('systemUsers').on('value', snapshot => {
+                const val = snapshot.val();
+                if (val) systemUsers = val;
+                atualizarNomesFiltros();
+            });
+
+            db.ref('tasks').on('value', snapshot => {
+                const val = snapshot.val();
+                tasks = val ? Object.keys(val).map(k => ({ id: k, ...val[k] })) : [];
+                renderTasks();
+                updateReportDashboard();
+                renderRealTimeStatus();
+            });
+
+            db.ref('timeLogs').on('value', snapshot => {
+                timeLogs = snapshot.val() || {};
+                renderTimeReportTable();
+            });
+
+            db.ref('auditLogs').on('value', snapshot => {
+                const val = snapshot.val();
+                auditLogs = val ? Object.values(val) : [];
+            });
+
+            renderizarCamposCubagemKit();
+            calcularTudo();
+        };
+
+        function registrarLog(acao) {
+            const logEntry = {
+                timestamp: new Date().toISOString(),
+                user: currentUser ? systemUsers[currentUser].name : "Visitante",
+                action: acao
+            };
+            db.ref('auditLogs').push(logEntry);
         }
 
-        const roteamentoUsuarios = {
-            "Fazer modelo novo": ["usuario_1"],
-            "Alterar modelo existente": ["usuario_1"],
-            "Cadastrar modelo novo": ["usuario_2"],
-            "Alterar cadastro de um modelo existente": ["usuario_2"],
-            "Digitalizar modelo novo": ["usuario_3"],
-            "Alterar modelo ja digitalizado": ["usuario_3"],
-            "Fazer personalizado": ["usuario_5"],
-            "Desenvolver nova arte personalizada": ["usuario_4"],
-            "alterar personalizado existente": ["usuario_5"],
-            "Criar bordado a partir da imagem disponibilizada": ["usuario_4"],
-            "Treinamento e Alinhamento da equipe": ["admin"],
-            "Desenvolvimento de ferramentas e softwares setoriais": ["admin"],
-            "Auxílio técnico aos setores de produção": ["admin"],
-            "Organização, planejamento e metas do setor": ["admin"],
-            "Medição de consumo": ["admin", "usuario_3"],
-            "Fazer croqui": ["admin", "usuario_4"],
-            "Alteração em croqui já existente": ["admin", "usuario_4"]
-        };
+        // FUNÇÕES DE FILTRO DE DATA & NOVO GRÁFICO DE PAUSAS
+        function toggleCustomDates() {
+            const period = document.getElementById('reportPeriod').value;
+            const customContainer = document.getElementById('customDateContainer');
+            if (period === 'custom') {
+                customContainer.style.display = 'flex';
+            } else {
+                customContainer.style.display = 'none';
+                updateReportDashboard();
+            }
+        }
 
-        let nomesExibicao = {
-            "admin": "Wesley", 
-            "usuario_1": "Modelista", 
-            "usuario_2": "Auxiliar 1 (Cadastro)",
-            "usuario_3": "Digitalizador", 
-            "usuario_4": "Desenhista", 
-            "usuario_5": "Auxiliar 2 (Personalizado)",
-            "visitante": "Monitoramento Geral"
-        };
+        function renderPauseReasonsChart(taskList) {
+            const pauseCounts = {};
+            taskList.forEach(task => {
+                if (task.pauses && Array.isArray(task.pauses)) {
+                    task.pauses.forEach(p => {
+                        const reason = p.reason || "Não Informado";
+                        pauseCounts[reason] = (pauseCounts[reason] || 0) + 1;
+                    });
+                }
+            });
 
-        let jornadas = {
-            "admin": { in: "07:12", out: "17:00" }, "usuario_1": { in: "07:12", out: "17:00" },
-            "usuario_2": { in: "07:12", out: "17:00" }, "usuario_3": { in: "07:12", out: "17:00" },
-            "usuario_4": { in: "07:12", out: "17:00" }, "usuario_5": { in: "14:00", out: "18:00" }
-        };
+            const labels = Object.keys(pauseCounts);
+            const data = Object.values(pauseCounts);
 
-        let almocosPadrao = {
-            "admin": { in: "12:00", out: "13:00" }, "usuario_1": { in: "12:00", out: "13:00" },
-            "usuario_2": { in: "12:00", out: "13:00" }, "usuario_3": { in: "12:00", out: "13:00" },
-            "usuario_4": { in: "12:00", out: "13:00" }, "usuario_5": { in: "12:00", out: "13:00" }
-        };
+            const mainPauseElem = document.getElementById('mMainPause');
+            if (mainPauseElem) {
+                if (labels.length > 0) {
+                    let maxReason = labels[0];
+                    labels.forEach(r => {
+                        if (pauseCounts[r] > pauseCounts[maxReason]) maxReason = r;
+                    });
+                    mainPauseElem.innerText = `${maxReason} (${pauseCounts[maxReason]}x)`;
+                } else {
+                    mainPauseElem.innerText = "Sem pausas";
+                }
+            }
 
-        let senhasEquipe = {
-            "usuario_1": "123", "usuario_2": "123", "usuario_3": "123", "usuario_4": "123", "usuario_5": "123"
-        };
-        let permissoesLancar = {
-            "usuario_1": false, "usuario_2": false, "usuario_3": false, "usuario_4": false, "usuario_5": false
-        };
+            const ctx = document.getElementById('pauseReasonsChart');
+            if (!ctx) return;
 
-        let adminPasswordDB = "admin123"; 
-        let tasks = []; let historicTasks = []; let mealLogs = {}; let descansoLogs = {};
-        let currentUser = 'visitante'; let myChart = null; let timeChart = null;
+            if (pauseChartInstance) pauseChartInstance.destroy();
 
-        let estadoAutomacao = { almocoAtivo: false, descansoAtivo: false };
-        let listaIdsTarefasConhecidas = null;
-        let alertaPrioridadeAtivo = false;
+            pauseChartInstance = new Chart(ctx.getContext('2d'), {
+                type: 'doughnut',
+                data: {
+                    labels: labels.length > 0 ? labels : ['Sem registros'],
+                    datasets: [{
+                        data: data.length > 0 ? data : [1],
+                        backgroundColor: ['#e74c3c', '#e67e22', '#f1c40f', '#3498db', '#9b59b6', '#95a5a6']
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: { legend: { position: 'bottom' } }
+                }
+            });
+        }
 
-        let splashClicadoOuPassado = false;
+        // ATUALIZAÇÃO DO PAINEL DE RELATÓRIOS
+        function updateReportDashboard() {
+            const period = document.getElementById('reportPeriod').value;
+            let filtered = tasks;
+            const now = new Date();
 
-        const listaVersiculos = [
-            { texto: '"O Senhor te abençoe e te guarde; o Senhor faça resplandecer o seu rosto sobre ti e te conceda graça."', ref: "Números 6:24-25" },
-            { texto: '"Consagre ao Senhor tudo o que você faz, e os seus planos serão bem-sucedidos."', ref: "Provérbios 16:3" },
-            { texto: '"Tudo o que fizerem, façam de todo o coração, como para o Senhor, e não para os homens."', ref: "Colossenses 3:23" },
-            { texto: '"Seja forte e corajoso! Não se apavore nem desanime, pois o Senhor, o seu Deus, estará com você por onde você andar."', ref: "Josué 1:9" },
-            { texto: '"O próprio Senhor irá à sua frente e estará com você; ele nunca o deixará, nunca o abandonará. Não tenha medo! Não desanime!"', ref: "Deuteronômio 31:8" },
-            { texto: '"Confie no Senhor de todo o seu coração e não se apóie em seu próprio entendimento; reconheça o Senhor em todos os seus caminhos, e ele endireitará as suas veredas."', ref: "Provérbios 3:5-6" },
-            { texto: '"Mas os que esperam no Senhor renovarão as suas forças; subirão com asas como águias; correrão, e não se cansarão; caminharão, e não se fatigarão."', ref: "Isaías 40:31" }
-        ];
+            if (period === 'hoje') {
+                filtered = tasks.filter(t => t.completedAt && new Date(t.completedAt).toDateString() === now.toDateString());
+            } else if (period === 'semanal') {
+                const past7 = new Date(now.getTime() - 7 * 84600000);
+                filtered = tasks.filter(t => t.completedAt && new Date(t.completedAt) >= past7);
+            } else if (period === 'quinzenal') {
+                const past15 = new Date(now.getTime() - 15 * 84600000);
+                filtered = tasks.filter(t => t.completedAt && new Date(t.completedAt) >= past15);
+            } else if (period === 'mensal') {
+                filtered = tasks.filter(t => t.completedAt && new Date(t.completedAt).getMonth() === now.getMonth() && new Date(t.completedAt).getFullYear() === now.getFullYear());
+            } else if (period === 'anual') {
+                filtered = tasks.filter(t => t.completedAt && new Date(t.completedAt).getFullYear() === now.getFullYear());
+            } else if (period === 'custom') {
+                const startVal = document.getElementById('reportStartDate').value;
+                const endVal = document.getElementById('reportEndDate').value;
+                if (startVal && endVal) {
+                    const start = new Date(startVal);
+                    const end = new Date(endVal);
+                    end.setHours(23, 59, 59);
+                    filtered = tasks.filter(t => t.completedAt && new Date(t.completedAt) >= start && new Date(t.completedAt) <= end);
+                }
+            }
 
-        function obterVersiculoDoDia() {
-            const diaSemana = new Date().getDay(); 
-            return listaVersiculos[diaSemana];
+            const done = filtered.filter(t => t.status === 'done');
+            const noPrazo = done.filter(t => new Date(t.completedAt) <= new Date(t.deadline + 'T23:59:59')).length;
+            const foraPrazo = done.length - noPrazo;
+            const pendentes = tasks.filter(t => t.status !== 'done').length;
+
+            document.getElementById('mNoPrazo').innerText = noPrazo;
+            document.getElementById('mForaPrazo').innerText = foraPrazo;
+            document.getElementById('mPendentes').innerText = pendentes;
+
+            const effRate = done.length > 0 ? Math.round((noPrazo / done.length) * 100) : 0;
+            document.getElementById('goalEffValue').innerText = `${effRate}%`;
+            document.getElementById('goalEffBar').style.width = `${effRate}%`;
+
+            renderEfficiencyChart(noPrazo, foraPrazo);
+            renderTimeChart();
+            renderPauseReasonsChart(done);
+        }
+
+        function renderEfficiencyChart(noPrazo, foraPrazo) {
+            const ctx = document.getElementById('efficiencyChart');
+            if (!ctx) return;
+            if (effChartInstance) effChartInstance.destroy();
+
+            effChartInstance = new Chart(ctx.getContext('2d'), {
+                type: 'pie',
+                data: {
+                    labels: ['No Prazo', 'Fora do Prazo'],
+                    datasets: [{
+                        data: [noPrazo, foraPrazo],
+                        backgroundColor: ['#2ecc71', '#e74c3c']
+                    }]
+                },
+                options: { responsive: true, maintainAspectRatio: false }
+            });
+        }
+
+        function renderTimeChart() {
+            const ctx = document.getElementById('timeChart');
+            if (!ctx) return;
+            if (timeChartInstance) timeChartInstance.destroy();
+
+            const userNames = Object.keys(systemUsers).map(k => systemUsers[k].name);
+            const userTimes = Object.keys(systemUsers).map(k => {
+                const uLogs = timeLogs[k] || {};
+                let workMs = 0;
+                Object.values(uLogs).forEach(log => {
+                    if (log.type === 'work' && log.duration) workMs += log.duration;
+                });
+                return (workMs / 3600000).toFixed(1);
+            });
+
+            timeChartInstance = new Chart(ctx.getContext('2d'), {
+                type: 'bar',
+                data: {
+                    labels: userNames,
+                    datasets: [{
+                        label: 'Horas Trabalhadas',
+                        data: userTimes,
+                        backgroundColor: '#2980b9'
+                    }]
+                },
+                options: { responsive: true, maintainAspectRatio: false }
+            });
+        }
+
+        // EXPORTAÇÃO PDF ATUALIZADA
+        function abrirModalOpcoesPDF() { document.getElementById('modalPDFOptions').style.display = 'flex'; }
+        function fecharModalOpcoesPDF() { document.getElementById('modalPDFOptions').style.display = 'none'; }
+
+        function gerarPDFPersonalizado() {
+            fecharModalOpcoesPDF();
+            const { jsPDF } = window.jspdf;
+            const doc = new jsPDF('p', 'mm', 'a4');
+
+            doc.setFillColor(44, 62, 80);
+            doc.rect(0, 0, 210, 25, 'F');
+            doc.setTextColor(255, 255, 255);
+            doc.setFontSize(14);
+            doc.setFont('helvetica', 'bold');
+            doc.text("RELATÓRIO DE DESEMPENHO E PRODUTIVIDADE SETORIAL", 14, 15);
+
+            doc.setFontSize(8);
+            doc.setFont('helvetica', 'normal');
+            doc.text(`Setor: Engenharia e Modelagem | Data: ${new Date().toLocaleDateString('pt-BR')}`, 14, 21);
+
+            let currentY = 32;
+
+            if (document.getElementById('pdfIncCharts').checked) {
+                doc.setTextColor(40, 40, 40);
+                doc.setFontSize(11);
+                doc.setFont('helvetica', 'bold');
+                doc.text("1. Resumo Visual e Gráficos de Desempenho", 14, currentY);
+                currentY += 5;
+
+                const effCanvas = document.getElementById('efficiencyChart');
+                const timeCanvas = document.getElementById('timeChart');
+                const pauseCanvas = document.getElementById('pauseReasonsChart');
+
+                if (effCanvas && timeCanvas) {
+                    doc.addImage(effCanvas.toDataURL('image/png', 1.0), 'PNG', 14, currentY, 88, 45);
+                    doc.addImage(timeCanvas.toDataURL('image/png', 1.0), 'PNG', 106, currentY, 88, 45);
+                    currentY += 48;
+                }
+                if (pauseCanvas) {
+                    doc.addImage(pauseCanvas.toDataURL('image/png', 1.0), 'PNG', 60, currentY, 90, 40);
+                    currentY += 44;
+                }
+            }
+
+            if (document.getElementById('pdfIncTable').checked) {
+                doc.setFontSize(11);
+                doc.setFont('helvetica', 'bold');
+                doc.text("2. Apuração de Jornada e Horas por Colaborador", 14, currentY);
+                currentY += 4;
+
+                doc.autoTable({
+                    html: '#restrictedTimeReportSection table',
+                    startY: currentY,
+                    theme: 'striped',
+                    headStyles: { fillColor: [41, 128, 185], textColor: 255, fontStyle: 'bold' },
+                    styles: { fontSize: 8, halign: 'center' },
+                    columnStyles: { 0: { halign: 'left', fontStyle: 'bold' } }
+                });
+                currentY = doc.lastAutoTable.finalY + 10;
+            }
+
+            const totalPages = doc.internal.getNumberOfPages();
+            for (let i = 1; i <= totalPages; i++) {
+                doc.setPage(i);
+                doc.setFontSize(8);
+                doc.setTextColor(150);
+                doc.text(`Página ${i} de ${totalPages} - Sistema de Gestão de Tempo`, 105, 290, { align: 'center' });
+            }
+
+            doc.save(`Relatorio_Setorial_${new Date().toISOString().slice(0, 10)}.pdf`);
+        }
+
+        // LÓGICA DAS TABS, SPLASH E SESSÃO
+        function switchTab(tab) {
+            document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+            document.getElementById('tabPainel').style.display = 'none';
+            document.getElementById('tabRelatorios').style.display = 'none';
+            document.getElementById('tabCubagem').style.display = 'none';
+            document.getElementById('tabGerenciamento').style.display = 'none';
+
+            if (tab === 'painel') {
+                document.getElementById('tabPainel').style.display = 'grid';
+                document.getElementById('btnTabPainel').classList.add('active');
+            } else if (tab === 'relatorios') {
+                document.getElementById('tabRelatorios').style.display = 'block';
+                document.getElementById('btnTabRelatorios').classList.add('active');
+                updateReportDashboard();
+            } else if (tab === 'cubagem') {
+                document.getElementById('tabCubagem').style.display = 'block';
+                document.getElementById('btnTabCubagem').classList.add('active');
+            } else if (tab === 'gerenciamento') {
+                document.getElementById('tabGerenciamento').style.display = 'block';
+                document.getElementById('btnTabGerenciamento').classList.add('active');
+            }
         }
 
         function pularSplashPreLogin() {
-            if (splashClicadoOuPassado) return;
-            splashClicadoOuPassado = true;
-            
-            const splash = document.getElementById('welcomeSplash');
-            splash.style.opacity = '0';
-            splash.style.visibility = 'hidden';
-
-            setTimeout(() => {
-                if (currentUser === 'visitante') { abrirModalLogin(); }
-            }, 300);
-        }
-
-        function exibirSplashPostLogin() {
-            const splash = document.getElementById('welcomeSplash');
-            splash.style.display = 'flex';
-            
-            const versiculoHoje = obterVersiculoDoDia();
-
-            document.getElementById('splashSystemTitle').innerText = "Acesso Autorizado";
-            document.getElementById('splashGreeting').innerText = `Bom trabalho, ${nomesExibicao[currentUser]}!`;
-            document.getElementById('splashVerse').innerText = versiculoHoje.texto;
-            document.getElementById('splashRef').innerText = versiculoHoje.ref;
-            
-            splash.onclick = null; 
-            document.getElementById('welcomeSplash').style.cursor = 'default';
-            
-            document.getElementById('btnStartDay').style.display = 'inline-block';
-            document.getElementById('splashTip').style.display = 'none';
-
-            splash.style.opacity = '1';
-            splash.style.visibility = 'visible';
+            document.getElementById('welcomeSplash').style.display = 'none';
+            abrirModalLogin();
         }
 
         function fecharSplashPostLogin() {
-            const splash = document.getElementById('welcomeSplash');
-            splash.style.opacity = '0';
-            splash.style.visibility = 'hidden';
+            document.getElementById('welcomeSplash').style.display = 'none';
+        }
+
+        function abrirModalLogin() {
+            document.getElementById('modalLogin').style.display = 'flex';
+        }
+
+        function fecharModalLogin() {
+            document.getElementById('modalLogin').style.display = 'none';
+        }
+
+        function realizarLogin() {
+            const uKey = document.getElementById('loginUser').value;
+            const pass = document.getElementById('loginPass').value;
+
+            if (systemUsers[uKey] && systemUsers[uKey].pass === pass) {
+                currentUser = uKey;
+                document.getElementById('userDisplay').innerText = systemUsers[uKey].name;
+                document.getElementById('btnLogout').style.display = 'inline-block';
+                document.getElementById('btnLoginTrigger').innerText = 'Trocar Setor 🔑';
+
+                if (systemUsers[uKey].role === 'admin') {
+                    document.getElementById('adminFormBox').style.display = 'block';
+                    document.getElementById('btnTabGerenciamento').style.display = 'inline-block';
+                    document.getElementById('btnTabCubagem').style.display = 'inline-block';
+                } else {
+                    document.getElementById('adminFormBox').style.display = 'none';
+                    document.getElementById('btnTabGerenciamento').style.display = 'none';
+                    document.getElementById('btnTabCubagem').style.display = (uKey === 'usuario_3') ? 'inline-block' : 'none';
+                }
+
+                document.getElementById('userControlPanels').style.display = 'flex';
+                fecharModalLogin();
+
+                document.getElementById('splashSystemTitle').innerText = `Bem-vindo, ${systemUsers[uKey].name}!`;
+                document.getElementById('splashGreeting').innerText = "Tenha um excelente e produtivo dia de trabalho!";
+                document.getElementById('btnStartDay').style.display = 'inline-block';
+                document.getElementById('splashTip').innerText = "Clique no botão acima para iniciar.";
+                document.getElementById('welcomeSplash').style.display = 'flex';
+
+                registrarLog(`Login efetuado por ${systemUsers[uKey].name}`);
+                renderTasks();
+            } else {
+                alert("Senha incorreta!");
+            }
+        }
+
+        function logout() {
+            currentUser = null;
+            document.getElementById('userDisplay').innerText = 'Monitoramento Geral';
+            document.getElementById('btnLogout').style.display = 'none';
+            document.getElementById('adminFormBox').style.display = 'none';
+            document.getElementById('btnTabGerenciamento').style.display = 'none';
+            document.getElementById('btnTabCubagem').style.display = 'none';
+            document.getElementById('userControlPanels').style.display = 'none';
+            switchTab('painel');
+        }
+
+        function atualizarNomesFiltros() {
+            document.getElementById('filterAdminName').innerText = `Filtrar: ${systemUsers.admin.name}`;
+            document.getElementById('filterUser1').innerText = `Filtrar: ${systemUsers.usuario_1.name}`;
+            document.getElementById('filterUser2').innerText = `Filtrar: ${systemUsers.usuario_2.name}`;
+            document.getElementById('filterUser3').innerText = `Filtrar: ${systemUsers.usuario_3.name}`;
+            document.getElementById('filterUser4').innerText = `Filtrar: ${systemUsers.usuario_4.name}`;
+            document.getElementById('filterUser5').innerText = `Filtrar: ${systemUsers.usuario_5.name}`;
         }
 
         function toggleFormTarefa() {
-            const form = document.getElementById('taskFormBody');
-            const btn = document.getElementById('btnToggleForm');
-            if (form.style.display === 'none') {
-                form.style.display = 'block';
-                btn.innerText = '◄ Minimizar Formulário de Cadastro';
-                btn.style.background = '#95a5a6';
-            } else {
-                form.style.display = 'none';
-                btn.innerText = '➕ Lançar Nova Tarefa (Abrir Formulário)';
-                btn.style.background = 'var(--primary-color)';
-            }
+            const body = document.getElementById('taskFormBody');
+            body.style.display = (body.style.display === 'none') ? 'block' : 'none';
         }
 
-        function renderizarStatusEquipeTempoReal() {
-            const container = document.getElementById('realTimeStatusContainer');
-            if (!container) return;
-            
-            const temPermissaoLancar = permissoesLancar[currentUser] || false;
-            if (currentUser !== 'admin' && !temPermissaoLancar && currentUser !== 'visitante') {
-                container.style.display = 'none';
-                return;
-            }
-            container.style.display = 'block';
-
-            const chavesEquipe = ['admin', 'usuario_1', 'usuario_2', 'usuario_3', 'usuario_4', 'usuario_5'];
-            let htmlGrid = '<div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap: 15px; margin-top: 10px;">';
-
-            chavesEquipe.forEach(uKey => {
-                const nome = nomesExibicao[uKey];
-                const minhasTasks = tasks.filter(t => t.responsibles && t.responsibles.includes(uKey));
-                const taskAtiva = tasks.find(t => {
-                    const ultimoLog = t.timeLogs && t.timeLogs.length > 0 ? t.timeLogs[t.timeLogs.length - 1] : null;
-                    return ultimoLog && ultimoLog.type === 'start' && ultimoLog.by === uKey;
-                });
-
-                let statusTexto = '<span style="color: #7f8c8d; font-weight: bold;">💤 Desconectado / Ocioso</span>';
-                let cardBg = '#fdfefe';
-                let bordaCor = '#bdc3c7';
-
-                const hojeStr = new Date().toISOString().split('T')[0];
-                const logAlmoco = mealLogs[hojeStr]?.[uKey];
-                const logDescanso = descansoLogs[hojeStr]?.[uKey];
-
-                if (uKey === 'admin') {
-                    if (logAlmoco && logAlmoco.start && !logAlmoco.end) {
-                        statusTexto = '<span style="color: #e67e22; font-weight: bold;">🍽️ Em Almoço</span>';
-                        cardBg = '#fffaf5'; bordaCor = '#e67e22';
-                    } else if (logDescanso && logDescanso.start && !logDescanso.end) {
-                        statusTexto = '<span style="color: #9b59b6; font-weight: bold;">☕ Em Descanso</span>';
-                        cardBg = '#faf5ff'; bordaCor = '#9b59b6';
-                    } else {
-                        statusTexto = '<span style="color: var(--success-color); font-weight: bold;">💼 Gestão e Supervisão Ativa</span>';
-                        cardBg = '#f5fdf7'; bordaCor = 'var(--success-color)';
-                    }
-                } else if (logAlmoco && logAlmoco.start && !logAlmoco.end) {
-                    statusTexto = '<span style="color: #e67e22; font-weight: bold;">🍽️ Em Almoço</span>';
-                    cardBg = '#fffaf5'; bordaCor = '#e67e22';
-                } else if (logDescanso && logDescanso.start && !logDescanso.end) {
-                    statusTexto = '<span style="color: #9b59b6; font-weight: bold;">☕ Em Descanso</span>';
-                    cardBg = '#faf5ff'; bordaCor = '#9b59b6';
-                } else if (taskAtiva) {
-                    statusTexto = `<span style="color: var(--success-color); font-weight: bold;">▶️ Focando em:<br><small style="color:#333;">${taskAtiva.title}</small></span>`;
-                    cardBg = '#f5fdf7'; bordaCor = 'var(--success-color)';
-                } else if (minhasTasks.length > 0) {
-                    statusTexto = `<span style="color: #f39c12; font-weight: bold;">⏸️ Fila Coletiva (${minhasTasks.length} un)</span>`;
-                    cardBg = '#fffdf5'; bordaCor = '#f39c12';
-                }
-
-                htmlGrid += `
-                    <div style="background: ${cardBg}; border: 1px solid ${bordaCor}; border-left: 5px solid ${bordaCor}; padding: 12px; border-radius: 6px; box-shadow: 0 2px 4px rgba(0,0,0,0.02);">
-                        <strong style="color: var(--secondary-color); font-size: 0.95rem; display: block; margin-bottom: 4px;">${nome}</strong>
-                        <div style="font-size: 0.85rem; line-height: 1.3;">${statusTexto}</div>
-                    </div>
-                `;
-            });
-
-            htmlGrid += '</div>';
-            container.innerHTML = `<h2>🔴 Atividades da Equipe em Tempo Real</h2>` + htmlGrid;
-        }
-
-        function emitirSinalSonoro() {
-            try {
-                const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
-                let osc1 = audioCtx.createOscillator(); let gain1 = audioCtx.createGain();
-                osc1.type = 'square'; osc1.frequency.setValueAtTime(660, audioCtx.currentTime);
-                gain1.gain.setValueAtTime(0.2, audioCtx.currentTime);
-                osc1.connect(gain1); gain1.connect(audioCtx.destination);
-                osc1.start(); osc1.stop(audioCtx.currentTime + 0.15);
-            } catch (e) { console.log("Áudio bloqueado."); }
-        }
-
-        function mostrarPopupNotificacao(titulo, mensagem, corBorda) {
-            const idPopup = 'popup_' + Math.random().toString(36).substr(2, 9);
-            const div = document.createElement('div');
-            div.id = idPopup;
-            div.style = `
-                position: fixed; bottom: 20px; right: 20px; width: 350px; 
-                background: white; border-left: 6px solid ${corBorda}; 
-                box-shadow: 0 4px 15px rgba(0,0,0,0.25); padding: 15px; 
-                border-radius: 4px; z-index: 9999; animation: slideIn 0.3s ease-out;
-            `;
-            div.innerHTML = `
-                <h4 style="margin: 0 0 5px 0; color: #2c3e50; font-size: 1rem;">${titulo}</h4>
-                <p style="margin: 0 0 10px 0; color: #555; font-size: 0.9rem; line-height: 1.3;">${mensagem}</p>
-                <button onclick="document.getElementById('${idPopup}').remove()" style="
-                    background: #eee; border: none; padding: 4px 10px; border-radius: 3px; cursor: pointer; font-size: 0.8rem; font-weight: bold;
-                ">Entendido ✕</button>
-            `;
-            if (!document.getElementById('stylePopupAnim')) {
-                const style = document.createElement('style'); style.id = 'stylePopupAnim';
-                style.innerHTML = `@keyframes slideIn { from { transform: translateX(120%); } to { transform: translateX(0); } }`;
-                document.head.appendChild(style);
-            }
-            document.body.appendChild(div);
-            setTimeout(() => { if(document.getElementById(idPopup)) document.getElementById(idPopup).remove(); }, 12000);
-        }
-
-        function verificarNovasTarefasEPrioridades(novasTarefas) {
-            if (currentUser === 'visitante' || currentUser === 'admin') return;
-            const minhasTasks = novasTarefas.filter(t => t.responsibles && t.responsibles.includes(currentUser));
-            const todosIdsAtuais = novasTarefas.map(t => t.id);
-
-            if (listaIdsTarefasConhecidas !== null) {
-                minhasTasks.forEach(task => {
-                    if (!listaIdsTarefasConhecidas.includes(task.id)) {
-                        mostrarPopupNotificacao(
-                            `📌 Nova Tarefa na sua Fila!`, 
-                            `A tarefa <strong>"${task.title}"</strong> (${task.category}) foi alocada para você.`,
-                            task.priority === "1" ? "#e74c3c" : "#2ecc71"
-                        );
-                        emitirSinalSonoro(); 
-                    }
-                });
-            }
-            listaIdsTarefasConhecidas = todosIdsAtuais;
-
-            const tarefaEmExecucao = minhasTasks.find(t => {
-                const ultimoLog = t.timeLogs && t.timeLogs.length > 0 ? t.timeLogs[t.timeLogs.length - 1] : null;
-                return ultimoLog && ultimoLog.type === 'start' && ultimoLog.by === currentUser;
-            });
-
-            if (tarefaEmExecucao) {
-                const prioridadeAtual = parseInt(tarefaEmExecucao.priority);
-                const temTarefaMaisUrgentePendente = minhasTasks.some(t => parseInt(t.priority) < prioridadeAtual);
-                if (temTarefaMaisUrgentePendente && !alertaPrioridadeAtivo) {
-                    alertaPrioridadeAtivo = true;
-                    mostrarPopupNotificacao(`⚠️ VIOLAÇÃO DE PRIORIDADE!`, `Você está executando uma tarefa de Prioridade ${prioridadeAtual}, mas há demandas mais urgentes pendentes.`, "#e74c3c");
-                    emitirSinalSonoro();
-                    setTimeout(() => { alertaPrioridadeAtivo = false; }, 30000);
-                }
-            }
-        }
-
-        const containerCampos = document.getElementById('userFieldsContainer');
-        if(containerCampos) {
-            for(let i=1; i<=5; i++) {
-                containerCampos.innerHTML += `
-                    <div style="border: 1px solid #eee; padding:10px; border-radius:6px; margin-bottom:10px; background:#fafafa;">
-                        <span id="lbl_user${i}" style="font-weight:bold; font-size:0.85rem; display:block; margin-bottom:5px;">Funcionário ${i}:</span>
-                        <input type="text" id="cfg_user${i}" class="form-control" style="margin-bottom:5px;" placeholder="Nome">
-                        <div style="display:flex; gap:10px; margin-bottom:5px;">
-                            <input type="time" id="cfg_in${i}" class="form-control" title="Início da Jornada">
-                            <input type="time" id="cfg_out${i}" class="form-control" title="Fim da Jornada">
-                        </div>
-                        <div style="display:flex; gap:10px; align-items:center; margin-bottom:5px;">
-                            <span style="font-size:0.75rem; font-weight:bold; color:#e67e22;">Almoço:</span>
-                            <input type="time" id="cfg_meal_in${i}" class="form-control" title="Início do Almoço">
-                            <input type="time" id="cfg_meal_out${i}" class="form-control" title="Fim do Almoço">
-                        </div>
-                        <div style="display:flex; gap:10px; align-items:center; margin-top:5px; border-top: 1px dashed #ddd; padding-top:5px;">
-                            <input type="password" id="cfg_pass${i}" class="form-control" style="width:130px; padding:5px; font-size:0.8rem;" placeholder="Senha">
-                            <label style="font-size:0.75rem; font-weight:bold; color:var(--primary-color); cursor:pointer;">
-                                <input type="checkbox" id="cfg_perm${i}"> Substituto 👑
-                            </label>
-                        </div>
-                    </div>
-                `;
-            }
-        }
-
-        if (database) {
-            database.ref('configuracoes/equipe').on('value', (snapshot) => {
-                const data = snapshot.val();
-                if (data) {
-                    Object.keys(jornadas).forEach(k => {
-                        if(data[k]) nomesExibicao[k] = data[k].nome || nomesExibicao[k];
-                        if(data[k] && data[k].jornada) jornadas[k] = data[k].jornada;
-                        if(data[k] && data[k].almoco) almocosPadrao[k] = data[k].almoco;
-                        if(data[k] && k !== 'admin') {
-                            senhasEquipe[k] = data[k].senha || "123";
-                            permissoesLancar[k] = data[k].podeLancar || false;
-                        }
-                    });
-                    if (document.getElementById('cfg_admin_nome')) document.getElementById('cfg_admin_nome').value = nomesExibicao['admin'];
-                    if (document.getElementById('cfg_admin_in')) document.getElementById('cfg_admin_in').value = jornadas['admin'].in;
-                    if (document.getElementById('cfg_admin_out')) document.getElementById('cfg_admin_out').value = jornadas['admin'].out;
-                    if (document.getElementById('cfg_admin_meal_in')) document.getElementById('cfg_admin_meal_in').value = almocosPadrao['admin'].in;
-                    if (document.getElementById('cfg_admin_meal_out')) document.getElementById('cfg_admin_meal_out').value = almocosPadrao['admin'].out;
-
-                    for(let i=1; i<=5; i++) {
-                        const uKey = `usuario_${i}`;
-                        if (document.getElementById(`cfg_user${i}`)) document.getElementById(`cfg_user${i}`).value = nomesExibicao[uKey];
-                        if (document.getElementById(`cfg_in${i}`)) document.getElementById(`cfg_in${i}`).value = jornadas[uKey].in;
-                        if (document.getElementById(`cfg_out${i}`)) document.getElementById(`cfg_out${i}`).value = jornadas[uKey].out;
-                        if (document.getElementById(`cfg_meal_in${i}`)) document.getElementById(`cfg_meal_in${i}`).value = almocosPadrao[uKey].in;
-                        if (document.getElementById(`cfg_meal_out${i}`)) document.getElementById(`cfg_meal_out${i}`).value = almocosPadrao[uKey].out;
-                        if (document.getElementById(`cfg_pass${i}`)) document.getElementById(`cfg_pass${i}`).value = senhasEquipe[uKey];
-                        if (document.getElementById(`cfg_perm${i}`)) document.getElementById(`cfg_perm${i}`).checked = permissoesLancar[uKey];
-                        if (document.getElementById(`lbl_user${i}`)) document.getElementById(`lbl_user${i}`).innerText = `Funcionário ${i} (${nomesExibicao[uKey]}):`;
-                    }
-                    atualizarNomesNoSeletorLogin(); renderTasks(); renderizarStatusEquipeTempoReal();
-                }
-            });
-
-            database.ref('configuracoes/seguranca/adminPassword').on('value', (snapshot) => {
-                const val = snapshot.val(); if(val) adminPasswordDB = val;
-            });
-
-            database.ref('tasks/ativas').on('value', (snapshot) => {
-                tasks = snapshot.val() ? Object.values(snapshot.val()) : [];
-                renderTasks(); verificarAlertasCriticos(); updateReportDashboard();
-                verificarNovasTarefasEPrioridades(tasks); renderizarStatusEquipeTempoReal();
-            });
-
-            database.ref('tasks/historico').on('value', (snapshot) => {
-                historicTasks = snapshot.val() ? Object.values(snapshot.val()) : []; updateReportDashboard();
-            });
-
-            database.ref('almoço/historico').on('value', (snapshot) => {
-                mealLogs = snapshot.val() || {}; atualizarPainelAlmoçoInterface(); updateReportDashboard(); renderizarStatusEquipeTempoReal();
-            });
-
-            database.ref('descanso/historico').on('value', (snapshot) => {
-                descansoLogs = snapshot.val() || {}; atualizarPainelDescansoInterface(); updateReportDashboard(); renderizarStatusEquipeTempoReal();
-            });
-        }
-
-        function atualizarNomesNoSeletorLogin() {
-            const select = document.getElementById('loginUser');
-            if (select && select.options.length > 0) {
-                select.options[0].text = nomesExibicao['admin'];
-                for(let i=1; i<=5; i++) { if(select.options[i]) select.options[i].text = nomesExibicao[`usuario_${i}`]; }
-            }
-
-            const queueSelect = document.getElementById('queueUserFilter');
-            if (queueSelect) {
-                const valAtual = queueSelect.value;
-                queueSelect.innerHTML = `
-                    <option value="todos">👁️ Ver todas as tarefas do setor</option>
-                    <option value="minhas">👤 Ver apenas minhas tarefas</option>
-                `;
-                
-                const chavesEquipe = ['admin', 'usuario_1', 'usuario_2', 'usuario_3', 'usuario_4', 'usuario_5'];
-                const agrupadoPorNome = {};
-                
-                chavesEquipe.forEach(k => {
-                    const nome = (nomesExibicao[k] || '').trim();
-                    if (nome) {
-                        if (!agrupadoPorNome[nome]) agrupadoPorNome[nome] = [];
-                        agrupadoPorNome[nome].push(k);
-                    }
-                });
-                
-                Object.keys(agrupadoPorNome).forEach(nome => {
-                    const opt = document.createElement('option');
-                    opt.value = agrupadoPorNome[nome].join(',');
-                    opt.textContent = `Filtrar: ${nome}`;
-                    queueSelect.appendChild(opt);
-                });
-                
-                queueSelect.value = valAtual;
-                if (!queueSelect.value) queueSelect.value = 'todos';
-            }
-        }
-
-        window.addEventListener('DOMContentLoaded', () => {
-            currentUser = sessionStorage.getItem('modelagem_current_user') || 'visitante';
-            configurarInterfacePorUsuario();
-            
-            const versiculoHoje = obterVersiculoDoDia();
-            document.getElementById('splashVerse').innerText = versiculoHoje.texto;
-            document.getElementById('splashRef').innerText = versiculoHoje.ref;
-
-            inicializarCubagemTool();
-
-            setTimeout(() => {
-                if (currentUser === 'visitante') {
-                    pularSplashPreLogin();
-                }
-            }, 800);
-
-            setInterval(() => { verificarEExecutarHorariosAutomaticos(); updateReportDashboard(); }, 1000);
-        });
-
-        function abrirModalLogin() { document.getElementById('loginModal').style.display = 'flex'; }
-        function fecharModalLogin() { document.getElementById('loginModal').style.display = 'none'; document.getElementById('loginPassword').value = ''; }
-
-        function login() {
-            const userSelected = document.getElementById('loginUser').value;
-            const senhaDigitada = document.getElementById('loginPassword').value;
-
-            if (userSelected === 'admin') {
-                if (senhaDigitada !== adminPasswordDB) { alert("Senha mestre incorreta!"); return; }
-            } else {
-                if (senhaDigitada !== (senhasEquipe[userSelected] || "123")) { alert("Senha de usuário incorreta!"); return; }
-            }
-            
-            currentUser = userSelected;
-            sessionStorage.setItem('modelagem_current_user', currentUser);
-            fecharModalLogin(); configurarInterfacePorUsuario();
-            exibirSplashPostLogin();
-        }
-
-        function configurarInterfacePorUsuario() {
-            const container = document.getElementById('tabPainel');
-            const adminBox = document.getElementById('adminFormBox');
-            const btnGerenciamento = document.getElementById('btnTabGerenciamento');
-            const btnCubagem = document.getElementById('btnTabCubagem');
-            const btnLoginTrigger = document.getElementById('btnLoginTrigger');
-            const btnLogout = document.getElementById('btnLogout');
-            const reportButtons = document.getElementById('reportButtonsContainer');
-            const userPanels = document.getElementById('userControlPanels');
-            const restrictedSection = document.getElementById('restrictedTimeReportSection');
-
-            document.getElementById('adminTabs').style.display = 'flex';
-            userPanels.style.display = 'none';
-            const temPermissaoLancar = permissoesLancar[currentUser] || false;
-
-            // REGRA DE SEGURANÇA: CALCULADORA VISÍVEL SOMENTE PARA ADMIN E DIGITALIZADOR (USUARIO_3)
-            if (currentUser === 'admin' || currentUser === 'usuario_3') {
-                btnCubagem.style.display = 'block';
-            } else {
-                btnCubagem.style.display = 'none';
-                if (document.getElementById('tabCubagem').style.display === 'block') {
-                    switchTab('painel');
-                }
-            }
-
-            if (currentUser === 'admin') {
-                document.getElementById('userDisplay').innerText = nomesExibicao[currentUser];
-                adminBox.style.display = 'block'; container.classList.remove('full-width');
-                btnGerenciamento.style.display = 'block'; btnLoginTrigger.style.display = 'none'; btnLogout.style.display = 'block';
-                reportButtons.style.display = 'flex'; restrictedSection.style.display = 'block'; userPanels.style.display = 'flex';
-                atualizarPainelAlmoçoInterface(); atualizarPainelDescansoInterface(); switchTab('painel');
-            } else if (currentUser === 'visitante') {
-                document.getElementById('userDisplay').innerText = "Monitoramento Geral";
-                adminBox.style.display = 'none'; container.classList.add('full-width');
-                btnGerenciamento.style.display = 'none'; btnLoginTrigger.style.display = 'block'; btnLogout.style.display = 'none';
-                reportButtons.style.display = 'none'; restrictedSection.style.none; switchTab('painel');
-            } else {
-                document.getElementById('userDisplay').innerText = nomesExibicao[currentUser] + (temPermissaoLancar ? " (Substituto 👑)" : "");
-                adminBox.style.display = temPermissaoLancar ? 'block' : 'none';
-                container.className = temPermissaoLancar ? 'dashboard-layout' : 'dashboard-layout full-width';
-                document.getElementById('adminTabs').style.display = temPermissaoLancar ? 'flex' : 'none';
-                btnGerenciamento.style.display = 'none'; btnLoginTrigger.style.display = 'none'; btnLogout.style.display = 'block';
-                reportButtons.style.display = 'flex'; restrictedSection.style.display = 'block'; userPanels.style.display = 'flex';
-                atualizarPainelAlmoçoInterface(); atualizarPainelDescansoInterface(); verificarAlertasCriticos();
-            }
-            renderTasks(); updateReportDashboard(); renderizarStatusEquipeTempoReal();
-        }
-
-        function logout() { sessionStorage.setItem('modelagem_current_user', 'visitante'); currentUser = 'visitante'; configurarInterfacePorUsuario(); }
-
-        function switchTab(tab) {
-            // VERIFICAÇÃO DE PERMISSÃO PARA CUBAGEM
-            if (tab === 'cubagem' && currentUser !== 'admin' && currentUser !== 'usuario_3') {
-                alert("Acesso restrito! Apenas o Administrador e o Digitalizador possuem permissão para esta ferramenta.");
-                return;
-            }
-
-            document.querySelectorAll('.nav-tabs .tab-btn').forEach(b => b.classList.remove('active'));
-            document.getElementById('tabPainel').style.display = 'none'; 
-            document.getElementById('tabRelatorios').style.display = 'none'; 
-            document.getElementById('tabGerenciamento').style.display = 'none';
-            document.getElementById('tabCubagem').style.display = 'none';
-
-            if (tab === 'painel') { document.getElementById('btnTabPainel').classList.add('active'); document.getElementById('tabPainel').style.display = 'grid'; }
-            else if (tab === 'relatorios') { document.getElementById('btnTabRelatorios').classList.add('active'); document.getElementById('tabRelatorios').style.display = 'block'; updateReportDashboard(); }
-            else if (tab === 'gerenciamento') { document.getElementById('btnTabGerenciamento').classList.add('active'); document.getElementById('tabGerenciamento').style.display = 'block'; }
-            else if (tab === 'cubagem') { document.getElementById('btnTabCubagem').classList.add('active'); document.getElementById('tabCubagem').style.display = 'block'; calcularTudo(); }
-        }
-
-        function verificarAlertasCriticos() {
-            if(currentUser === 'visitante' || currentUser === 'admin') return;
-            const hoje = new Date().toISOString().split('T')[0];
-            const temUrgencia = tasks.some(t => t.responsibles && t.responsibles.includes(currentUser) && t.priority === "1" && t.deadline <= hoje);
-            document.getElementById('criticalAlertPanel').style.display = temUrgencia ? 'block' : 'none';
-        }
-
-        function verificarEExecutarHorariosAutomaticos() {
-            if (currentUser === 'visitante' || currentUser === 'admin') return;
-            const agora = new Date(); const horaAtual = agora.getHours(); const minutoAtual = agora.getMinutes();
-            const totalMinutos = (horaAtual * 60) + minutoAtual;
-            const horaMinutoAtualStr = `${String(horaAtual).padStart(2, '0')}:${String(minutoAtual).padStart(2, '0')}`;
-
-            const pausarTarefasEmExecucaoAutomatico = (motivoPreDefinido) => {
-                tasks.forEach(task => {
-                    const ultimoLog = task.timeLogs && task.timeLogs.length > 0 ? task.timeLogs[task.timeLogs.length - 1] : null;
-                    if (ultimoLog && ultimoLog.type === 'start' && ultimoLog.by === currentUser) {
-                        if (!task.timeLogs) task.timeLogs = [];
-                        task.timeLogs.push({
-                            type: 'pause',
-                            time: new Date().getTime(),
-                            by: 'sistema',
-                            byName: 'Sistema (Automático)',
-                            reason: motivoPreDefinido,
-                            requestedBy: 'Sistema'
-                        });
-                        if (database) database.ref('tasks/ativas/' + task.id).set(task);
-                    }
-                });
+        // CADASTRO E GERENCIAMENTO DE TAREFAS
+        document.getElementById('taskForm').onsubmit = function(e) {
+            e.preventDefault();
+            const newTask = {
+                title: document.getElementById('taskTitle').value,
+                requester: document.getElementById('taskRequester').value,
+                category: document.getElementById('taskCategory').value,
+                action: document.getElementById('taskAction').value,
+                priority: document.getElementById('taskPriority').value,
+                deadline: document.getElementById('taskDeadline').value,
+                desc: document.getElementById('taskDesc').value,
+                status: 'pending',
+                assignedTo: 'admin',
+                createdAt: new Date().toISOString()
             };
 
-            const configAlmoco = almocosPadrao[currentUser];
-            if (configAlmoco && configAlmoco.in && configAlmoco.out) {
-                if (horaMinutoAtualStr >= configAlmoco.in && horaMinutoAtualStr < configAlmoco.out) {
-                    if (!estadoAutomacao.almocoAtivo) {
-                        pausarTarefasEmExecucaoAutomatico("Pausa automática: Horário de Almoço iniciado");
-                        const hojeStr = new Date().toISOString().split('T')[0];
-                        const logHoje = mealLogs[hojeStr]?.[currentUser];
-                        if (!logHoje || !logHoje.start) { registrarAlmoço('start'); }
-                        estadoAutomacao.almocoAtivo = true;
-                    }
-                } else if (horaMinutoAtualStr >= configAlmoco.out) {
-                    if (estadoAutomacao.almocoAtivo) {
-                        const hojeStr = new Date().toISOString().split('T')[0];
-                        const logHoje = mealLogs[hojeStr]?.[currentUser];
-                        if (logHoje && logHoje.start && !logHoje.end) { registrarAlmoço('end'); }
-                        estadoAutomacao.almocoAtivo = false;
-                    }
+            db.ref('tasks').push(newTask, err => {
+                if (!err) {
+                    alert("Tarefa lançada com sucesso!");
+                    document.getElementById('taskForm').reset();
+                    toggleFormTarefa();
+                    registrarLog(`Criou a tarefa: ${newTask.title}`);
                 }
-            }
+            });
+        };
 
-            const naJanelaDescansoManha = (totalMinutos >= 590 && totalMinutos < 600);
-            const naJanelaDescansoTarde = (totalMinutos >= 930 && totalMinutos < 940);
-
-            if (naJanelaDescansoManha || naJanelaDescansoTarde) {
-                if (!estadoAutomacao.descansoAtivo) {
-                    pausarTarefasEmExecucaoAutomatico("Pausa automática: Horário de Descanso setorial");
-                    const hojeStr = new Date().toISOString().split('T')[0];
-                    const logHoje = descansoLogs[hojeStr]?.[currentUser];
-                    if (!logHoje || !logHoje.start) { registrarDescanso('start'); }
-                    estadoAutomacao.descansoAtivo = true;
-                }
-            } else {
-                if (estadoAutomacao.descansoAtivo) {
-                    const hojeStr = new Date().toISOString().split('T')[0];
-                    const logHoje = descansoLogs[hojeStr]?.[currentUser];
-                    if (logHoje && logHoje.start && !logHoje.end) { registrarDescanso('end'); }
-                    estadoAutomacao.descansoAtivo = false;
-                }
-            }
-
-            const configJornada = jornadas[currentUser];
-            if (configJornada && configJornada.out) {
-                if (horaMinutoAtualStr >= configJornada.out) {
-                    pausarTarefasEmExecucaoAutomatico("Pausa automática: Fim do Expediente atingido");
-                }
-            }
-        }
-
-        function registrarDescanso(status) {
-            const hojeStr = new Date().toISOString().split('T')[0]; const refPath = `descanso/historico/${hojeStr}/${currentUser}`;
-            if (status === 'start') { if (database) database.ref(refPath).set({ start: new Date().getTime() }); } 
-            else { if (database) database.ref(refPath).update({ end: new Date().getTime() }); }
-        }
-
-        function atualizarPainelDescansoInterface() {
-            if (currentUser === 'visitante') return;
-            const logHoje = descansoLogs[new Date().toISOString().split('T')[0]]?.[currentUser];
-            const btnStart = document.getElementById('btnStartDescanso'); const btnEnd = document.getElementById('btnEndDescanso'); const label = document.getElementById('descansoStatusLabel');
-            if (!logHoje) { btnStart.style.display = 'inline-block'; btnEnd.style.display = 'none'; label.innerText = "Status do Descanso: Disponível"; } 
-            else if (logHoje.start && !logHoje.end) { btnStart.style.display = 'none'; btnEnd.style.display = 'inline-block'; label.innerText = "Status: ☕ Em Intervalo..."; } 
-            else { btnStart.style.display = 'none'; btnEnd.style.display = 'none'; label.innerText = "Status: ✓ Realizado."; }
-        }
-
-        function registrarAlmoço(status) {
-            const hojeStr = new Date().toISOString().split('T')[0]; const refPath = `almoço/historico/${hojeStr}/${currentUser}`;
-            if (status === 'start') { if (database) database.ref(refPath).set({ start: new Date().getTime() }); } 
-            else { if (database) database.ref(refPath).update({ end: new Date().getTime() }); }
-        }
-
-        function atualizarPainelAlmoçoInterface() {
-            if (currentUser === 'visitante') return;
-            const logHoje = mealLogs[new Date().toISOString().split('T')[0]]?.[currentUser];
-            const btnStart = document.getElementById('btnStartMeal'); const btnEnd = document.getElementById('btnEndMeal'); const label = document.getElementById('mealStatusLabel');
-            if (!logHoje) { btnStart.style.display = 'inline-block'; btnEnd.style.display = 'none'; label.innerText = "Status do Almoço: Pronto"; } 
-            else if (logHoje.start && !logHoje.end) { btnStart.style.display = 'none'; btnEnd.style.display = 'inline-block'; label.innerText = "Status: 🍽️ Almoçando..."; } 
-            else { btnStart.style.display = 'none'; btnEnd.style.display = 'none'; label.innerText = "Status: ✓ Finalizado."; }
-        }
-
-        function buildPausasHTML(timeLogs) {
-            if (!timeLogs) return 'Nenhuma pausa';
-            const pausas = timeLogs.filter(log => log.type === 'pause');
-            if (pausas.length === 0) return 'Nenhuma pausa';
-            
-            return pausas.map(p => {
-                const horaStr = new Date(p.time).toLocaleTimeString('pt-BR', {hour: '2-digit', minute:'2-digit'});
-                const solicitante = p.requestedBy || 'Não informado';
-                return `• [${horaStr}] Por: ${p.byName} | Solicitante: ${solicitante} | Motivo: ${p.reason || 'Sem motivo'}`;
-            }).join('<br>');
-        }
-
-        /* --- FILTRO INTELIGENTE E RENDERIZAÇÃO DE TAREFAS --- */
         function renderTasks() {
-            const taskList = document.getElementById('taskList'); if(!taskList) return;
-            taskList.innerHTML = '';
-            
-            const filtroUsuario = document.getElementById('queueUserFilter').value;
-            const filtroAcao = document.getElementById('filterActionSelect').value;
-            const textoBusca = document.getElementById('taskSearchBar').value.toLowerCase().trim();
-            
-            let filteredTasks = tasks.filter(t => {
-                if (filtroUsuario === 'minhas') {
-                    if (!t.responsibles || !t.responsibles.includes(currentUser)) return false;
-                } else if (filtroUsuario !== 'todos') {
-                    const chavesFiltro = filtroUsuario.split(',');
-                    if (!t.responsibles || !t.responsibles.some(r => chavesFiltro.includes(r))) return false;
-                }
+            const container = document.getElementById('taskList');
+            if (!container) return;
+            container.innerHTML = '';
 
-                if (filtroAcao !== 'todos' && t.action !== filtroAcao) {
-                    return false;
-                }
+            const search = document.getElementById('taskSearchBar').value.toLowerCase();
+            const actionFilter = document.getElementById('filterActionSelect').value;
+            const userFilter = document.getElementById('queueUserFilter').value;
 
-                return true;
+            let filtered = tasks.filter(t => {
+                const matchSearch = t.title.toLowerCase().includes(search) || t.requester.toLowerCase().includes(search) || (t.desc && t.desc.toLowerCase().includes(search));
+                const matchAction = actionFilter === 'todos' || t.action === actionFilter;
+                let matchUser = true;
+
+                if (userFilter === 'minhas') {
+                    matchUser = currentUser && t.assignedTo === currentUser;
+                } else if (userFilter !== 'todos') {
+                    matchUser = t.assignedTo === userFilter;
+                }
+                return matchSearch && matchAction && matchUser;
             });
 
-            if (textoBusca !== '') {
-                filteredTasks = filteredTasks.filter(t => {
-                    const noTitulo = t.title ? t.title.toLowerCase().includes(textoBusca) : false;
-                    const nasInstrucoes = t.desc ? t.desc.toLowerCase().includes(textoBusca) : false;
-                    const naCategoria = t.category ? t.category.toLowerCase().includes(textoBusca) : false;
-                    const noSolicitante = t.requester ? t.requester.toLowerCase().includes(textoBusca) : false;
-                    const naAcao = t.action ? t.action.toLowerCase().includes(textoBusca) : false;
-                    const dataBr = t.deadline ? t.deadline.split('-').reverse().join('/') : '';
-                    const noPrazo = t.deadline ? (t.deadline.includes(textoBusca) || dataBr.includes(textoBusca)) : false;
-                    const nosResponsaveis = t.responsibles ? t.responsibles.some(r => nomesExibicao[r] && nomesExibicao[r].toLowerCase().includes(textoBusca)) : false;
+            filtered.sort((a, b) => a.priority - b.priority);
 
-                    return noTitulo || nasInstrucoes || naCategoria || noSolicitante || naAcao || noPrazo || nosResponsaveis;
-                });
+            if (filtered.length === 0) {
+                container.innerHTML = '<p style="text-align:center; padding: 20px; color: #888;">Nenhuma tarefa encontrada com os filtros selecionados.</p>';
+                return;
             }
 
-            filteredTasks.sort((a, b) => a.priority - b.priority || new Date(a.deadline) - new Date(b.deadline));
-            if (filteredTasks.length === 0) { taskList.innerHTML = '<p style="color: #999; text-align: center; padding: 35px;">Nenhuma atividade localizada com os filtros selecionados.</p>'; return; }
-
-            const hoje = new Date().toISOString().split('T')[0];
-
-            filteredTasks.forEach((task) => {
+            filtered.forEach(task => {
                 const card = document.createElement('div');
                 card.className = `task-card prio-${task.priority}`;
-                const dataBr = task.deadline.split('-').reverse().join('/');
-                let prazoStatus = task.deadline < hoje ? `<span class="deadline-alert">⚠️ ATRASADA (${dataBr})</span>` : (task.deadline === hoje ? `<span class="deadline-alert">🚨 ENTREGA HOJE</span>` : `Prazo: ${dataBr}`);
 
-                const ultimoLog = task.timeLogs && task.timeLogs.length > 0 ? task.timeLogs[task.timeLogs.length - 1] : null;
-                const isRunning = ultimoLog && ultimoLog.type === 'start';
-                let statusCronometro = ultimoLog ? (ultimoLog.type === 'start' ? `▶️ Em execução por ${ultimoLog.byName}` : `⏸️ Pausado por ${ultimoLog.byName}`) : "Aguardando Início";
-
-                let motivosPausaHTML = '';
-                if (task.timeLogs) {
-                    const pausas = task.timeLogs.filter(log => log.type === 'pause');
-                    if (pausas.length > 0) {
-                        motivosPausaHTML = `<div style="margin-top: 10px;">`;
-                        pausas.forEach(p => { 
-                            const solicitanteStr = p.requestedBy ? ` | <strong>Solicitante:</strong> ${p.requestedBy}` : '';
-                            motivosPausaHTML += `<div class="pause-reason-box"><strong>Pausa (${p.byName}):</strong> ${p.reason}${solicitanteStr}</div>`; 
-                        });
-                        motivosPausaHTML += `</div>`;
-                    }
-                }
-
-                const ehResponsavel = task.responsibles && task.responsibles.includes(currentUser);
-                const temPermissaoLancar = permissoesLancar[currentUser] || false;
-                
-                let podeControlar = false;
-                if (currentUser === 'admin' || temPermissaoLancar) {
-                    podeControlar = true; 
-                } else if (currentUser !== 'visitante') {
-                    if (!isRunning) {
-                        podeControlar = true; 
-                    } else {
-                        podeControlar = ehResponsavel || (ultimoLog && ultimoLog.by === currentUser); 
-                    }
-                }
-
-                const classeBotao = podeControlar ? "btn-action" : "btn-action btn-disabled";
-                const atributoDesabilitado = podeControlar ? "" : "disabled";
+                const isAssignedToMe = currentUser && task.assignedTo === currentUser;
+                const isAdmin = currentUser && systemUsers[currentUser].role === 'admin';
 
                 card.innerHTML = `
                     <span class="prio-badge">Prioridade ${task.priority}</span>
-                    <h3>${task.title} <span style="font-size:0.85rem; color:#3498db; font-weight:bold; background:#e8f4fd; padding:3px 8px; border-radius:4px;">${task.category || 'KIT'}</span></h3>
-                    <div class="task-info-line" style="margin-top: 8px;"><strong>Solicitante:</strong> ${task.requester || 'Não informado'} | <strong>Ação:</strong> ${task.action} | <strong>Status:</strong> ${statusCronometro}</div>
-                    ${task.desc ? `<div class="task-desc-box"><strong>Instruções:</strong> ${task.desc}</div>` : ''}
-                    ${motivosPausaHTML}
+                    <h3 style="font-size: 1.1rem; color: #2c3e50; margin-bottom: 5px;">${task.title}</h3>
+                    <p style="font-size: 0.85rem; color: #555;"><strong>Solicitante:</strong> ${task.requester} | <strong>Categoria:</strong> ${task.category}</p>
+                    <p style="font-size: 0.85rem; color: #555;"><strong>Especificação:</strong> ${task.action}</p>
+                    ${task.desc ? `<div class="task-desc-box">${task.desc}</div>` : ''}
+                    ${task.pauseReason ? `<div class="pause-reason-box">⚠️ <strong>Motivo da Pausa:</strong> ${task.pauseReason}</div>` : ''}
                     <div class="task-meta">
-                        <span>👥 Alocado para: <strong>${task.responsibles ? task.responsibles.map(r => nomesExibicao[r]).join(' / ') : 'Setor'}</strong></span>
-                        <span>${prazoStatus}</span>
+                        <span><strong>Prazo:</strong> ${task.deadline}</span>
+                        <span><strong>Atribuído a:</strong> ${systemUsers[task.assignedTo] ? systemUsers[task.assignedTo].name : task.assignedTo}</span>
                     </div>
                     <div class="task-actions">
-                        ${currentUser === 'admin' || temPermissaoLancar ? `<button class="btn-action btn-delete" onclick="deleteTask('${task.id}')">Excluir</button>` : ''}
-                        ${currentUser !== 'visitante' ? `<button class="btn-action btn-edit" onclick="abrirModalEdicao('${task.id}')">Editar ✏️</button>` : ''}
-                        ${!isRunning ? 
-                            `<button class="${classeBotao} btn-start" ${atributoDesabilitado} onclick="alterarCronometro('${task.id}', 'start')">Iniciar Task ▶️</button>` : 
-                            `<button class="${classeBotao} btn-pause" ${atributoDesabilitado} onclick="alterarCronometro('${task.id}', 'pause')">Pausar Task ⏸️</button>`
-                        }
-                        <button class="${classeBotao} btn-done" ${atributoDesabilitado} onclick="finishTask('${task.id}')">Concluir ✓</button>
+                        ${task.status === 'pending' ? `<button class="btn-action btn-start" onclick="iniciarTarefa('${task.id}')" ${!isAssignedToMe && !isAdmin ? 'disabled class="btn-action btn-disabled"' : ''}>Iniciar ▶</button>` : ''}
+                        ${task.status === 'running' ? `<button class="btn-action btn-pause" onclick="solicitarPausaTarefa('${task.id}')" ${!isAssignedToMe && !isAdmin ? 'disabled class="btn-action btn-disabled"' : ''}>Pausar ⏸</button>` : ''}
+                        ${task.status === 'paused' ? `<button class="btn-action btn-start" onclick="retomarTarefa('${task.id}')" ${!isAssignedToMe && !isAdmin ? 'disabled class="btn-action btn-disabled"' : ''}>Retomar ▶</button>` : ''}
+                        ${task.status !== 'done' ? `<button class="btn-action btn-done" onclick="concluirTarefa('${task.id}')" ${!isAssignedToMe && !isAdmin ? 'disabled class="btn-action btn-disabled"' : ''}>Concluir ✔</button>` : ''}
+                        ${isAdmin ? `
+                            <button class="btn-action btn-edit" onclick="abrirEdicaoTarefa('${task.id}')">Editar ✏️</button>
+                            <button class="btn-action btn-delete" onclick="excluirTarefa('${task.id}')">Excluir 🗑️</button>
+                        ` : ''}
                     </div>
                 `;
-                taskList.appendChild(card);
+                container.appendChild(card);
             });
         }
 
-        function abrirModalEdicao(id) {
-            const task = tasks.find(t => t.id === id);
-            if (!task) return;
-            
-            document.getElementById('editTaskId').value = task.id;
-            document.getElementById('editTaskTitle').value = task.title || '';
-            document.getElementById('editTaskRequester').value = task.requester || '';
-            document.getElementById('editTaskCategory').value = task.category || 'KIT';
-            document.getElementById('editTaskPriority').value = task.priority || '3';
-            document.getElementById('editTaskDeadline').value = task.deadline || '';
-            document.getElementById('editTaskDesc').value = task.desc || '';
-            
-            document.getElementById('editTaskModal').style.display = 'flex';
+        function iniciarTarefa(id) {
+            db.ref(`tasks/${id}`).update({ status: 'running', startedAt: new Date().toISOString() });
+            registrarLog(`Iniciou a tarefa ${id}`);
         }
 
-        function fecharModalEdicao() {
-            document.getElementById('editTaskModal').style.display = 'none';
+        function solicitarPausaTarefa(id) {
+            pendingPauseTaskId = id;
+            document.getElementById('modalPauseReason').style.display = 'flex';
         }
+
+        function toggleCustomPauseInput() {
+            const val = document.getElementById('pauseReasonSelect').value;
+            document.getElementById('customPauseReasonGroup').style.display = (val === 'Outro Motivo') ? 'block' : 'none';
+        }
+
+        function confirmarPausaComMotivo() {
+            if (!pendingPauseTaskId) return;
+            const selectVal = document.getElementById('pauseReasonSelect').value;
+            const reason = (selectVal === 'Outro Motivo') ? document.getElementById('customPauseReason').value : selectVal;
+
+            const task = tasks.find(t => t.id === pendingPauseTaskId);
+            const pauses = task.pauses || [];
+            pauses.push({ reason, pausedAt: new Date().toISOString() });
+
+            db.ref(`tasks/${pendingPauseTaskId}`).update({
+                status: 'paused',
+                pauseReason: reason,
+                pauses: pauses
+            });
+
+            document.getElementById('modalPauseReason').style.display = 'none';
+            pendingPauseTaskId = null;
+            registrarLog(`Pausou a tarefa ${task.title} pelo motivo: ${reason}`);
+        }
+
+        function retomarTarefa(id) {
+            db.ref(`tasks/${id}`).update({ status: 'running', pauseReason: null });
+            registrarLog(`Retomou a tarefa ${id}`);
+        }
+
+        function concluirTarefa(id) {
+            db.ref(`tasks/${id}`).update({ status: 'done', completedAt: new Date().toISOString() });
+            registrarLog(`Concluiu a tarefa ${id}`);
+        }
+
+        function excluirTarefa(id) {
+            if (confirm("Deseja realmente excluir esta tarefa?")) {
+                db.ref(`tasks/${id}`).remove();
+                registrarLog(`Excluiu a tarefa ${id}`);
+            }
+        }
+
+        // EDIÇÃO E DETALHAMENTO DE TAREFAS
+        function abrirEdicaoTarefa(id) {
+            const t = tasks.find(x => x.id === id);
+            if (!t) return;
+            document.getElementById('editTaskId').value = t.id;
+            document.getElementById('editTitle').value = t.title;
+            document.getElementById('editRequester').value = t.requester;
+            document.getElementById('editCategory').value = t.category;
+            document.getElementById('editAction').value = t.action;
+            document.getElementById('editPriority').value = t.priority;
+            document.getElementById('editDeadline').value = t.deadline;
+            document.getElementById('editDesc').value = t.desc || '';
+            document.getElementById('modalEditTask').style.display = 'flex';
+        }
+
+        function fecharModalEdicao() { document.getElementById('modalEditTask').style.display = 'none'; }
 
         function salvarEdicaoTarefa() {
             const id = document.getElementById('editTaskId').value;
-            const task = tasks.find(t => t.id === id);
-            if (!task) return;
-
-            task.title = document.getElementById('editTaskTitle').value;
-            task.requester = document.getElementById('editTaskRequester').value;
-            task.category = document.getElementById('editTaskCategory').value;
-            task.priority = document.getElementById('editTaskPriority').value;
-            task.deadline = document.getElementById('editTaskDeadline').value;
-            task.desc = document.getElementById('editTaskDesc').value;
-
-            if (database) {
-                database.ref('tasks/ativas/' + id).set(task).then(() => {
+            const updates = {
+                title: document.getElementById('editTitle').value,
+                requester: document.getElementById('editRequester').value,
+                category: document.getElementById('editCategory').value,
+                action: document.getElementById('editAction').value,
+                priority: document.getElementById('editPriority').value,
+                deadline: document.getElementById('editDeadline').value,
+                desc: document.getElementById('editDesc').value
+            };
+            db.ref(`tasks/${id}`).update(updates, err => {
+                if (!err) {
                     fecharModalEdicao();
-                    alert("Tarefa atualizada com sucesso!");
-                });
-            }
+                    registrarLog(`Editou a tarefa ${id}`);
+                }
+            });
         }
 
-        function alterarCronometro(id, acao) {
-            const task = tasks.find(t => t.id === id); if (!task) return;
-            const now = new Date().getTime(); if (!task.timeLogs) task.timeLogs = [];
-
-            if (acao === 'pause') {
-                const quemSolicitou = prompt("Quem solicitou a pausa? (Obrigatório):");
-                if (!quemSolicitou || quemSolicitou.trim() === "") { alert("Você deve informar quem solicitou a pausa."); return; }
-                
-                const motivo = prompt("Informe o motivo para pausar a tarefa (Obrigatório):"); 
-                if (!motivo || motivo.trim() === "") { alert("Você deve informar um motivo válido."); return; }
-                
-                task.timeLogs.push({ 
-                    type: 'pause', 
-                    time: now, 
-                    by: currentUser, 
-                    byName: nomesExibicao[currentUser], 
-                    reason: motivo.trim(),
-                    requestedBy: quemSolicitou.trim()
+        function renderRealTimeStatus() {
+            const container = document.getElementById('realTimeStatusContainer');
+            if (!container) return;
+            const runningTasks = tasks.filter(t => t.status === 'running');
+            if (runningTasks.length > 0) {
+                container.style.display = 'block';
+                container.innerHTML = '<h2>🔴 Atividades da Equipe em Tempo Real</h2>';
+                runningTasks.forEach(t => {
+                    const user = systemUsers[t.assignedTo] ? systemUsers[t.assignedTo].name : t.assignedTo;
+                    container.innerHTML += `<p style="margin-top: 5px; font-size: 0.9rem;"><strong>${user}</strong> está executando: <em>${t.title}</em> (${t.action})</p>`;
                 });
             } else {
-                task.timeLogs.push({ type: 'start', time: now, by: currentUser, byName: nomesExibicao[currentUser] });
-                if (task.responsibles && !task.responsibles.includes(currentUser)) {
-                    task.responsibles.push(currentUser);
-                }
-            }
-            if (database) database.ref('tasks/ativas/' + id).set(task);
-        }
-
-        function finishTask(id) {
-            const compTask = tasks.find(t => t.id === id); if (!compTask) return;
-            compTask.dateFinished = new Date().toISOString().split('T')[0];
-            compTask.onTime = compTask.dateFinished <= compTask.deadline;
-            compTask.userWhoFinished = currentUser; compTask.userWhoFinishedName = nomesExibicao[currentUser];
-
-            if (database) {
-                database.ref('tasks/historico/' + id).set(compTask).then(() => {
-                    database.ref('tasks/ativas/' + id).remove(); alert("Tarefa concluída!");
-                });
+                container.style.display = 'none';
             }
         }
 
-        function calcularTempoTrabalhoEInterrupcoes(userKey, deDataStr, apenasHoje = false) {
-            const agoraMs = new Date().getTime(); let eventos = [];
-            const processarLogs = (t) => {
-                if (!t.timeLogs) return;
-                t.timeLogs.forEach(log => {
-                    if (log.by === userKey && log.time >= new Date(deDataStr).getTime()) { eventos.push({ time: log.time, type: log.type }); }
-                });
-            };
-            historicTasks.forEach(t => { if(t.dateFinished >= deDataStr) processarLogs(t); });
-            tasks.forEach(processarLogs);
-            eventos.sort((a, b) => a.time - b.time);
-
-            let minutesWork = 0; let minutesInterrupt = 0;
-            if (eventos.length === 0) return { trabalho: 0, interrupcao: 0 };
-
-            for (let i = 0; i < eventos.length; i++) {
-                const eventoAtual = eventos[i];
-                let fimJanelaEventos = (i + 1 < eventos.length) ? eventos[i + 1].time : agoraMs;
-                if (fimJanelaEventos > agoraMs) fimJanelaEventos = agoraMs;
-                if (eventoAtual.time >= fimJanelaEventos) continue;
-
-                const msUteis = calcularMilissegundosUteisNoPeriodo(eventoAtual.time, fimJanelaEventos, userKey, apenasHoje);
-                const minutesConvertidos = Math.max(0, Math.round(msUteis / 1000 / 60));
-
-                if (eventoAtual.type === 'start') { minutesWork += minutesConvertidos; } 
-                else if (eventoAtual.type === 'pause') { minutesInterrupt += minutesConvertidos; }
-            }
-            return { trabalho: minutesWork, interrupcao: minutesInterrupt };
-        }
-
-        function getFilteredMetrics() {
-            const periodo = document.getElementById('reportPeriod').value;
-            const hoje = new Date(); let limiteDias = 0; const apenasHoje = (periodo === 'hoje');
-
-            if (periodo === 'semanal') limiteDias = 7; 
-            else if (periodo === 'quinzenal') limiteDias = 15; 
-            else if (periodo === 'mensal') limiteDias = 30; 
-            else if (periodo === 'anual') limiteDias = 365;
-
-            const dataCorte = apenasHoje ? new Date().toISOString().split('T')[0] : new Date(hoje.setDate(hoje.getDate() - limiteDias)).toISOString().split('T')[0];
-            return {
-                noPrazo: historicTasks.filter(t => t.dateFinished >= dataCorte && t.onTime).length,
-                foraPrazo: historicTasks.filter(t => t.dateFinished >= dataCorte && !t.onTime).length,
-                pendentes: tasks.length, dataCorte, apenasHoje, periodo
-            };
-        }
-
-        function calcularMilissegundosUteisNoPeriodo(startMs, endMs, userKey, apenasHoje = false) {
-            if (startMs >= endMs) return 0;
-            let totalMs = 0;
-            const itemJornada = jornadas[userKey] || { in: "07:12", out: "17:00" };
-            const [hIn, mIn] = itemJornada.in.split(':').map(Number);
-            const [hOut, mOut] = itemJornada.out.split(':').map(Number);
-
-            let ponteiro = new Date(startMs); const fimJanela = new Date(endMs);
-
-            while (ponteiro <= fimJanela) {
-                const diaSemana = ponteiro.getDay();
-                if (diaSemana >= 1 && diaSemana <= 6) {
-                    const inicioComercial = new Date(ponteiro); inicioComercial.setHours(hIn, mIn, 0, 0);
-                    const fimComercial = new Date(ponteiro); fimComercial.setHours(hOut, mOut, 0, 0);
-                    const maxStart = Math.max(startMs, inicioComercial.getTime()); const minEnd = Math.min(endMs, fimComercial.getTime());
-                    if (maxStart < minEnd) { totalMs += (minEnd - maxStart); }
-                }
-                ponteiro.setDate(ponteiro.getDate() + 1); ponteiro.setHours(0,0,0,0);
-                if (ponteiro.getTime() > fimJanela.getTime()) break;
-            }
-            return totalMs;
-        }
-
-        function calcularEMostrarMetasDinamicas(metrics) {
-            const totalConcluido = metrics.noPrazo + metrics.foraPrazo;
-            let pctEficiencia = totalConcluido > 0 ? Math.round((metrics.noPrazo / totalConcluido) * 100) : 0;
-            document.getElementById('goalEffValue').innerText = `${pctEficiencia}%`;
-            document.getElementById('goalEffBar').style.width = `${Math.min(pctEficiencia, 100)}%`;
-
-            let metaVolumeAlvo = 10;
-            if (metrics.periodo === 'hoje') metaVolumeAlvo = 2;
-            if (metrics.periodo === 'quinzenal') metaVolumeAlvo = 20;
-            if (metrics.periodo === 'mensal') metaVolumeAlvo = 40;
-
-            let pctVolume = Math.round((totalConcluido / metaVolumeAlvo) * 100);
-            document.getElementById('goalVolValue').innerText = `${totalConcluido} / ${metaVolumeAlvo}`;
-            document.getElementById('goalVolBar').style.width = `${Math.min(pctVolume, 100)}%`;
-
-            const hojeStr = new Date().toISOString().split('T')[0];
-            const tarefasAtrasadasSetor = tasks.filter(t => t.deadline < hojeStr).length;
-            document.getElementById('goalDelayValue').innerText = `${tarefasAtrasadasSetor} Ativas`;
-            document.getElementById('goalDelayBar').style.width = `${Math.max(0, 100 - (tarefasAtrasadasSetor * 33))}%`;
-        }
-
-        function updateReportDashboard() {
-            if (document.getElementById('tabRelatorios').style.display === 'none') return;
-            const metrics = getFilteredMetrics();
-            
-            document.getElementById('mNoPrazo').innerText = metrics.noPrazo;
-            document.getElementById('mForaPrazo').innerText = metrics.foraPrazo;
-            document.getElementById('mPendentes').innerText = metrics.pendentes;
-            document.getElementById('mTotal').innerText = metrics.noPrazo + metrics.foraPrazo + metrics.pendentes;
-
-            calcularEMostrarMetasDinamicas(metrics);
-
-            const ctxEff = document.getElementById('efficiencyChart');
-            if (ctxEff) {
-                if (myChart) myChart.destroy();
-                myChart = new Chart(ctxEff.getContext('2d'), {
-                    type: 'doughnut',
-                    data: { labels: ['No Prazo', 'Atrasado', 'Pendente'], datasets: [{ data: [metrics.noPrazo, metrics.foraPrazo, metrics.pendentes], backgroundColor: ['#2ecc71', '#e74c3c', '#f39c12'] }] },
-                    options: { responsive: true, maintainAspectRatio: false }
-                });
-            }
-
-            const tbody = document.getElementById('timeTableBody'); if (!tbody) return;
+        // TELA CHEIA / DETALHAMENTO DE STATUS
+        function abrirDetalhamentoStatus(type) {
+            const overlay = document.getElementById('fullscreenDetails');
+            const tbody = document.getElementById('fsTableBody');
             tbody.innerHTML = '';
-            
-            let labelsTime = []; let dataWork = []; const hojeStr = new Date().toISOString().split('T')[0]; const agoraMs = new Date().getTime();
-            const chavesEquipe = ['admin', 'usuario_1', 'usuario_2', 'usuario_3', 'usuario_4', 'usuario_5'];
+            let filtered = [];
 
-            chavesEquipe.forEach(userKey => {
-                let totalTrabalhoMin = 0;
-                let totalInterrupcoesMin = 0;
-                let totalAlmoçoMin = 0; 
-                let descansoLegalMin = 0;
-
-                const itemJornada = jornadas[userKey];
-                const [hIn, mIn] = itemJornada.in.split(':').map(Number); 
-                const [hOut, mOut] = itemJornada.out.split(':').map(Number);
-                
-                const configAlmoco = almocosPadrao[userKey];
-                if (configAlmoco && configAlmoco.in && configAlmoco.out) {
-                    const [hAlmIn, mAlmIn] = configAlmoco.in.split(':').map(Number);
-                    const [hAlmOut, mAlmOut] = configAlmoco.out.split(':').map(Number);
-                    if (metrics.apenasHoje && agoraMs >= new Date().setHours(hAlmIn, mAlmIn)) { totalAlmoçoMin = (hAlmOut*60+mAlmOut) - (hAlmIn*60+mAlmIn); }
-                    else if (!metrics.apenasHoje) { totalAlmoçoMin = (hAlmOut*60+mAlmOut) - (hAlmIn*60+mAlmIn); }
-                }
-
-                if(metrics.apenasHoje && descansoLogs[hojeStr]?.[userKey]) {
-                    descansoLegalMin = Math.round(((descansoLogs[hojeStr][userKey].end || agoraMs) - descansoLogs[hojeStr][userKey].start) / 1000 / 60);
-                }
-
-                let janelaTotalMinutosHoje = 0;
-                if (new Date().getDay() >= 1 && agoraMs > new Date().setHours(hIn, mIn)) {
-                    janelaTotalMinutosHoje = Math.round((Math.min(new Date().setHours(hOut, mOut), agoraMs) - new Date().setHours(hIn, mIn)) / 1000 / 60);
-                }
-
-                if (userKey === 'admin') {
-                    if (metrics.apenasHoje) {
-                        totalTrabalhoMin = Math.max(0, janelaTotalMinutosHoje - totalAlmoçoMin - descansoLegalMin);
-                    } else {
-                        const totalJornadaPadraoMin = (hOut * 60 + mOut) - (hIn * 60 + mIn) - totalAlmoçoMin;
-                        totalTrabalhoMin = totalJornadaPadraoMin;
-                    }
-                    totalInterrupcoesMin = 0; 
-                } else {
-                    const tempos = calcularTempoTrabalhoEInterrupcoes(userKey, metrics.dataCorte, metrics.apenasHoje);
-                    totalTrabalhoMin = tempos.trabalho;
-                    totalInterrupcoesMin = tempos.interrupcao;
-                }
-
-                let totalOciosoMin = metrics.apenasHoje ? Math.max(0, janelaTotalMinutosHoje - totalTrabalhoMin - totalAlmoçoMin - descansoLegalMin - totalInterrupcoesMin) : 0;
-                labelsTime.push(nomesExibicao[userKey]); dataWork.push(totalTrabalhoMin);
-
-                const formatTime = (min) => min > 0 ? `${Math.floor(min/60)}h ${min%60}m` : "0m";
-
-                tbody.innerHTML += `
-                    <tr style="border-bottom: 1px solid #ddd; text-align: center;">
-                        <td style="padding: 12px; text-align: left;"><strong>${nomesExibicao[userKey]}</strong></td>
-                        <td>${itemJornada.in} às ${itemJornada.out}</td>
-                        <td style="color:#2ecc71; font-weight:bold;">${formatTime(totalTrabalhoMin)}</td>
-                        <td>${formatTime(totalAlmoçoMin)}</td>
-                        <td>${formatTime(descansoLegalMin)}</td>
-                        <td style="color:#e67e22; font-weight:bold;">${formatTime(totalInterrupcoesMin)}</td>
-                        <td style="color:#e74c3c; font-weight:bold;">${metrics.apenasHoje ? formatTime(totalOciosoMin) : 'Visão Diária'}</td>
-                    </tr>
-                `;
-            });
-
-            const ctxTime = document.getElementById('timeChart');
-            if (ctxTime) {
-                if(timeChart) timeChart.destroy();
-                timeChart = new Chart(ctxTime.getContext('2d'), {
-                    type: 'bar',
-                    data: { labels: labelsTime, datasets: [{ label: 'Trabalho Efetivo (Minutos)', data: dataWork, backgroundColor: '#2ecc71' }] },
-                    options: { responsive: true, maintainAspectRatio: false }
-                });
-            }
-        }
-
-        function abrirDetalhamentoStatus(tipoStatus) {
-            const metrics = getFilteredMetrics(); const modal = document.getElementById('fullscreenDetailsModal');
-            const titulo = document.getElementById('fullscreenModalTitle'); const tbody = document.getElementById('fullscreenDetailsTableBody');
-            tbody.innerHTML = ''; modal.style.display = 'flex';
-
-            let tarefasAlvo = []; const filtradasHistorico = historicTasks.filter(t => t.dateFinished >= metrics.dataCorte);
-            if(tipoStatus === 'noPrazo') { titulo.innerText = "Entregues No Prazo"; tarefasAlvo = filtradasHistorico.filter(t => t.onTime); } 
-            else if(tipoStatus === 'foraPrazo') { titulo.innerText = "Entregues Com Atraso"; tarefasAlvo = filtradasHistorico.filter(t => !t.onTime); } 
-            else { titulo.innerText = "Demandas Pendentes"; tarefasAlvo = tasks; }
-
-            tarefasAlvo.forEach(t => {
-                tbody.innerHTML += `
-                    <tr style="border-bottom: 1px solid #eee; text-align: center;">
-                        <td style="text-align: left; padding: 12px;"><strong>${t.title}</strong></td>
-                        <td>${t.requester || 'Não informado'}</td>
-                        <td>${t.category}</td>
-                        <td>${t.action}</td>
-                        <td>${t.responsibles ? t.responsibles.map(r => nomesExibicao[r]).join(', ') : 'Setor'}</td>
-                        <td>${t.deadline.split('-').reverse().join('/')}</td>
-                        <td style="text-align: left; font-size: 0.8rem; line-height: 1.3; padding: 8px;">${buildPausasHTML(t.timeLogs)}</td>
-                        <td>${t.dateFinished ? '✓ Concluída' : '▶️ Ativa'}</td>
-                    </tr>
-                `;
-            });
-        }
-
-        function fecharFullscreenDetails() { document.getElementById('fullscreenDetailsModal').style.display = 'none'; }
-
-        /* --- MODAL E EXPORTAÇÃO PDF PERSONALIZADO --- */
-        function abrirModalOpcoesPDF() {
-            // Mostrar ou ocultar opção de cubagem dependendo do usuário
-            const optWrapper = document.getElementById('pdfCubagemOptionWrapper');
-            if (currentUser === 'admin' || currentUser === 'usuario_3') {
-                optWrapper.style.display = 'flex';
+            if (type === 'noPrazo') {
+                document.getElementById('fsTitle').innerText = 'Detalhamento: Tarefas Concluídas NO PRAZO';
+                filtered = tasks.filter(t => t.status === 'done' && new Date(t.completedAt) <= new Date(t.deadline + 'T23:59:59'));
+            } else if (type === 'foraPrazo') {
+                document.getElementById('fsTitle').innerText = 'Detalhamento: Tarefas Concluídas FORA DO PRAZO';
+                filtered = tasks.filter(t => t.status === 'done' && new Date(t.completedAt) > new Date(t.deadline + 'T23:59:59'));
+            } else if (type === 'pendentes') {
+                document.getElementById('fsTitle').innerText = 'Detalhamento: Demandas Pendentes / Em Execução';
+                filtered = tasks.filter(t => t.status !== 'done');
             } else {
-                optWrapper.style.display = 'none';
-                document.getElementById('pdfOptCubagem').checked = false;
-            }
-            document.getElementById('pdfOptionsModal').style.display = 'flex';
-        }
-
-        function fecharModalOpcoesPDF() {
-            document.getElementById('pdfOptionsModal').style.display = 'none';
-        }
-
-        function gerarPDFPersonalizado() {
-            const incMetrics = document.getElementById('pdfOptMetrics').checked;
-            const incTime = document.getElementById('pdfOptTimeReport').checked;
-            const incTasks = document.getElementById('pdfOptTasks').checked;
-            const incPauses = document.getElementById('pdfOptPauses').checked;
-            const incDesc = document.getElementById('pdfOptDesc').checked;
-            const incCubagem = document.getElementById('pdfOptCubagem').checked;
-
-            fecharModalOpcoesPDF();
-
-            const { jsPDF } = window.jspdf;
-            const doc = new jsPDF();
-            let currentY = 15;
-
-            // Cabeçalho Principal
-            doc.setFontSize(16);
-            doc.setTextColor(41, 128, 185);
-            doc.text("ENGENHARIA E MODELAGEM - RELATÓRIO EXECUTIVO", 14, currentY);
-            currentY += 8;
-
-            doc.setFontSize(9);
-            doc.setTextColor(100);
-            doc.text(`Gerado em: ${new Date().toLocaleString('pt-BR')} | Período: ${document.getElementById('reportPeriod').value.toUpperCase()} | Emitido por: ${nomesExibicao[currentUser] || 'Sistema'}`, 14, currentY);
-            currentY += 10;
-
-            // 1. MÉTRICAS E INDICADORES
-            if (incMetrics) {
-                const metrics = getFilteredMetrics();
-                doc.setFontSize(12);
-                doc.setTextColor(44, 62, 80);
-                doc.text("1. Resumo de Indicadores Gerais", 14, currentY);
-                currentY += 4;
-
-                doc.autoTable({
-                    startY: currentY,
-                    head: [['Concluídas no Prazo', 'Concluídas fora do Prazo', 'Tarefas Pendentes', 'Total Filtrado']],
-                    body: [[metrics.noPrazo, metrics.foraPrazo, metrics.pendentes, metrics.noPrazo + metrics.foraPrazo + metrics.pendentes]],
-                    theme: 'grid',
-                    headStyles: { fillColor: [41, 128, 185] },
-                    styles: { fontSize: 9, halign: 'center' }
-                });
-                currentY = doc.lastAutoTable.finalY + 10;
+                document.getElementById('fsTitle').innerText = 'Detalhamento: Todas as Demandas Filtradas';
+                filtered = tasks;
             }
 
-            // 2. RELATÓRIO DE TEMPO POR COLABORADOR
-            if (incTime) {
-                doc.setFontSize(12);
-                doc.setTextColor(44, 62, 80);
-                doc.text("2. Relatório de Horas por Colaborador", 14, currentY);
-                currentY += 4;
-
-                const rowsTempo = [];
-                const chavesEquipe = ['admin', 'usuario_1', 'usuario_2', 'usuario_3', 'usuario_4', 'usuario_5'];
-                const metrics = getFilteredMetrics();
-                const hojeStr = new Date().toISOString().split('T')[0];
-                const agoraMs = new Date().getTime();
-
-                chavesEquipe.forEach(userKey => {
-                    let totalTrabalhoMin = 0; let totalInterrupcoesMin = 0; let totalAlmoçoMin = 0; let descansoLegalMin = 0;
-                    const itemJornada = jornadas[userKey];
-                    const [hIn, mIn] = itemJornada.in.split(':').map(Number); 
-                    const [hOut, mOut] = itemJornada.out.split(':').map(Number);
-                    
-                    const configAlmoco = almocosPadrao[userKey];
-                    if (configAlmoco && configAlmoco.in && configAlmoco.out) {
-                        const [hAlmIn, mAlmIn] = configAlmoco.in.split(':').map(Number);
-                        const [hAlmOut, mAlmOut] = configAlmoco.out.split(':').map(Number);
-                        if (metrics.apenasHoje && agoraMs >= new Date().setHours(hAlmIn, mAlmIn)) { totalAlmoçoMin = (hAlmOut*60+mAlmOut) - (hAlmIn*60+mAlmIn); }
-                        else if (!metrics.apenasHoje) { totalAlmoçoMin = (hAlmOut*60+mAlmOut) - (hAlmIn*60+mAlmIn); }
-                    }
-
-                    if(metrics.apenasHoje && descansoLogs[hojeStr]?.[userKey]) {
-                        descansoLegalMin = Math.round(((descansoLogs[hojeStr][userKey].end || agoraMs) - descansoLogs[hojeStr][userKey].start) / 1000 / 60);
-                    }
-
-                    let janelaTotalMinutosHoje = 0;
-                    if (new Date().getDay() >= 1 && agoraMs > new Date().setHours(hIn, mIn)) {
-                        janelaTotalMinutosHoje = Math.round((Math.min(new Date().setHours(hOut, mOut), agoraMs) - new Date().setHours(hIn, mIn)) / 1000 / 60);
-                    }
-
-                    if (userKey === 'admin') {
-                        if (metrics.apenasHoje) { totalTrabalhoMin = Math.max(0, janelaTotalMinutosHoje - totalAlmoçoMin - descansoLegalMin); }
-                        else { totalTrabalhoMin = (hOut * 60 + mOut) - (hIn * 60 + mIn) - totalAlmoçoMin; }
-                        totalInterrupcoesMin = 0; 
-                    } else {
-                        const tempos = calcularTempoTrabalhoEInterrupcoes(userKey, metrics.dataCorte, metrics.apenasHoje);
-                        totalTrabalhoMin = tempos.trabalho; totalInterrupcoesMin = tempos.interrupcao;
-                    }
-
-                    let totalOciosoMin = metrics.apenasHoje ? Math.max(0, janelaTotalMinutosHoje - totalTrabalhoMin - totalAlmoçoMin - descansoLegalMin - totalInterrupcoesMin) : 0;
-                    const formatTime = (min) => min > 0 ? `${Math.floor(min/60)}h ${min%60}m` : "0m";
-
-                    rowsTempo.push([
-                        nomesExibicao[userKey],
-                        `${itemJornada.in} ás ${itemJornada.out}`,
-                        formatTime(totalTrabalhoMin),
-                        formatTime(totalAlmoçoMin),
-                        formatTime(descansoLegalMin),
-                        formatTime(totalInterrupcoesMin),
-                        metrics.apenasHoje ? formatTime(totalOciosoMin) : 'Visão Diária'
-                    ]);
-                });
-
-                doc.autoTable({
-                    startY: currentY,
-                    head: [['Funcionário', 'Jornada', 'Trabalho', 'Almoço', 'Descanso', 'Interrupções', 'Ociosidade']],
-                    body: rowsTempo,
-                    theme: 'striped',
-                    headStyles: { fillColor: [44, 62, 80] },
-                    styles: { fontSize: 8, halign: 'center' }
-                });
-                currentY = doc.lastAutoTable.finalY + 10;
-            }
-
-            // 3. DETALHAMENTO DE TAREFAS
-            if (incTasks) {
-                if (currentY > 230) { doc.addPage(); currentY = 15; }
-                
-                doc.setFontSize(12);
-                doc.setTextColor(44, 62, 80);
-                doc.text("3. Tabela Detalhada de Tarefas e Produção", 14, currentY);
-                currentY += 4;
-
-                const todasTarefas = [...tasks, ...historicTasks];
-                const rowsTarefas = todasTarefas.map(t => {
-                    let detalheExtra = "";
-                    if (incDesc && t.desc) detalheExtra += `Instruções: ${t.desc}
-`;
-                    if (incPauses && t.timeLogs) {
-                        const pausas = t.timeLogs.filter(l => l.type === 'pause');
-                        if (pausas.length > 0) {
-                            detalheExtra += "Pausas: " + pausas.map(p => `[${p.byName} | Sol: ${p.requestedBy||'N/I'} | Motivo: ${p.reason}]`).join("; ");
-                        }
-                    }
-
-                    return [
-                        t.title || 'Sem título',
-                        t.requester || 'Não informado',
-                        t.category || 'KIT',
-                        t.action || 'Geral',
-                        t.responsibles ? t.responsibles.map(r => nomesExibicao[r]).join(', ') : 'Setor',
-                        t.deadline ? t.deadline.split('-').reverse().join('/') : '',
-                        t.dateFinished ? '✓ Concluída' : '▶️ Ativa',
-                        detalheExtra || 'Sem observações'
-                    ];
-                });
-
-                doc.autoTable({
-                    startY: currentY,
-                    head: [['Modelo/Referência', 'Solicitante', 'Cat.', 'Ação', 'Responsáveis', 'Prazo', 'Status', 'Observações / Pausas']],
-                    body: rowsTarefas,
-                    theme: 'grid',
-                    headStyles: { fillColor: [41, 128, 185] },
-                    styles: { fontSize: 7, cellPadding: 2 },
-                    columnStyles: { 7: { cellWidth: 50 } }
-                });
-                currentY = doc.lastAutoTable.finalY + 10;
-            }
-
-            // 4. RESUMO DE CUBAGEM (MATÉRIA-PRIMA)
-            if (incCubagem && (currentUser === 'admin' || currentUser === 'usuario_3')) {
-                if (currentY > 220) { doc.addPage(); currentY = 15; }
-
-                doc.setFontSize(12);
-                doc.setTextColor(44, 62, 80);
-                doc.text("4. Dados e Resumo de Matéria-Prima (Calculadora de Cubagem)", 14, currentY);
-                currentY += 4;
-
-                const cat = document.getElementById('prod_categoria').value;
-                const codigo = document.getElementById('prod_codigo').value || "Não informado";
-                const nomeProd = document.getElementById('prod_nome').value || "Não informado";
-
-                const rowsCubagem = [];
-                rowsCubagem.push(["Identificação do Produto", `Código: ${codigo} | Modelo: ${nomeProd} | Categoria: ${cat}`]);
-
-                const cardsCubagem = document.querySelectorAll('#dashboard-resultados .card');
-                cardsCubagem.forEach(card => {
-                    const title = card.querySelector('.card-title')?.innerText || '';
-                    const val = card.querySelector('.card-value')?.innerText || '';
-                    const sub = card.querySelector('.card-sub')?.innerText || '';
-                    if (title && val) {
-                        rowsCubagem.push([title, `${val} ${sub ? '(' + sub + ')' : ''}`]);
-                    }
-                });
-
-                doc.autoTable({
-                    startY: currentY,
-                    head: [['Especificação / Material', 'Resultado Consolidado / Medição']],
-                    body: rowsCubagem,
-                    theme: 'striped',
-                    headStyles: { fillColor: [221, 107, 32] },
-                    styles: { fontSize: 8 }
-                });
-            }
-
-            doc.save(`Relatorio_Personalizado_${new Date().toISOString().split('T')[0]}.pdf`);
-        }
-
-        function exportExcel() {
-            let linhas = [["Funcionário", "Solicitante", "Tarefa", "Data Conclusão", "Status", "Pausas / Motivos"]];
-            historicTasks.forEach(t => { 
-                let pausasTexto = t.timeLogs ? t.timeLogs.filter(l => l.type === 'pause').map(l => `[Motivo: ${l.reason} | Por: ${l.byName} | Solicitante: ${l.requestedBy||'Não informado'}]`).join('; ') : 'Nenhuma';
-                linhas.push([t.userWhoFinishedName||'Setor', t.requester||'Não informado', t.title, t.dateFinished, t.onTime?"No Prazo":"Atrasado", pausasTexto]); 
+            filtered.forEach(t => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>P${t.priority}</td>
+                    <td>${t.title}</td>
+                    <td>${t.requester}</td>
+                    <td>${systemUsers[t.assignedTo] ? systemUsers[t.assignedTo].name : t.assignedTo}</td>
+                    <td>${t.category}</td>
+                    <td>${t.action}</td>
+                    <td>${t.deadline}</td>
+                    <td>${t.status === 'done' ? `Concluída (${new Date(t.completedAt).toLocaleDateString('pt-BR')})` : 'Em Andamento'}</td>
+                    <td>-</td>
+                `;
+                tbody.appendChild(tr);
             });
-            const ws = XLSX.utils.aoa_to_sheet(linhas); const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb, ws, "Produtividade");
-            XLSX.writeFile(wb, "Relatorio_Produtividade.xlsx");
+            overlay.style.display = 'flex';
         }
 
-        function exportPDF() {
-            abrirModalOpcoesPDF();
+        function fecharDetalhamentoStatus() { document.getElementById('fullscreenDetails').style.display = 'none'; }
+
+        // RELATÓRIO DE TEMPO E COLABORADORES
+        function renderTimeReportTable() {
+            const tbody = document.getElementById('timeTableBody');
+            if (!tbody) return;
+            tbody.innerHTML = '';
+
+            Object.keys(systemUsers).forEach(uKey => {
+                const u = systemUsers[uKey];
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td style="text-align: left; font-weight: bold;">${u.name} (${u.role})</td>
+                    <td>08:48 hs</td>
+                    <td>00:00 hs</td>
+                    <td>00:00 hs</td>
+                    <td>00:00 hs</td>
+                    <td>00:00 hs</td>
+                    <td>08:48 hs</td>
+                `;
+                tbody.appendChild(tr);
+            });
         }
 
-        function salvarConfiguracaoEquipe() {
-            const configEquipe = {};
-            for(let i=1; i<=5; i++) {
-                const uKey = `usuario_${i}`;
-                configEquipe[uKey] = {
-                    nome: document.getElementById(`cfg_user${i}`).value,
-                    jornada: { in: document.getElementById(`cfg_in${i}`).value, out: document.getElementById(`cfg_out${i}`).value },
-                    almoco: { in: document.getElementById(`cfg_meal_in${i}`).value, out: document.getElementById(`cfg_meal_out${i}`).value },
-                    senha: document.getElementById(`cfg_pass${i}`).value || "123", podeLancar: document.getElementById(`cfg_perm${i}`).checked
-                };
-            }
-            configEquipe['admin'] = {
-                nome: document.getElementById('cfg_admin_nome').value || nomesExibicao['admin'],
-                jornada: { in: document.getElementById('cfg_admin_in').value, out: document.getElementById('cfg_admin_out').value },
-                almoco: { in: document.getElementById('cfg_admin_meal_in').value, out: document.getElementById('cfg_admin_meal_out').value }
+        // GERENCIAMENTO DA EQUIPE & BACKUP
+        function abrirModalEquipe() {
+            const tbody = document.getElementById('equipeTableBody');
+            tbody.innerHTML = '';
+            Object.keys(systemUsers).forEach(k => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${k}</td>
+                    <td><input type="text" id="eq_name_${k}" value="${systemUsers[k].name}" class="form-control"></td>
+                    <td><input type="text" id="eq_pass_${k}" value="${systemUsers[k].pass}" class="form-control"></td>
+                `;
+                tbody.appendChild(tr);
+            });
+            document.getElementById('modalEquipe').style.display = 'flex';
+        }
+
+        function fecharModalEquipe() { document.getElementById('modalEquipe').style.display = 'none'; }
+
+        function salvarConfiguracoesEquipe() {
+            Object.keys(systemUsers).forEach(k => {
+                systemUsers[k].name = document.getElementById(`eq_name_${k}`).value;
+                systemUsers[k].pass = document.getElementById(`eq_pass_${k}`).value;
+            });
+            db.ref('systemUsers').set(systemUsers, err => {
+                if (!err) {
+                    alert("Usuários atualizados com sucesso!");
+                    fecharModalEquipe();
+                }
+            });
+        }
+
+        function abrirModalAuditLogs() {
+            const tbody = document.getElementById('auditLogsTableBody');
+            tbody.innerHTML = '';
+            auditLogs.slice().reverse().forEach(log => {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td>${new Date(log.timestamp).toLocaleString('pt-BR')}</td>
+                    <td>${log.user}</td>
+                    <td>${log.action}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+            document.getElementById('modalAuditLogs').style.display = 'flex';
+        }
+
+        function fecharModalAuditLogs() { document.getElementById('modalAuditLogs').style.display = 'none'; }
+
+        function exportBackupJSON() {
+            db.ref('/').once('value', snapshot => {
+                const data = snapshot.val();
+                const blob = new Blob([JSON.stringify(data, null, 2)], { type: 'application/json' });
+                const a = document.createElement('a');
+                a.href = URL.createObjectURL(blob);
+                a.download = `Backup_Sistema_Gestao_${new Date().toISOString().slice(0, 10)}.json`;
+                a.click();
+            });
+        }
+
+        function importBackupJSON(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+            const reader = new FileReader();
+            reader.onload = function(evt) {
+                try {
+                    const data = JSON.parse(evt.target.result);
+                    if (confirm("Atenção: Isso substituirá todo o banco de dados atual. Continuar?")) {
+                        db.ref('/').set(data, err => {
+                            if (!err) alert("Backup restaurado com sucesso!");
+                        });
+                    }
+                } catch (err) { alert("Ficheiro JSON inválido."); }
             };
-            if (database) database.ref('configuracoes/equipe').set(configEquipe).then(() => alert("Configuração gravada!"));
+            reader.readAsText(file);
         }
 
-        function salvarSenhaAdmin() {
-            const novaSenha = document.getElementById('cfg_adminPassword').value; if(!novaSenha) return;
-            if (database) database.ref('configuracoes/seguranca/adminPassword').set(novaSenha).then(() => { alert("Senha mestre alterada!"); });
-        }
-
-        function criarBackupFirebase() {
-            if (!database) return;
-            Promise.all([database.ref('tasks/ativas').once('value'), database.ref('tasks/historico').once('value')]).then(([sA, sH]) => {
-                database.ref('backup_sistema').set({ ativas: sA.val()||{}, historico: sH.val()||{} }).then(() => alert("Backup criado!"));
-            });
-        }
-
-        function restaurarBackupFirebase() {
-            if(!database || !confirm("Deseja restaurar os dados?")) return;
-            database.ref('backup_sistema').once('value').then((snapshot) => {
-                const bkp = snapshot.val(); if(!bkp) return;
-                Promise.all([database.ref('tasks/ativas').set(bkp.ativas||null), database.ref('tasks/historico').set(bkp.historico||null)]).then(() => alert("Restauração concluída!"));
-            });
-        }
-
-        function deleteTask(id) { if(database && confirm("Deseja deletar permanentemente?")) database.ref('tasks/ativas/' + id).remove(); }
-        
-        document.getElementById('taskForm').addEventListener('submit', (e) => {
-            e.preventDefault(); const acao = document.getElementById('taskAction').value; const taskId = '_' + Math.random().toString(36).substr(2, 9);
-            const solicitante = document.getElementById('taskRequester').value;
-            if (database) {
-                database.ref('tasks/ativas/' + taskId).set({
-                    id: taskId, title: document.getElementById('taskTitle').value, requester: solicitante, category: document.getElementById('taskCategory').value,
-                    action: acao, priority: document.getElementById('taskPriority').value, deadline: document.getElementById('taskDeadline').value,
-                    desc: document.getElementById('taskDesc').value, responsibles: roteamentoUsuarios[acao] || [], timestampCreated: new Date().getTime(), timeLogs: []
-                });
-            }
-            document.getElementById('taskForm').reset(); alert("Tarefa enviada!");
-        });
-
-        /* --- LÓGICA DA CALCULADORA DE CUBAGEM --- */
-        const partesBancos = [
-            { id: "ED", letra: "B" }, { id: "AD", letra: "C" }, { id: "ET", letra: "D" },
-            { id: "AT", letra: "E" }, { id: "ETPM", letra: "G" }, { id: "ATPM", letra: "H" }
-        ];
-
-        const partesAPC = [
-            { id: "PORTAS", letra: "F" }, { id: "PAINEL", letra: "F" },
-            { id: "APC", letra: "A" }, { id: "APB", letra: "A" }, { id: "CONSOLE", letra: "A" }
-        ];
-
+        // --- CÁLCULOS E LÓGICA DA FERRAMENTA DE CUBAGEM ---
         function toggleAdminTool() {
             const p = document.getElementById('painel-admin-tool');
-            p.style.display = (p.style.display === 'block') ? 'none' : 'block';
-        }
-
-        function alternarThermoflex() {
-            const usa = document.getElementById('usa_thermoflex').value;
-            const el = document.getElementById('f-alt-thermo');
-            if(el) {
-                el.style.display = (usa === 'Sim') ? 'flex' : 'none';
-                if(usa === 'Nao') document.getElementById('alt_thermo').value = 0;
-            }
-            calcularTudo();
+            p.style.display = (p.style.display === 'none') ? 'block' : 'none';
         }
 
         function alternarFluxoCategoria() {
             const cat = document.getElementById('prod_categoria').value;
-            const isKit = cat === 'KIT';
-
-            document.getElementById('f-tipo-kit').style.display = isKit ? 'flex' : 'none';
-            document.getElementById('f-qtd-cores').style.display = isKit ? 'flex' : 'none';
-            document.getElementById('opcoes-corte-kit').style.display = isKit ? 'flex' : 'none';
-
-            document.getElementById('campos-cubagem-kit').style.display = isKit ? 'grid' : 'none';
-            document.getElementById('campos-cubagem-piso').style.display = isKit ? 'none' : 'grid';
-
-            document.getElementById('bloco-tabelas-kit').style.display = isKit ? 'block' : 'none';
-            document.getElementById('bloco-tabelas-piso').style.display = isKit ? 'none' : 'block';
-
-            if(isKit) renderizarCamposCubagemKit();
+            if (cat === 'KIT') {
+                document.getElementById('f-tipo-kit').style.display = 'flex';
+                document.getElementById('f-qtd-cores').style.display = 'flex';
+                document.getElementById('opcoes-corte-kit').style.display = 'flex';
+                document.getElementById('campos-cubagem-kit').style.display = 'grid';
+                document.getElementById('campos-cubagem-piso').style.display = 'none';
+                document.getElementById('bloco-tabelas-kit').style.display = 'block';
+                document.getElementById('bloco-tabelas-piso').style.display = 'none';
+            } else {
+                document.getElementById('f-tipo-kit').style.display = 'none';
+                document.getElementById('f-qtd-cores').style.display = 'none';
+                document.getElementById('opcoes-corte-kit').style.display = 'none';
+                document.getElementById('campos-cubagem-kit').style.display = 'none';
+                document.getElementById('campos-cubagem-piso').style.display = 'grid';
+                document.getElementById('bloco-tabelas-kit').style.display = 'none';
+                document.getElementById('bloco-tabelas-piso').style.display = 'block';
+            }
             calcularTudo();
         }
 
         function renderizarCamposCubagemKit() {
-            const qtdCores = parseInt(document.getElementById('prod_qtd_cores').value) || 1;
+            const qtdCores = parseInt(document.getElementById('prod_qtd_cores').value);
             const container = document.getElementById('campos-cubagem-kit');
-            
-            const valoresAntigos = {};
-            container.querySelectorAll('input').forEach(i => valoresAntigos[i.id] = i.value);
+            container.innerHTML = '';
 
-            let html = '';
-
-            for(let i = 1; i <= qtdCores; i++) {
-                let sufixo = qtdCores > 1 ? ` Cor ${i}` : '';
-                let idSufixo = `_c${i}`;
-
-                html += `
-                    <div class="form-group"><label style="color:#dd6b20;">COURO${sufixo} - Comprimento (cm):</label><input type="number" id="alt_couro${idSufixo}" value="${valoresAntigos[`alt_couro${idSufixo}`] || 0}" oninput="calcularTudo()"></div>
-                    <div class="form-group"><label>Vinil Espuma Média${sufixo} - Comprimento (cm):</label><input type="number" id="alt_v_media${idSufixo}" value="${valoresAntigos[`alt_v_media${idSufixo}`] || 0}" oninput="calcularTudo()"></div>
-                    <div class="form-group"><label>Vinil Espuma Fina${sufixo} - Comprimento (cm):</label><input type="number" id="alt_v_fina${idSufixo}" value="${valoresAntigos[`alt_v_fina${idSufixo}`] || 0}" oninput="calcularTudo()"></div>
-                    <div class="form-group"><label>Vinil Sem Espuma${sufixo} - Comprimento (cm):</label><input type="number" id="alt_v_sem${idSufixo}" value="${valoresAntigos[`alt_v_sem${idSufixo}`] || 0}" oninput="calcularTudo()"></div>
+            for (let i = 1; i <= qtdCores; i++) {
+                container.innerHTML += `
+                    <div style="border: 1px solid #cbd5e0; padding: 10px; border-radius: 6px; background: #ffffff;">
+                        <h4 style="margin: 0 0 8px 0; color: #2b6cb0; font-size: 12px; text-transform: uppercase;">Cor ${i} do Kit</h4>
+                        <div class="form-group"><label>Nome / Código da Cor ${i}:</label><input type="text" id="cor_nome_${i}" value="Cor ${i}" oninput="calcularTudo()"></div>
+                        <div class="form-group"><label>Comprimento do Couro (cm):</label><input type="number" id="alt_couro_${i}" value="0" min="0" oninput="calcularTudo()"></div>
+                        <div class="form-group"><label>Comprimento do Vinil (cm):</label><input type="number" id="alt_vinil_${i}" value="0" min="0" oninput="calcularTudo()"></div>
+                        <div class="form-group"><label>Comprimento da Espuma (cm):</label><input type="number" id="alt_espuma_${i}" value="0" min="0" oninput="calcularTudo()"></div>
+                        <div class="form-group f-thermo" style="display:none;"><label style="color:#805ad5;">Thermoflex (cm):</label><input type="number" id="alt_thermo_${i}" value="0" min="0" oninput="calcularTudo()"></div>
+                    </div>
                 `;
             }
+            alternarThermoflex();
+        }
 
-            html += `
-                <div class="form-group"><label style="color:#38a169;">Espuma Média - Comprimento (cm):</label><input type="number" id="alt_e_media" value="${valoresAntigos['alt_e_media'] || 0}" oninput="calcularTudo()"></div>
-                <div class="form-group"><label style="color:#38a169;">Espuma Fina - Comprimento (cm):</label><input type="number" id="alt_e_fina" value="${valoresAntigos['alt_e_fina'] || 0}" oninput="calcularTudo()"></div>
-            `;
-
-            const usaThermo = document.getElementById('usa_thermoflex').value;
-            let displayThermo = usaThermo === "Sim" ? "flex" : "none";
-            html += `
-                <div class="form-group" id="f-alt-thermo" style="display:${displayThermo};"><label style="color:#805ad5;">Thermoflex - Comprimento (cm):</label><input type="number" id="alt_thermo" value="${valoresAntigos['alt_thermo'] || 0}" oninput="calcularTudo()"></div>
-            `;
-
-            container.innerHTML = html;
+        function alternarThermoflex() {
+            const usa = document.getElementById('usa_thermoflex').value === 'Sim';
+            document.querySelectorAll('.f-thermo').forEach(el => el.style.display = usa ? 'block' : 'none');
             calcularTudo();
         }
 
-        function inicializarCubagemTool() {
-            const cb = document.getElementById('corpo-bancos');
-            if (!cb) return;
-            cb.innerHTML = '';
-            partesBancos.forEach(p => {
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td class="part-header">${p.id} (${p.letra})</td>
-                    <td><input type="number" class="input-table" data-mat="GUARNIÇÃO J" value="0" oninput="calcularTudo()"><span class="unit-label">m</span></td>
-                    <td><input type="number" class="input-table" data-mat="GUARNIÇÃO SETA" value="0" oninput="calcularTudo()"><span class="unit-label">m</span></td>
-                    <td><input type="number" class="input-table" data-mat="VELCRO ORIGINAL" value="0" oninput="calcularTudo()"><span class="unit-label">m</span></td>
-                    <td><input type="number" class="input-table" data-mat="VELCRO MACHO" value="0" oninput="calcularTudo()"><span class="unit-label">m</span></td>
-                    <td><input type="number" class="input-table" data-mat="VELCRO FEMEA" value="0" oninput="calcularTudo()"><span class="unit-label">m</span></td>
-                    <td><input type="number" class="input-table" data-mat="ZIPPER" value="0" oninput="calcularTudo()"><span class="unit-label">m</span></td>
-                    <td><input type="number" class="input-table" data-mat="PALETA DE BOLSA" value="0" oninput="calcularTudo()"><span class="unit-label">m</span></td>
-                    <td><input type="number" class="input-table" data-mat="ELÁSTICO" value="0" oninput="calcularTudo()"><span class="unit-label">m</span></td>
-                `;
-                cb.appendChild(tr);
-            });
-
-            const ca = document.getElementById('corpo-apc');
-            if (!ca) return;
-            ca.innerHTML = '';
-            partesAPC.forEach(p => {
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td class="part-header">${p.id} (${p.letra})</td>
-                    <td><input type="number" class="input-table" data-mat="GUARNIÇÃO J" value="0" oninput="calcularTudo()"><span class="unit-label">m</span></td>
-                    <td><input type="number" class="input-table" data-mat="GUARNIÇÃO SETA" value="0" oninput="calcularTudo()"><span class="unit-label">m</span></td>
-                    <td><input type="number" class="input-table" data-mat="VELCRO ORIGINAL" value="0" oninput="calcularTudo()"><span class="unit-label">m</span></td>
-                    <td><input type="number" class="input-table" data-mat="VELCRO MACHO" value="0" oninput="calcularTudo()"><span class="unit-label">m</span></td>
-                    <td><input type="number" class="input-table" data-mat="VELCRO FEMEA" value="0" oninput="calcularTudo()"><span class="unit-label">m</span></td>
-                    <td><input type="number" class="input-table" data-mat="ZIPPER" value="0" oninput="calcularTudo()"><span class="unit-label">m</span></td>
-                    <td><input type="number" class="input-table" data-mat="ELÁSTICO" value="0" oninput="calcularTudo()"><span class="unit-label">m</span></td>
-                `;
-                ca.appendChild(tr);
-            });
-            
-            renderizarCamposCubagemKit();
-        }
-
-        function cmParaM2(comprimentoCm) {
-            const larguraConfig = parseFloat(document.getElementById('cfg_largura').value) || 138;
-            return (larguraConfig / 100) * ((parseFloat(comprimentoCm) || 0) / 100);
-        }
-
         function calcularTudo() {
-            const categoria = document.getElementById('prod_categoria').value;
-            const prodCodigo = document.getElementById('prod_codigo').value || "Não informado";
-            const prodNome = document.getElementById('prod_nome').value || "Não informado";
-            
-            const pCouro = (parseFloat(document.getElementById('cfg_perda_couro').value) || 0) / 100;
-            const pOutros = (parseFloat(document.getElementById('cfg_perda_outros').value) || 0) / 100;
-
-            const dash = document.getElementById('dashboard-resultados');
-            if (!dash) return;
+            const cat = document.getElementById('prod_categoria').value;
+            const larg = (parseFloat(document.getElementById('cfg_largura').value) || 138) / 100;
+            const pCouro = (parseFloat(document.getElementById('cfg_perda_couro').value) || 7) / 100;
+            const pOutros = (parseFloat(document.getElementById('cfg_perda_outros').value) || 5) / 100;
+            const dash = document.getElementById('dashboard-cards');
             dash.innerHTML = '';
 
-            dash.innerHTML += `
-                <div class="card prod-info">
-                    <div class="card-title">📦 Produto Em Medição (${categoria})</div>
-                    <div style="font-size:14px; margin-top:5px;">
-                        <strong>Código:</strong> ${prodCodigo} | <strong>Modelo/Nome:</strong> ${prodNome}
-                    </div>
-                </div>
-            `;
-
-            if (categoria === "KIT") {
+            if (cat === 'KIT') {
+                const qtdCores = parseInt(document.getElementById('prod_qtd_cores').value);
                 const tipoCorte = document.getElementById('tipo_corte').value;
-                const qtdCores = parseInt(document.getElementById('prod_qtd_cores').value) || 1;
-                const usaThermo = document.getElementById('usa_thermoflex').value;
-
-                let percCouro = 0, percVinil = 0;
-                if (tipoCorte === "70/30") { percCouro = 0.7; percVinil = 0.3; }
-                else if (tipoCorte === "50/50") { percCouro = 0.5; percVinil = 0.5; }
-                else if (tipoCorte === "40/60") { percCouro = 0.4; percVinil = 0.6; }
-                else if (tipoCorte === "30/70") { percCouro = 0.3; percVinil = 0.7; }
-                else if (tipoCorte === "100V") { percCouro = 0; percVinil = 1; }
-                else if (tipoCorte === "100C") { percCouro = 1; percVinil = 0; }
+                const usaThermo = document.getElementById('usa_thermoflex').value === 'Sim';
 
                 for (let i = 1; i <= qtdCores; i++) {
-                    let labelSufixo = qtdCores > 1 ? ` Cor ${i}` : '';
-                    let idSufixo = `_c${i}`;
+                    const cNome = document.getElementById(`cor_nome_${i}`) ? document.getElementById(`cor_nome_${i}`).value : `Cor ${i}`;
+                    const cCouroM = ((parseFloat(document.getElementById(`alt_couro_${i}`)?.value) || 0)) / 100;
+                    const cVinilM = ((parseFloat(document.getElementById(`alt_vinil_${i}`)?.value) || 0)) / 100;
+                    const cEspumaM = ((parseFloat(document.getElementById(`alt_espuma_${i}`)?.value) || 0)) / 100;
+                    const cThermoM = usaThermo ? (((parseFloat(document.getElementById(`alt_thermo_${i}`)?.value) || 0)) / 100) : 0;
 
-                    const cmC = parseFloat(document.getElementById(`alt_couro${idSufixo}`)?.value) || 0;
-                    const m2CBase = cmParaM2(cmC) * percCouro;
-                    if(m2CBase > 0) {
-                        dash.innerHTML += `
-                            <div class="card destaque-c">
-                                <div class="card-title">COURO${labelSufixo} [Corte: ${tipoCorte}] <span class="badge-perda">${(pCouro*100).toFixed(0)}% Perda</span></div>
-                                <div class="card-value">${(m2CBase * (1 + pCouro)).toFixed(2)} m²</div>
-                                <div class="card-sub">Líquido: ${m2CBase.toFixed(2)} m²</div>
-                            </div>`;
-                    }
+                    let cM2 = cCouroM * larg, vM2 = cVinilM * larg, eM2 = cEspumaM * larg, tM2 = cThermoM * larg;
+                    let cBruto = cM2 * (1 + pCouro), vBruto = vM2 * (1 + pOutros), eBruto = eM2 * (1 + pOutros), tBruto = tM2 * (1 + pOutros);
 
-                    const cmVM = parseFloat(document.getElementById(`alt_v_media${idSufixo}`)?.value) || 0;
-                    const m2VMBase = cmParaM2(cmVM) * percVinil;
-                    if(m2VMBase > 0) {
-                        dash.innerHTML += `
-                            <div class="card destaque-v">
-                                <div class="card-title">VINIL ESPUMA MÉDIA${labelSufixo} [Corte: ${tipoCorte}] <span class="badge-perda v-e">${(pOutros*100).toFixed(0)}% Perda</span></div>
-                                <div class="card-value">${(m2VMBase * (1 + pOutros)).toFixed(2)} m²</div>
-                                <div class="card-sub">Líquido: ${m2VMBase.toFixed(2)} m²</div>
-                            </div>`;
-                    }
-
-                    const cmVF = parseFloat(document.getElementById(`alt_v_fina${idSufixo}`)?.value) || 0;
-                    const m2VFBase = cmParaM2(cmVF) * percVinil;
-                    if(m2VFBase > 0) {
-                        dash.innerHTML += `
-                            <div class="card destaque-v">
-                                <div class="card-title">VINIL ESPUMA FINA${labelSufixo} [Corte: ${tipoCorte}] <span class="badge-perda v-e">${(pOutros*100).toFixed(0)}% Perda</span></div>
-                                <div class="card-value">${(m2VFBase * (1 + pOutros)).toFixed(2)} m²</div>
-                                <div class="card-sub">Líquido: ${m2VFBase.toFixed(2)} m²</div>
-                            </div>`;
-                    }
-
-                    const cmVS = parseFloat(document.getElementById(`alt_v_sem${idSufixo}`)?.value) || 0;
-                    const m2VSBase = cmParaM2(cmVS) * percVinil;
-                    if(m2VSBase > 0) {
-                        dash.innerHTML += `
-                            <div class="card destaque-v">
-                                <div class="card-title">VINIL SEM ESPUMA${labelSufixo} [Corte: ${tipoCorte}] <span class="badge-perda v-e">${(pOutros*100).toFixed(0)}% Perda</span></div>
-                                <div class="card-value">${(m2VSBase * (1 + pOutros)).toFixed(2)} m²</div>
-                                <div class="card-sub">Líquido: ${m2VSBase.toFixed(2)} m²</div>
-                            </div>`;
-                    }
+                    if (cM2 > 0) dash.innerHTML += `<div class="card destaque-c"><div class="card-title">COURO METRAGEM (${cNome}) <span class="badge-perda">${(pCouro*100).toFixed(0)}% Perda</span></div><div class="card-value">${cBruto.toFixed(2)} m²</div><div class="card-sub">Líquido: ${cM2.toFixed(2)} m²</div></div>`;
+                    if (vM2 > 0) dash.innerHTML += `<div class="card destaque-v"><div class="card-title">VINIL METRAGEM (${cNome}) <span class="badge-perda v-e">${(pOutros*100).toFixed(0)}% Perda</span></div><div class="card-value">${vBruto.toFixed(2)} m²</div><div class="card-sub">Líquido: ${vM2.toFixed(2)} m²</div></div>`;
+                    if (eM2 > 0) dash.innerHTML += `<div class="card destaque-e"><div class="card-title">ESPUMA METRAGEM (${cNome}) <span class="badge-perda v-e">${(pOutros*100).toFixed(0)}% Perda</span></div><div class="card-value">${eBruto.toFixed(2)} m²</div><div class="card-sub">Líquido: ${eM2.toFixed(2)} m²</div></div>`;
+                    if (tM2 > 0) dash.innerHTML += `<div class="card destaque-t"><div class="card-title">THERMOFLEX (${cNome}) <span class="badge-perda t-p">${(pOutros*100).toFixed(0)}% Perda</span></div><div class="card-value">${tBruto.toFixed(2)} m²</div><div class="card-sub">Líquido: ${tM2.toFixed(2)} m²</div></div>`;
                 }
-
-                const espMedM2 = cmParaM2(document.getElementById('alt_e_media')?.value || 0);
-                const espFinM2 = cmParaM2(document.getElementById('alt_e_fina')?.value || 0);
-                const thermoM2 = (usaThermo === "Sim") ? cmParaM2(document.getElementById('alt_thermo')?.value || 0) : 0;
-
-                if (espMedM2 > 0) {
-                    dash.innerHTML += `
-                        <div class="card destaque-e">
-                            <div class="card-title">ESPUMA MÉDIA <span class="badge-perda v-e">${(pOutros*100).toFixed(0)}% Perda</span></div>
-                            <div class="card-value">${(espMedM2 * (1 + pOutros)).toFixed(2)} m²</div>
-                            <div class="card-sub">Líquido: ${espMedM2.toFixed(2)} m²</div>
-                        </div>`;
-                }
-                if (espFinM2 > 0) {
-                    dash.innerHTML += `
-                        <div class="card destaque-e">
-                            <div class="card-title">ESPUMA FINA <span class="badge-perda v-e">${(pOutros*100).toFixed(0)}% Perda</span></div>
-                            <div class="card-value">${(espFinM2 * (1 + pOutros)).toFixed(2)} m²</div>
-                            <div class="card-sub">Líquido: ${espFinM2.toFixed(2)} m²</div>
-                        </div>`;
-                }
-                if (thermoM2 > 0) {
-                    dash.innerHTML += `
-                        <div class="card destaque-t">
-                            <div class="card-title">THERMOFLEX <span class="badge-perda t-p">${(pOutros*100).toFixed(0)}% Perda</span></div>
-                            <div class="card-value">${(thermoM2 * (1 + pOutros)).toFixed(2)} m²</div>
-                            <div class="card-sub">Líquido: ${thermoM2.toFixed(2)} m²</div>
-                        </div>`;
-                }
-
-                const lineares = { "GUARNIÇÃO J":0, "GUARNIÇÃO SETA":0, "VELCRO ORIGINAL":0, "VELCRO MACHO":0, "VELCRO FEMEA":0, "ZIPPER":0, "PALETA DE BOLSA":0, "ELÁSTICO":0 };
-                document.querySelectorAll('#tabCubagem .input-table').forEach(input => {
-                    lineares[input.getAttribute('data-mat')] += parseFloat(input.value) || 0;
-                });
-                for (const [mat, m] of Object.entries(lineares)) {
-                    if (m > 0) {
-                        dash.innerHTML += `<div class="card"><div class="card-title">${mat} (SOMA TOTAL)</div><div class="card-value">${m.toFixed(2)} m</div></div>`;
-                    }
-                }
-
             } else {
-                const evaM2 = cmParaM2(document.getElementById('alt_piso_eva').value);
-                const vinilSemEspM2 = cmParaM2(document.getElementById('alt_piso_sem_esp').value);
+                const evaM = (parseFloat(document.getElementById('alt_piso_eva').value) || 0) / 100;
+                const semEspM = (parseFloat(document.getElementById('alt_piso_sem_esp').value) || 0) / 100;
 
-                if (evaM2 > 0) {
-                    dash.innerHTML += `
-                        <div class="card destaque-v">
-                            <div class="card-title">VINIL DUBLADO COM EVA <span class="badge-perda v-e">${(pOutros*100).toFixed(0)}% Perda</span></div>
-                            <div class="card-value">${(evaM2 * (1 + pOutros)).toFixed(2)} m²</div>
-                            <div class="card-sub">Líquido: ${evaM2.toFixed(2)} m²</div>
-                        </div>`;
-                }
-                if (vinilSemEspM2 > 0) {
-                    dash.innerHTML += `
-                        <div class="card destaque-v">
-                            <div class="card-title">VINIL SEM ESPUMA (PISO) <span class="badge-perda v-e">${(pOutros*100).toFixed(0)}% Perda</span></div>
-                            <div class="card-value">${(vinilSemEspM2 * (1 + pOutros)).toFixed(2)} m²</div>
-                            <div class="card-sub">Líquido: ${vinilSemEspM2.toFixed(2)} m²</div>
-                        </div>`;
-                }
+                const evaM2 = evaM * larg;
+                const semEspM2 = semEspM * larg;
 
-                document.querySelectorAll('#tabCubagem .input-table-piso').forEach(input => {
-                    const mat = input.getAttribute('data-piso');
-                    const m = parseFloat(input.value) || 0;
-                    if (m > 0) {
-                        dash.innerHTML += `<div class="card"><div class="card-title">${mat} (SOMA TOTAL)</div><div class="card-value">${m.toFixed(2)} m</div></div>`;
-                    }
-                });
+                if (evaM2 > 0) dash.innerHTML += `<div class="card destaque-v"><div class="card-title">VINIL DUBLADO COM EVA <span class="badge-perda v-e">${(pOutros*100).toFixed(0)}% Perda</span></div><div class="card-value">${(evaM2 * (1 + pOutros)).toFixed(2)} m²</div><div class="card-sub">Líquido: ${evaM2.toFixed(2)} m²</div></div>`;
+                if (semEspM2 > 0) dash.innerHTML += `<div class="card destaque-v"><div class="card-title">VINIL SEM ESPUMA (PISO) <span class="badge-perda v-e">${(pOutros*100).toFixed(0)}% Perda</span></div><div class="card-value">${(semEspM2 * (1 + pOutros)).toFixed(2)} m²</div><div class="card-sub">Líquido: ${semEspM2.toFixed(2)} m²</div></div>`;
             }
         }
     </script>
